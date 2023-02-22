@@ -46,7 +46,6 @@ export const Main = styled.main`
       width: 100%;
       height: 2.5rem;
       padding: 0 1rem;
-      margin-bottom: 1rem;
       border-radius: 0.25rem;
       background: transparent;
 
@@ -60,6 +59,21 @@ export const Main = styled.main`
       ::-ms-reveal {
         filter: invert(100%);
       }
+    }
+
+    span[role='alert'] {
+      padding: 0 1rem;
+      margin-top: 0.25rem;
+      margin-bottom: 1rem;
+
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      color: var(--red-300);
+    }
+
+    input + label,
+    input + button {
+      margin-top: 1rem;
     }
 
     label {

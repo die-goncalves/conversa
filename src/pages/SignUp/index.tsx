@@ -1,3 +1,6 @@
+import { useForm } from 'react-hook-form'
+import zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { LogoSVG } from '../../components/LogoSVG'
 import {
   Footer,
@@ -9,7 +12,32 @@ import {
   SignUpContainer
 } from './styles'
 
+const schema = zod.object({
+  email: zod
+    .string()
+    .min(1, { message: 'Campo obrigatório' })
+    .email('Deve ser um e-mail válido.'),
+  password: zod.string().min(6, { message: 'Deve ter no mínimo 6 caracteres' })
+})
+type Schema = zod.infer<typeof schema>
+
 export function SignUp(): JSX.Element {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<Schema>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: '',
+      password: ''
+    }
+  })
+
+  const onSubmit = async (data: Schema): Promise<void> => {
+    console.log(data)
+  }
+
   return (
     <PageContainer>
       <SignUpContainer>
@@ -23,16 +51,38 @@ export function SignUp(): JSX.Element {
         </Header>
 
         <Main>
-          <form
-            onSubmit={e => {
-              console.log(e.currentTarget)
-            }}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <label htmlFor="email">E-mail</label>
-            <input id="email" type="text" />
+            <input
+              id="email"
+              type="text"
+              {...register('email')}
+              {...(errors.email != null && {
+                'aria-invalid': true,
+                'aria-describedby': 'email_error'
+              })}
+            />
+            {errors.email != null && (
+              <span id="email_error" role="alert">
+                {errors.email.message}
+              </span>
+            )}
 
             <label htmlFor="password">Senha</label>
-            <input id="password" type="password" />
+            <input
+              id="password"
+              type="password"
+              {...register('password')}
+              {...(errors.password != null && {
+                'aria-invalid': true,
+                'aria-describedby': 'password_error'
+              })}
+            />
+            {errors.password != null && (
+              <span id="password_error" role="alert">
+                {errors.password.message}
+              </span>
+            )}
 
             <button type="submit">Cadastrar</button>
           </form>
