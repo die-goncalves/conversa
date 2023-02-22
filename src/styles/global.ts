@@ -8,6 +8,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
+    font-family: 'Assistant', sans-serif;
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 400;
