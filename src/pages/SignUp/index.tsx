@@ -11,6 +11,8 @@ import {
   Separator,
   SignUpContainer
 } from './styles'
+import { useContext } from 'react'
+import { AuthContext } from '../../contexts/AuthContext'
 
 const schema = zod.object({
   email: zod
@@ -22,6 +24,8 @@ const schema = zod.object({
 type Schema = zod.infer<typeof schema>
 
 export function SignUp(): JSX.Element {
+  const { onCreateUserWithEmailAndPassword, onSignInWithGoogle } =
+    useContext(AuthContext)
   const {
     register,
     handleSubmit,
@@ -35,7 +39,10 @@ export function SignUp(): JSX.Element {
   })
 
   const onSubmit = async (data: Schema): Promise<void> => {
-    console.log(data)
+    await onCreateUserWithEmailAndPassword({
+      email: data.email,
+      password: data.password
+    })
   }
 
   return (
@@ -89,7 +96,7 @@ export function SignUp(): JSX.Element {
 
           <Separator>outras opções</Separator>
 
-          <button>
+          <button onClick={onSignInWithGoogle}>
             <img src="data:image/svg+xml;base64,PHN2ZyBpZD0i0KHQu9C+0LlfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmlld0JveD0iLTM4MC4yIDI3NC43IDY1LjcgNjUuOCI+PHN0eWxlPi5zdDB7ZmlsbDojZTBlMGUwfS5zdDF7ZmlsbDojZmZmfS5zdDJ7Y2xpcC1wYXRoOnVybCgjU1ZHSURfMl8pO2ZpbGw6I2ZiYmMwNX0uc3Qze2NsaXAtcGF0aDp1cmwoI1NWR0lEXzRfKTtmaWxsOiNlYTQzMzV9LnN0NHtjbGlwLXBhdGg6dXJsKCNTVkdJRF82Xyk7ZmlsbDojMzRhODUzfS5zdDV7Y2xpcC1wYXRoOnVybCgjU1ZHSURfOF8pO2ZpbGw6IzQyODVmNH08L3N0eWxlPjxjaXJjbGUgY2xhc3M9InN0MCIgY3g9Ii0zNDcuMyIgY3k9IjMwNy42IiByPSIzMi45Ii8+PGNpcmNsZSBjbGFzcz0ic3QxIiBjeD0iLTM0Ny4zIiBjeT0iMzA3LjEiIHI9IjMyLjQiLz48Zz48ZGVmcz48cGF0aCBpZD0iU1ZHSURfMV8iIGQ9Ik0tMzI2LjMgMzAzLjNoLTIwLjV2OC41aDExLjhjLTEuMSA1LjQtNS43IDguNS0xMS44IDguNS03LjIgMC0xMy01LjgtMTMtMTNzNS44LTEzIDEzLTEzYzMuMSAwIDUuOSAxLjEgOC4xIDIuOWw2LjQtNi40Yy0zLjktMy40LTguOS01LjUtMTQuNS01LjUtMTIuMiAwLTIyIDkuOC0yMiAyMnM5LjggMjIgMjIgMjJjMTEgMCAyMS04IDIxLTIyIDAtMS4zLS4yLTIuNy0uNS00eiIvPjwvZGVmcz48Y2xpcFBhdGggaWQ9IlNWR0lEXzJfIj48dXNlIHhsaW5rOmhyZWY9IiNTVkdJRF8xXyIgb3ZlcmZsb3c9InZpc2libGUiLz48L2NsaXBQYXRoPjxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0tMzcwLjggMzIwLjN2LTI2bDE3IDEzeiIvPjxkZWZzPjxwYXRoIGlkPSJTVkdJRF8zXyIgZD0iTS0zMjYuMyAzMDMuM2gtMjAuNXY4LjVoMTEuOGMtMS4xIDUuNC01LjcgOC41LTExLjggOC41LTcuMiAwLTEzLTUuOC0xMy0xM3M1LjgtMTMgMTMtMTNjMy4xIDAgNS45IDEuMSA4LjEgMi45bDYuNC02LjRjLTMuOS0zLjQtOC45LTUuNS0xNC41LTUuNS0xMi4yIDAtMjIgOS44LTIyIDIyczkuOCAyMiAyMiAyMmMxMSAwIDIxLTggMjEtMjIgMC0xLjMtLjItMi43LS41LTR6Ii8+PC9kZWZzPjxjbGlwUGF0aCBpZD0iU1ZHSURfNF8iPjx1c2UgeGxpbms6aHJlZj0iI1NWR0lEXzNfIiBvdmVyZmxvdz0idmlzaWJsZSIvPjwvY2xpcFBhdGg+PHBhdGggY2xhc3M9InN0MyIgZD0iTS0zNzAuOCAyOTQuM2wxNyAxMyA3LTYuMSAyNC0zLjl2LTE0aC00OHoiLz48Zz48ZGVmcz48cGF0aCBpZD0iU1ZHSURfNV8iIGQ9Ik0tMzI2LjMgMzAzLjNoLTIwLjV2OC41aDExLjhjLTEuMSA1LjQtNS43IDguNS0xMS44IDguNS03LjIgMC0xMy01LjgtMTMtMTNzNS44LTEzIDEzLTEzYzMuMSAwIDUuOSAxLjEgOC4xIDIuOWw2LjQtNi40Yy0zLjktMy40LTguOS01LjUtMTQuNS01LjUtMTIuMiAwLTIyIDkuOC0yMiAyMnM5LjggMjIgMjIgMjJjMTEgMCAyMS04IDIxLTIyIDAtMS4zLS4yLTIuNy0uNS00eiIvPjwvZGVmcz48Y2xpcFBhdGggaWQ9IlNWR0lEXzZfIj48dXNlIHhsaW5rOmhyZWY9IiNTVkdJRF81XyIgb3ZlcmZsb3c9InZpc2libGUiLz48L2NsaXBQYXRoPjxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0tMzcwLjggMzIwLjNsMzAtMjMgNy45IDEgMTAuMS0xNXY0OGgtNDh6Ii8+PC9nPjxnPjxkZWZzPjxwYXRoIGlkPSJTVkdJRF83XyIgZD0iTS0zMjYuMyAzMDMuM2gtMjAuNXY4LjVoMTEuOGMtMS4xIDUuNC01LjcgOC41LTExLjggOC41LTcuMiAwLTEzLTUuOC0xMy0xM3M1LjgtMTMgMTMtMTNjMy4xIDAgNS45IDEuMSA4LjEgMi45bDYuNC02LjRjLTMuOS0zLjQtOC45LTUuNS0xNC41LTUuNS0xMi4yIDAtMjIgOS44LTIyIDIyczkuOCAyMiAyMiAyMmMxMSAwIDIxLTggMjEtMjIgMC0xLjMtLjItMi43LS41LTR6Ii8+PC9kZWZzPjxjbGlwUGF0aCBpZD0iU1ZHSURfOF8iPjx1c2UgeGxpbms6aHJlZj0iI1NWR0lEXzdfIiBvdmVyZmxvdz0idmlzaWJsZSIvPjwvY2xpcFBhdGg+PHBhdGggY2xhc3M9InN0NSIgZD0iTS0zMjIuOCAzMzEuM2wtMzEtMjQtNC0zIDM1LTEweiIvPjwvZz48L2c+PC9zdmc+" />
             <span>Entrar com Google</span>
           </button>
