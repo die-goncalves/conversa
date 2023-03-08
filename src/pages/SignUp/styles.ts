@@ -142,7 +142,7 @@ export const Main = styled.main`
       margin-top: 1rem;
     }
 
-    &:last-child {
+    &:nth-child(n + 5) {
       img {
         filter: invert(100%);
       }

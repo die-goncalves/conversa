@@ -6,7 +6,8 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   type User,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signInAnonymously
 } from 'firebase/auth'
 import { child, get, ref, set } from 'firebase/database'
 import { auth, database } from '../services/firebaseConfig'
@@ -94,6 +95,7 @@ interface AuthContextData {
     password
   }: IEmailAndPassword) => Promise<void>
   onSignInWithGoogle: () => Promise<void>
+  onSignInAnonymous: () => Promise<void>
   onSignOut: () => Promise<void>
   userState: IUserState
 }
@@ -167,6 +169,22 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     }
   }
 
+  const onSignInAnonymous: () => Promise<void> = async () => {
+    try {
+      const { user } = await signInAnonymously(auth)
+      await writeUserData({
+        uid: user.uid,
+        displayName: 'Anônimo',
+        email: user.email,
+        photoURL: '/anonym_avatar.png',
+        isAnonymous: user.isAnonymous
+      })
+      navigate('dashboard')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const onSignOut: () => Promise<void> = async () => {
     try {
       await auth.signOut()
@@ -195,6 +213,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         onSignInWithEmailAndPassword,
         onSignInWithGoogle,
         onSignOut,
+        onSignInAnonymous,
         userState
       }}
     >
