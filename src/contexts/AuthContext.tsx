@@ -8,7 +8,7 @@ import {
   type User,
   signInWithEmailAndPassword
 } from 'firebase/auth'
-import { ref, set } from 'firebase/database'
+import { child, get, ref, set } from 'firebase/database'
 import { auth, database } from '../services/firebaseConfig'
 
 const googleProvider = new GoogleAuthProvider()
@@ -26,6 +26,20 @@ interface IEmailAndPassword {
   password: string
 }
 
+async function addUserToRoom(userId: string, roomId: string): Promise<void> {
+  try {
+    const roomSnapshot = await get(
+      child(ref(database), `users/${userId}/rooms/${roomId}`)
+    )
+    if (!roomSnapshot.exists()) {
+      await set(ref(database, `users/${userId}/rooms/${roomId}`), true)
+      await set(ref(database, `rooms/${roomId}/users/${userId}`), true)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 async function writeUserData({
   uid,
   displayName,
@@ -34,12 +48,17 @@ async function writeUserData({
   isAnonymous
 }: IUserData): Promise<void> {
   try {
-    await set(ref(database, 'users/' + uid), {
-      displayName,
-      email,
-      photoURL,
-      isAnonymous
-    })
+    const userSnapshot = await get(child(ref(database), `users/${uid}`))
+    if (!userSnapshot.exists()) {
+      await set(ref(database, 'users/' + uid), {
+        displayName,
+        email,
+        photoURL,
+        isAnonymous
+      })
+
+      await addUserToRoom(uid, import.meta.env.VITE_APP_GLOBAL_ROOM_CHAT_ID)
+    }
   } catch (error) {
     console.log(error)
   }
