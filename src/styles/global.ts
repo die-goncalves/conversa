@@ -23,11 +23,11 @@ export const GlobalStyle = createGlobalStyle`
     --green-400: #4ade80;
     --green-300: #86efac;
 
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow: 0px 0.1px 0.1px rgba(0, 0, 0, 0.19), 0px 0.2px 0.4px rgba(0, 0, 0, 0.28), 0px 1px 2px rgba(0, 0, 0, 0.47);
+    --shadow-md: 0px 0.1px 0.3px rgba(0, 0, 0, 0.178), 0px 0.4px 0.9px rgba(0, 0, 0, 0.262), 0px 2px 4px rgba(0, 0, 0, 0.44);
+    --shadow-lg: 0px 0.2px 0.4px rgba(0, 0, 0, 0.166), 0px 0.7px 1.3px rgba(0, 0, 0, 0.244), 0px 3px 6px rgba(0, 0, 0, 0.41);
+    --shadow-xl: 0px 0.3px 0.7px rgba(0, 0, 0, 0.141), 0px 1.1px 2.2px rgba(0, 0, 0, 0.209), 0px 5px 10px rgba(0, 0, 0, 0.35);
+    --shadow-2xl: 0px 0.5px 0.9px rgba(0, 0, 0, 0.113), 0px 1.6px 3.1px rgba(0, 0, 0, 0.167), 0px 7px 14px rgba(0, 0, 0, 0.28);
   }
 
   * {
