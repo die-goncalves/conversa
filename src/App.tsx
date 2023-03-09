@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { SignIn } from './pages/SignIn'
 import { SignUp } from './pages/SignUp'
+import { Dashboard } from './pages/Dashboard'
 import { AuthLayout } from './components/AuthLayout'
 import { ProtectedLayout } from './components/ProtectedLayout'
 import { DashboardLayout } from './components/DashboardLayout'
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <h1>Painel dashboard</h1>
+                element: <Dashboard />
               }
             ]
           }
