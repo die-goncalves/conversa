@@ -3,6 +3,7 @@ import { SignIn } from './pages/SignIn'
 import { SignUp } from './pages/SignUp'
 import { AuthLayout } from './components/AuthLayout'
 import { ProtectedLayout } from './components/ProtectedLayout'
+import { DashboardLayout } from './components/DashboardLayout'
 
 const router = createBrowserRouter([
   {
@@ -22,7 +23,13 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'dashboard',
-            element: <h1>Dashboard</h1>
+            element: <DashboardLayout />,
+            children: [
+              {
+                index: true,
+                element: <h1>Painel dashboard</h1>
+              }
+            ]
           }
         ]
       }
