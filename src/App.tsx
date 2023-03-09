@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { SignIn } from './pages/SignIn'
 import { SignUp } from './pages/SignUp'
 import { Dashboard } from './pages/Dashboard'
+import { Room } from './pages/Room'
 import { AuthLayout } from './components/AuthLayout'
 import { ProtectedLayout } from './components/ProtectedLayout'
 import { DashboardLayout } from './components/DashboardLayout'
@@ -29,6 +30,13 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <Dashboard />
+              },
+              {
+                path: 'room/:roomId',
+                element: <Room />,
+                loader: ({ params }) => ({
+                  roomId: params.roomId
+                })
               }
             ]
           }
