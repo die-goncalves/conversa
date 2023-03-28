@@ -119,6 +119,8 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
           true
         )
 
+        if (type === 'video')
+          navigate(`/dashboard/call/${String(newRoomRef.key)}`)
         navigate(`/dashboard/room/${String(newRoomRef.key)}`)
       } catch (error) {
         console.log(error)

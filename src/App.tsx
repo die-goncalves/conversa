@@ -3,6 +3,7 @@ import { SignIn } from './pages/SignIn'
 import { SignUp } from './pages/SignUp'
 import { Dashboard } from './pages/Dashboard'
 import { Room } from './pages/Room'
+import { Call } from './pages/Call'
 import { AuthLayout } from './components/AuthLayout'
 import { ProtectedLayout } from './components/ProtectedLayout'
 import { DashboardLayout } from './components/DashboardLayout'
@@ -36,6 +37,13 @@ const router = createBrowserRouter([
                 element: <Room />,
                 loader: ({ params }) => ({
                   roomId: params.roomId
+                })
+              },
+              {
+                path: 'call/:callId',
+                element: <Call />,
+                loader: ({ params }) => ({
+                  callId: params.callId
                 })
               }
             ]
