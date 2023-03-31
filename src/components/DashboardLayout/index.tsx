@@ -1,4 +1,4 @@
-import { type FormEvent, useContext } from 'react'
+import { type FormEvent, useContext, useMemo } from 'react'
 import { useOutlet } from 'react-router-dom'
 import { AuthContext } from '../../contexts/AuthContext'
 import { RoomContext } from '../../contexts/RoomContext'
@@ -37,6 +37,19 @@ export function DashboardLayout(): JSX.Element {
     }
   }
 
+  const typedRooms = useMemo(() => {
+    return rooms.reduce(
+      (acc, currentValue) => {
+        if (currentValue.type === 'chat') return { ...acc, chat: acc.chat + 1 }
+        return { ...acc, video: acc.video + 1 }
+      },
+      {
+        chat: 0,
+        video: 0
+      }
+    )
+  }, [rooms])
+
   return (
     <DashboardLayoutContainer>
       <SidebarContainer>
@@ -60,18 +73,51 @@ export function DashboardLayout(): JSX.Element {
           </form>
         </FormNewRoom>
 
-        <RoomsBox>
-          <header>Salas</header>
+        {typedRooms.chat !== 0 && (
+          <RoomsBox>
+            <header>Chat</header>
 
-          {rooms.map(room => (
-            <StyledNavLink key={room.id} to={`/dashboard/room/${room.id!}`}>
-              <div>
-                <img src={room.image} alt="" />
-              </div>
-              <span>{room.displayName}</span>
-            </StyledNavLink>
-          ))}
-        </RoomsBox>
+            {rooms.map(room => {
+              if (room.type === 'chat') {
+                return (
+                  <StyledNavLink
+                    key={room.id}
+                    to={`/dashboard/room/${room.id!}`}
+                    end
+                  >
+                    <div>
+                      <img src={room.image} alt="" />
+                    </div>
+                    <span>{room.displayName}</span>
+                  </StyledNavLink>
+                )
+              } else return null
+            })}
+          </RoomsBox>
+        )}
+
+        {typedRooms.video !== 0 && (
+          <RoomsBox>
+            <header>Video Chamada</header>
+
+            {rooms.map(room => {
+              if (room.type === 'video') {
+                return (
+                  <StyledNavLink
+                    key={room.id}
+                    to={`/dashboard/call/${room.id!}`}
+                    end
+                  >
+                    <div>
+                      <img src={room.image} alt="" />
+                    </div>
+                    <span>{room.displayName}</span>
+                  </StyledNavLink>
+                )
+              } else return null
+            })}
+          </RoomsBox>
+        )}
       </SidebarContainer>
       {outlet}
     </DashboardLayoutContainer>
