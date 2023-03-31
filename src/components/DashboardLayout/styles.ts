@@ -4,7 +4,7 @@ import styled from 'styled-components'
 export const DashboardLayoutContainer = styled.div`
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   display: flex;
 
   background: var(--gray-900);
@@ -12,14 +12,14 @@ export const DashboardLayoutContainer = styled.div`
 
 export const SidebarContainer = styled.div`
   position: relative;
-  width: 486px;
-  height: 100vh;
+  width: 28rem;
+  height: 100%;
 
   overflow: auto;
   scrollbar-gutter: stable;
 
   &::-webkit-scrollbar {
-    width: 16px;
+    width: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -28,7 +28,7 @@ export const SidebarContainer = styled.div`
   }
   &::-webkit-scrollbar-thumb:hover {
     background: var(--gray-700);
-    box-shadow: inset var(--shadow-md);
+    box-shadow: var(--shadow-md);
   }
   &::-webkit-scrollbar-thumb:active {
     background-color: var(--gray-800);

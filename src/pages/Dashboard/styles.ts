@@ -5,13 +5,12 @@ export const DashboardContainer = styled.div`
   display: flex;
   flex: 1;
   background: var(--gray-900);
-  height: 100vh;
 
   overflow: auto;
   scrollbar-gutter: stable;
 
   &::-webkit-scrollbar {
-    width: 16px;
+    width: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -28,7 +27,6 @@ export const DashboardContainer = styled.div`
   }
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
-    box-shadow: var(--shadow);
   }
 `
 
