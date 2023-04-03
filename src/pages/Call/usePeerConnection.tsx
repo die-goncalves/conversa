@@ -33,7 +33,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 interface ICall {
   callId: string
   userId: string
-  localStream?: MediaStream
+  localStream: MediaStream | null
   participants: Array<
     [
       string,
@@ -69,9 +69,10 @@ interface IActions {
 function reducer(state: ICall, action: IActions): ICall {
   switch (action.type) {
     case 'user-id': {
+      const timestamp = Date.now()
       return {
         ...state,
-        userId: action.payload
+        userId: `${String(action.payload)}-${timestamp}`
       }
     }
     case 'local-stream': {
@@ -81,7 +82,7 @@ function reducer(state: ICall, action: IActions): ICall {
       }
     }
     case 'add-participant': {
-      if (state.localStream === undefined) return state
+      if (state.localStream === null) return state
       if (state.participants.findIndex(p => p[0] === action.payload[0]) !== -1)
         return state
 
@@ -130,6 +131,8 @@ function reducer(state: ICall, action: IActions): ICall {
       }
     }
     case 'remove-participant': {
+      const pc = state.participants.find(p => p[0] === action.payload)
+      if (pc !== undefined) pc[1].peerConnection.close()
       const newStateParticipant = state.participants.filter(p => {
         return p[0] !== action.payload
       })
@@ -173,6 +176,7 @@ function reducer(state: ICall, action: IActions): ICall {
         ...state,
         callId: '',
         userId: '',
+        localStream: null,
         participants: [],
         media: []
       }
@@ -210,6 +214,7 @@ export function usePeerConnection(): IPeerConnection {
   const [call, dispatch] = useReducer(reducer, {
     callId,
     userId: '',
+    localStream: null,
     participants: [],
     media: []
   })
@@ -265,29 +270,27 @@ export function usePeerConnection(): IPeerConnection {
     }
   }, [call.userId, call.localStream])
 
-  async function hangup(): Promise<void> {
-    if (call.localStream !== undefined) {
+  const hangup = useCallback(async (): Promise<void> => {
+    if (call.localStream != null) {
+      call.participants.forEach(p => {
+        p[1].peerConnection.close()
+      })
+
       call.localStream.getTracks().forEach(t => {
         t.stop()
+        call.localStream?.removeTrack(t)
       })
-      dispatch({
-        type: 'local-stream',
-        payload: undefined
-      })
+
+      dispatch({ type: 'clear-state' })
       await remove(ref(database, `rooms/${callId}/users/${call.userId}`))
     }
-  }
-
-  async function unmountComponent(): Promise<void> {
-    await hangup()
-    dispatch({ type: 'clear-state' })
-  }
+  }, [call.localStream, call.participants, call.userId])
 
   const screenShare = useCallback(async () => {
     const stream = await navigator.mediaDevices.getDisplayMedia()
     const [videoTrack] = stream.getVideoTracks()
 
-    if (call.localStream !== undefined)
+    if (call.localStream != null)
       videoTrack.enabled = call.localStream.getVideoTracks()[0].enabled
 
     for (const p of call.participants) {
@@ -300,7 +303,7 @@ export function usePeerConnection(): IPeerConnection {
           }
         }
       } else {
-        if (call.localStream !== undefined) {
+        if (call.localStream != null) {
           videoTrackRef.current = call.localStream.getVideoTracks()[0]
           call.localStream.removeTrack(call.localStream.getVideoTracks()[0])
           call.localStream.addTrack(videoTrack)
@@ -310,10 +313,7 @@ export function usePeerConnection(): IPeerConnection {
 
     setIsScreenShare(true)
     stream.getVideoTracks()[0].onended = async () => {
-      if (
-        videoTrackRef.current !== undefined &&
-        call.localStream !== undefined
-      ) {
+      if (videoTrackRef.current !== undefined && call.localStream != null) {
         videoTrackRef.current.enabled =
           call.localStream.getVideoTracks()[0].enabled
 
@@ -325,7 +325,7 @@ export function usePeerConnection(): IPeerConnection {
             if (sender !== undefined)
               await sender.replaceTrack(videoTrackRef.current)
           } else {
-            if (call.localStream !== undefined) {
+            if (call.localStream != null) {
               call.localStream.removeTrack(call.localStream.getVideoTracks()[0])
               call.localStream.addTrack(videoTrackRef.current)
             }
@@ -338,7 +338,7 @@ export function usePeerConnection(): IPeerConnection {
   }, [call.participants, call.userId, call.media, call.localStream])
 
   const forceStopScreenShare = useCallback(async () => {
-    if (videoTrackRef.current !== undefined && call.localStream !== undefined) {
+    if (videoTrackRef.current !== undefined && call.localStream != null) {
       videoTrackRef.current.enabled =
         call.localStream.getVideoTracks()[0].enabled
 
@@ -350,7 +350,7 @@ export function usePeerConnection(): IPeerConnection {
           if (sender !== undefined)
             await sender.replaceTrack(videoTrackRef.current)
         } else {
-          if (call.localStream !== undefined) {
+          if (call.localStream != null) {
             call.localStream.removeTrack(call.localStream.getVideoTracks()[0])
             call.localStream.addTrack(videoTrackRef.current)
           }
@@ -372,7 +372,10 @@ export function usePeerConnection(): IPeerConnection {
           audio: true
         })
         dispatch({ type: 'local-stream', payload: stream })
-        dispatch({ type: 'user-id', payload: String(userState.user?.uid) })
+        dispatch({
+          type: 'user-id',
+          payload: userState.user.uid
+        })
         setMediaPermissionGranted(true)
       }
     })()
@@ -392,13 +395,12 @@ export function usePeerConnection(): IPeerConnection {
       connectedRef,
       async snap => {
         if (snap.val() === true) {
-          const timestamp = Date.now()
           dispatch({
             type: 'add-participant',
             payload: [
               call.userId,
               {
-                joinDate: timestamp
+                joinDate: Number(call.userId.split('-')[1])
               }
             ]
           })
@@ -415,7 +417,7 @@ export function usePeerConnection(): IPeerConnection {
 
           await set(userRef, {
             media: { audio: true, video: true },
-            'join-date': timestamp
+            'join-date': Number(call.userId.split('-')[1])
           })
 
           await onDisconnect(userRef).remove()
@@ -486,6 +488,8 @@ export function usePeerConnection(): IPeerConnection {
 
   // MONITORA SAÍDA DE UM USUÁRIO DA SALA
   useEffect(() => {
+    if (call.userId.length === 0) return
+
     if (onChildRemovedRef.current.unsubscribe !== null)
       onChildRemovedRef.current.unsubscribe()
 
@@ -493,6 +497,8 @@ export function usePeerConnection(): IPeerConnection {
       ref(database, `rooms/${callId}/users`),
       async snap => {
         if (snap.exists() && snap.key !== null) {
+          dispatch({ type: 'remove-participant', payload: snap.key })
+
           const snapshotCallers = await get(
             child(
               ref(database),
@@ -552,8 +558,6 @@ export function usePeerConnection(): IPeerConnection {
               `rooms/${callId}/users/${call.userId}/video-answer/${snap.key}`
             )
           )
-
-          dispatch({ type: 'remove-participant', payload: snap.key })
         }
       }
     )
@@ -562,7 +566,7 @@ export function usePeerConnection(): IPeerConnection {
       if (onChildRemovedRef.current.unsubscribe !== null)
         onChildRemovedRef.current.unsubscribe()
     }
-  }, [])
+  }, [call.userId])
 
   useEffect(() => {
     if (!mediaPermissionGranted) return
@@ -584,7 +588,7 @@ export function usePeerConnection(): IPeerConnection {
   // LIMPAR TODOS OS ESTADOS AO REMOVER O COMPONENTE DO DOM
   useEffect(() => {
     return () => {
-      if (call.localStream !== undefined) void unmountComponent()
+      if (call.localStream != null) void hangup()
     }
   }, [call.localStream])
 

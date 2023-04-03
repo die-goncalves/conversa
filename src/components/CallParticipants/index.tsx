@@ -6,7 +6,7 @@ import { CallParticipantsContainer, CallWrapper, FlexWrapper } from './styles'
 
 interface ICallParticipants {
   call: {
-    localStream?: MediaStream
+    localStream: MediaStream | null
     userId: string
     participants: Array<
       [

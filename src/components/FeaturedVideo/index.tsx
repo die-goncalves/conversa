@@ -38,7 +38,7 @@ export function FeaturedVideo({
     async function getPhotoURL(): Promise<void> {
       if (featuredDefaultVideo !== null) {
         const user = await get(
-          ref(database, `users/${featuredDefaultVideo.id}`)
+          ref(database, `users/${featuredDefaultVideo.id.split('-')[0]}`)
         )
         if (user.exists()) {
           if (user.key !== null) {

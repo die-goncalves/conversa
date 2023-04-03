@@ -7,7 +7,7 @@ interface IDefaultVideo {
   userId: string
   participant: [string, { peerConnection: RTCPeerConnection }] | undefined
   media: [string, { video: boolean; audio: boolean }] | undefined
-  stream: MediaStream | undefined
+  stream: MediaStream | null
   isFeatured: boolean
   onAddFeaturedVideo: (id: string) => void
 }
@@ -26,7 +26,7 @@ export function DefaultVideo({
     if (participant === undefined) return
 
     if (userId === participant[0]) {
-      if (videoRef.current != null && stream !== undefined)
+      if (videoRef.current != null && stream != null)
         videoRef.current.srcObject = stream
     } else {
       const peerConnection = participant[1].peerConnection
@@ -44,7 +44,9 @@ export function DefaultVideo({
   useEffect(() => {
     async function getPhotoURL(): Promise<void> {
       if (participant != null) {
-        const user = await get(ref(database, `users/${participant[0]}`))
+        const user = await get(
+          ref(database, `users/${participant[0].split('-')[0]}`)
+        )
         if (user.exists()) {
           if (user.key !== null) {
             setPhotoURL(user.val().photoURL)
