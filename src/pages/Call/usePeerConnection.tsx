@@ -282,7 +282,9 @@ export function usePeerConnection(): IPeerConnection {
       })
 
       dispatch({ type: 'clear-state' })
-      await remove(ref(database, `rooms/${callId}/users/${call.userId}`))
+      await remove(
+        ref(database, `rooms/${callId}/signaling-users/${call.userId}`)
+      )
     }
   }, [call.localStream, call.participants, call.userId])
 
@@ -386,7 +388,10 @@ export function usePeerConnection(): IPeerConnection {
     if (!mediaPermissionGranted) return
 
     const connectedRef = ref(database, '.info/connected')
-    const userRef = ref(database, `rooms/${callId}/users/${call.userId}`)
+    const userRef = ref(
+      database,
+      `rooms/${callId}/signaling-users/${call.userId}`
+    )
 
     if (onValuePresenceRef.current.unsubscribe !== null)
       onValuePresenceRef.current.unsubscribe()
@@ -436,7 +441,7 @@ export function usePeerConnection(): IPeerConnection {
   useEffect(() => {
     if (!mediaPermissionGranted) return
 
-    const usersRef = ref(database, `rooms/${callId}/users`)
+    const usersRef = ref(database, `rooms/${callId}/signaling-users`)
 
     if (onChildAddedRef.current.unsubscribe !== null)
       onChildAddedRef.current.unsubscribe()
@@ -445,7 +450,7 @@ export function usePeerConnection(): IPeerConnection {
       if (snap.exists()) {
         if (snap.key != null) {
           onChildChanged(
-            ref(database, `rooms/${callId}/users/${snap.key}/media`),
+            ref(database, `rooms/${callId}/signaling-users/${snap.key}/media`),
             snapshot => {
               if (snapshot.key != null) {
                 dispatch({
@@ -494,7 +499,7 @@ export function usePeerConnection(): IPeerConnection {
       onChildRemovedRef.current.unsubscribe()
 
     onChildRemovedRef.current.unsubscribe = onChildRemoved(
-      ref(database, `rooms/${callId}/users`),
+      ref(database, `rooms/${callId}/signaling-users`),
       async snap => {
         if (snap.exists() && snap.key !== null) {
           dispatch({ type: 'remove-participant', payload: snap.key })
@@ -502,7 +507,7 @@ export function usePeerConnection(): IPeerConnection {
           const snapshotCallers = await get(
             child(
               ref(database),
-              `rooms/${callId}/users/${call.userId}/caller-candidates`
+              `rooms/${callId}/signaling-users/${call.userId}/caller-candidates`
             )
           )
           if (snapshotCallers.exists()) {
@@ -515,7 +520,7 @@ export function usePeerConnection(): IPeerConnection {
                 await remove(
                   ref(
                     database,
-                    `rooms/${callId}/users/${call.userId}/caller-candidates/${c[0]}`
+                    `rooms/${callId}/signaling-users/${call.userId}/caller-candidates/${c[0]}`
                   )
                 )
               }
@@ -525,7 +530,7 @@ export function usePeerConnection(): IPeerConnection {
           const snapshotCallee = await get(
             child(
               ref(database),
-              `rooms/${callId}/users/${call.userId}/callee-candidates`
+              `rooms/${callId}/signaling-users/${call.userId}/callee-candidates`
             )
           )
           if (snapshotCallee.exists()) {
@@ -538,7 +543,7 @@ export function usePeerConnection(): IPeerConnection {
                 await remove(
                   ref(
                     database,
-                    `rooms/${callId}/users/${call.userId}/callee-candidates/${c[0]}`
+                    `rooms/${callId}/signaling-users/${call.userId}/callee-candidates/${c[0]}`
                   )
                 )
               }
@@ -548,14 +553,14 @@ export function usePeerConnection(): IPeerConnection {
           await remove(
             ref(
               database,
-              `rooms/${callId}/users/${call.userId}/video-offer/${snap.key}`
+              `rooms/${callId}/signaling-users/${call.userId}/video-offer/${snap.key}`
             )
           )
 
           await remove(
             ref(
               database,
-              `rooms/${callId}/users/${call.userId}/video-answer/${snap.key}`
+              `rooms/${callId}/signaling-users/${call.userId}/video-answer/${snap.key}`
             )
           )
         }

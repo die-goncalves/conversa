@@ -41,7 +41,7 @@ export function listeners(
   unsubscribeCalleeCandidates: Unsubscribe
 } {
   const unsubscribeVideoOffer = onChildAdded(
-    ref(database, `rooms/${callId}/users/${userId}/video-offer`),
+    ref(database, `rooms/${callId}/signaling-users/${userId}/video-offer`),
     async snapshot => {
       if (snapshot.exists() && snapshot.key !== null) {
         const participant = participants.find(p => p[0] === snapshot.key)
@@ -64,7 +64,7 @@ export function listeners(
   )
 
   const unsubscribeVideoAnswer = onChildAdded(
-    ref(database, `rooms/${callId}/users/${userId}/video-answer`),
+    ref(database, `rooms/${callId}/signaling-users/${userId}/video-answer`),
     async snapshot => {
       if (snapshot.exists()) {
         const participant = participants.find(p => p[0] === snapshot.key)
@@ -80,7 +80,10 @@ export function listeners(
   )
 
   const unsubscribeCallerCandidates = onChildAdded(
-    ref(database, `rooms/${callId}/users/${userId}/caller-candidates`),
+    ref(
+      database,
+      `rooms/${callId}/signaling-users/${userId}/caller-candidates`
+    ),
     async snapshot => {
       const callerId = snapshot.val().caller
       if (snapshot.exists()) {
@@ -97,7 +100,10 @@ export function listeners(
   )
 
   const unsubscribeCalleeCandidates = onChildAdded(
-    ref(database, `rooms/${callId}/users/${userId}/callee-candidates`),
+    ref(
+      database,
+      `rooms/${callId}/signaling-users/${userId}/callee-candidates`
+    ),
     async snapshot => {
       const calleeId = snapshot.val().callee
       if (snapshot.exists()) {
@@ -134,7 +140,10 @@ export async function handleMakeCall(
     event.candidate != null &&
       set(
         push(
-          ref(database, `rooms/${roomId}/users/${calleeId}/caller-candidates`)
+          ref(
+            database,
+            `rooms/${roomId}/signaling-users/${calleeId}/caller-candidates`
+          )
         ),
         {
           ...event.candidate.toJSON(),
@@ -150,7 +159,10 @@ export async function handleMakeCall(
     type: sdpOffer.type
   }
   await set(
-    ref(database, `rooms/${roomId}/users/${calleeId}/video-offer/${callerId}`),
+    ref(
+      database,
+      `rooms/${roomId}/signaling-users/${calleeId}/video-offer/${callerId}`
+    ),
     videoOffer
   )
 }
@@ -168,7 +180,10 @@ async function handleVideoOfferMsg(
     event.candidate != null &&
       set(
         push(
-          ref(database, `rooms/${roomId}/users/${callerId}/callee-candidates`)
+          ref(
+            database,
+            `rooms/${roomId}/signaling-users/${callerId}/callee-candidates`
+          )
         ),
         {
           ...event.candidate.toJSON(),
@@ -184,7 +199,10 @@ async function handleVideoOfferMsg(
     type: sdpAnswer.type
   }
   await set(
-    ref(database, `rooms/${roomId}/users/${callerId}/video-answer/${calleeId}`),
+    ref(
+      database,
+      `rooms/${roomId}/signaling-users/${callerId}/video-answer/${calleeId}`
+    ),
     videoAnswer
   )
 }
@@ -194,7 +212,10 @@ export function updateMedia(
   userId: string,
   newMedia: { audio: boolean } | { video: boolean }
 ): void {
-  const mediaRef = ref(database, `rooms/${roomId}/users/${userId}/media`)
+  const mediaRef = ref(
+    database,
+    `rooms/${roomId}/signaling-users/${userId}/media`
+  )
 
   update(mediaRef, newMedia).catch(error => {
     console.error('Failed to update configuration media', error)
