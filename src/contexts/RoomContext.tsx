@@ -15,8 +15,9 @@ import {
   ref,
   set,
   serverTimestamp,
-  onChildAdded,
-  query
+  onValue,
+  query,
+  onChildAdded
 } from 'firebase/database'
 import { database } from '../services/firebaseConfig'
 import { AuthContext } from './AuthContext'
@@ -27,14 +28,14 @@ interface IRoom {
   displayName: string
   image: string
   timestamp: number
-  owner: Record<string, boolean>
+  adms: Record<string, boolean>
   users: Record<string, boolean>
 }
 
 interface INewRoom {
   type: 'chat' | 'voice' | 'video'
   displayName: string
-  owner: string
+  adm: string
   image: FileList
 }
 
@@ -64,7 +65,7 @@ async function handleImageUpload(files: FileList): Promise<string | undefined> {
 }
 
 interface RoomContextData {
-  writeNewRoom: ({ type, displayName, owner, image }: INewRoom) => Promise<void>
+  writeNewRoom: ({ type, displayName, adm, image }: INewRoom) => Promise<void>
   writeNewMember: ({
     roomId,
     userId
@@ -94,34 +95,33 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
   const [rooms, setRooms] = useState<IRoom[]>([])
 
   const writeNewRoom = useCallback(
-    async ({ type, displayName, owner, image }: INewRoom) => {
+    async ({ type, displayName, adm, image }: INewRoom) => {
       try {
         const compressedFile = await handleImageUpload(image)
 
         const roomListRef = child(ref(database), 'rooms')
         const newRoomRef = push(roomListRef)
 
-        await set(newRoomRef, {
-          type,
-          displayName,
-          owner: {
-            [owner]: true
-          },
-          image: compressedFile,
-          timestamp: serverTimestamp()
-        })
+        if (newRoomRef.key != null) {
+          await set(newRoomRef, {
+            type,
+            displayName,
+            adms: {
+              [adm]: true
+            },
+            image: compressedFile,
+            timestamp: serverTimestamp(),
+            users: {
+              [adm]: true
+            }
+          })
 
-        await set(
-          ref(
-            database,
-            `users/${userState.user!.uid}/rooms/${newRoomRef.key!}`
-          ),
-          true
-        )
+          await set(ref(database, `users/${adm}/rooms/${newRoomRef.key}`), true)
 
-        if (type === 'video')
-          navigate(`/dashboard/call/${String(newRoomRef.key)}`)
-        navigate(`/dashboard/room/${String(newRoomRef.key)}`)
+          if (type === 'video')
+            navigate(`/dashboard/call/${String(newRoomRef.key)}`)
+          navigate(`/dashboard/room/${String(newRoomRef.key)}`)
+        }
       } catch (error) {
         console.log(error)
       }
@@ -131,7 +131,6 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
 
   const writeNewMember = useCallback(
     async ({ roomId, userId }: { roomId: string; userId: string }) => {
-      console.log(roomId)
       try {
         const snapshotRoomByUser = await get(
           child(ref(database), `users/${userId}/rooms/${roomId}`)
@@ -193,7 +192,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
                   displayName: snapshotRooms.val().displayName,
                   image: snapshotRooms.val().image,
                   timestamp: snapshotRooms.val().timestamp,
-                  owner: snapshotRooms.val().owner,
+                  adms: snapshotRooms.val().adms,
                   users: snapshotRooms.val().users
                 }
                 setRooms(prevState => {

@@ -36,7 +36,7 @@ export function Dashboard(): JSX.Element {
   const onSubmit = async (data: Schema): Promise<void> => {
     if (userState.user != null) {
       await writeNewRoom({
-        owner: userState.user.uid,
+        adm: userState.user.uid,
         displayName: data.room,
         type: data.type,
         image: data.image
