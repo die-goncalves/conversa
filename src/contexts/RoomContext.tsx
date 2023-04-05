@@ -15,9 +15,7 @@ import {
   ref,
   set,
   serverTimestamp,
-  onValue,
-  query,
-  onChildAdded
+  onValue
 } from 'firebase/database'
 import { database } from '../services/firebaseConfig'
 import { AuthContext } from './AuthContext'
@@ -177,34 +175,29 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
   )
 
   useEffect(() => {
-    const unsubscribe = onChildAdded(
-      query(ref(database, `users/${userState.user!.uid}/rooms`)),
-      snapshotRoomsByUser => {
-        let newRoom: IRoom = {} as unknown as IRoom
+    if (userState.user === null) return
 
+    const unsubscribe = onValue(
+      ref(database, `users/${userState.user.uid}/rooms`),
+      async snapshotRoomsByUser => {
+        let roomsTemp: IRoom[] = []
         if (snapshotRoomsByUser.exists()) {
-          get(ref(database, 'rooms/' + snapshotRoomsByUser.key!))
-            .then(snapshotRooms => {
-              if (snapshotRooms.exists()) {
-                newRoom = {
-                  id: snapshotRoomsByUser.key,
-                  type: snapshotRooms.val().type,
-                  displayName: snapshotRooms.val().displayName,
-                  image: snapshotRooms.val().image,
-                  timestamp: snapshotRooms.val().timestamp,
-                  adms: snapshotRooms.val().adms,
-                  users: snapshotRooms.val().users
-                }
-                setRooms(prevState => {
-                  return [...prevState, newRoom]
-                })
-              } else {
-                console.log('Mensagem enviado por usuário desconhecido')
+          for (const room of Object.keys(snapshotRoomsByUser.val())) {
+            const snapshotRooms = await get(ref(database, `/rooms/${room}`))
+            if (snapshotRooms.exists()) {
+              const newRoom = {
+                id: snapshotRooms.key,
+                type: snapshotRooms.val().type,
+                displayName: snapshotRooms.val().displayName,
+                image: snapshotRooms.val().image,
+                timestamp: snapshotRooms.val().timestamp,
+                adms: snapshotRooms.val().adms,
+                users: snapshotRooms.val().users
               }
-            })
-            .catch(error => {
-              console.error(error)
-            })
+              roomsTemp = [...roomsTemp, newRoom]
+            }
+          }
+          setRooms(roomsTemp)
         }
       }
     )
@@ -212,7 +205,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
     return () => {
       unsubscribe()
     }
-  }, [])
+  }, [userState.user])
 
   return (
     <RoomContext.Provider
