@@ -1,4 +1,3 @@
-import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 export const DashboardLayoutContainer = styled.div`
@@ -117,47 +116,6 @@ export const ActionsBox = styled(Box)`
 `
 
 export const RoomsBox = styled(Box)``
-
-export const StyledNavLink = styled(NavLink)`
-  background: var(--gray-700);
-  box-shadow: var(--shadow);
-  height: 4rem;
-  padding: 0 0.5rem;
-  border-radius: 4px;
-  border: 2px solid transparent;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-
-  &.active {
-    background: var(--gray-500);
-    box-shadow: var(--shadow-lg);
-  }
-
-  & > div {
-    line-height: 0;
-
-    img {
-      border-radius: 4px;
-      width: 2.5rem;
-      height: 2.5rem;
-      object-fit: cover;
-    }
-  }
-
-  transition: background 150ms linear, border-color 150ms linear,
-    box-shadow 150ms linear;
-  &:not(.active):hover {
-    background: var(--gray-600);
-    box-shadow: var(--shadow-md);
-  }
-
-  outline: 0;
-  &:focus-visible {
-    border-color: var(--violet-300);
-  }
-`
 
 export const FormNewRoom = styled(Box)`
   form {

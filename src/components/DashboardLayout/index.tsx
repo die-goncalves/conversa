@@ -3,11 +3,11 @@ import { useOutlet } from 'react-router-dom'
 import { AuthContext } from '../../contexts/AuthContext'
 import { RoomContext } from '../../contexts/RoomContext'
 import { LogoSVG } from '../LogoSVG'
+import { NavLink } from '../NavLink'
 import {
   ActionsBox,
   DashboardLayoutContainer,
   Header,
-  StyledNavLink,
   LogoBox,
   RoomsBox,
   SidebarContainer,
@@ -80,16 +80,13 @@ export function DashboardLayout(): JSX.Element {
             {rooms.map(room => {
               if (room.type === 'chat') {
                 return (
-                  <StyledNavLink
+                  <NavLink
                     key={room.id}
-                    to={`/dashboard/room/${room.id!}`}
-                    end
-                  >
-                    <div>
-                      <img src={room.image} alt="" />
-                    </div>
-                    <span>{room.displayName}</span>
-                  </StyledNavLink>
+                    roomId={room.id ?? ''}
+                    roomImage={room.image}
+                    roomType={room.type}
+                    roomDisplayName={room.displayName}
+                  />
                 )
               } else return null
             })}
@@ -103,16 +100,13 @@ export function DashboardLayout(): JSX.Element {
             {rooms.map(room => {
               if (room.type === 'video') {
                 return (
-                  <StyledNavLink
+                  <NavLink
                     key={room.id}
-                    to={`/dashboard/call/${room.id!}`}
-                    end
-                  >
-                    <div>
-                      <img src={room.image} alt="" />
-                    </div>
-                    <span>{room.displayName}</span>
-                  </StyledNavLink>
+                    roomId={room.id ?? ''}
+                    roomImage={room.image}
+                    roomType={room.type}
+                    roomDisplayName={room.displayName}
+                  />
                 )
               } else return null
             })}
