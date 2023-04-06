@@ -13,6 +13,8 @@ import {
   SidebarContainer,
   FormNewRoom
 } from './styles'
+import { get, ref } from 'firebase/database'
+import { database } from '../../services/firebaseConfig'
 
 export function DashboardLayout(): JSX.Element {
   const outlet = useOutlet()
@@ -24,16 +26,22 @@ export function DashboardLayout(): JSX.Element {
     const form = ev.currentTarget as unknown as { roomId: HTMLInputElement }
     const roomId = form.roomId.value
 
-    try {
-      if (userState.user != null) {
-        await writeNewMember({
-          userId: userState.user?.uid,
-          roomId
-        })
-        form.roomId.value = ''
+    const res = await get(
+      ref(database, `rooms/${roomId}/blocked/${userState.user?.uid ?? ''}`)
+    )
+
+    if (!res.exists()) {
+      try {
+        if (userState.user != null) {
+          await writeNewMember({
+            userId: userState.user?.uid,
+            roomId
+          })
+          form.roomId.value = ''
+        }
+      } catch (error) {
+        console.error(error)
       }
-    } catch (error) {
-      console.error(error)
     }
   }
 

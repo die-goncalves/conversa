@@ -7,9 +7,12 @@ import {
   StyledDropdownMenuContent,
   StyledDropdownMenuItem
 } from './styles'
+import { ref, remove, set } from 'firebase/database'
+import { database } from '../../services/firebaseConfig'
 
 interface IParticipantCard {
   userId: string | undefined
+  roomId: string
   adms: Record<
     string,
     {
@@ -28,19 +31,35 @@ interface IParticipantCard {
       photoURL: string
     }
   >
-  onRemoveParticipant: (participantId: string) => Promise<void>
-  onAddParticipantAdm: (participantId: string) => Promise<void>
-  onRemoveParticipantAdm: (participantId: string) => Promise<void>
+  blocked: Record<string, boolean>
 }
 
 export function ParticipantCard({
   userId,
   adms,
-  participant,
-  onRemoveParticipant,
-  onAddParticipantAdm,
-  onRemoveParticipantAdm
+  blocked,
+  roomId,
+  participant
 }: IParticipantCard): JSX.Element | null {
+  async function handleRemoveParticipant(participantId: string): Promise<void> {
+    await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
+    await remove(ref(database, `rooms/${roomId}/users/${participantId}`))
+
+    await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
+  }
+  async function handleAddParticipantAdm(participantId: string): Promise<void> {
+    await set(ref(database, `rooms/${roomId}/adms/${participantId}`), true)
+    await remove(ref(database, `rooms/${roomId}/blocked/${participantId}`))
+  }
+  async function handleRemoveParticipantAdm(
+    participantId: string
+  ): Promise<void> {
+    await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
+  }
+  async function handleBlockParticipant(participantId: string): Promise<void> {
+    await set(ref(database, `rooms/${roomId}/blocked/${participantId}`), true)
+  }
+
   const isParticipantAdm = useMemo(() => {
     return Object.keys(adms).includes(Object.keys(participant)[0])
   }, [adms, participant])
@@ -48,6 +67,10 @@ export function ParticipantCard({
   const isUserAdm = useMemo(() => {
     return userId !== undefined && Object.keys(adms).includes(userId)
   }, [userId, adms])
+
+  const isBlocked = Object.entries(blocked).find(
+    el => el[0] === Object.keys(participant)[0]
+  )?.[1]
 
   if (
     !isUserAdm ||
@@ -115,8 +138,12 @@ export function ParticipantCard({
       <DropdownMenu.Portal>
         <StyledDropdownMenuContent sideOffset={8}>
           <StyledDropdownMenuItem
-            onClick={async () => {
-              await onRemoveParticipant(Object.keys(participant)[0])
+            onClick={() => {
+              handleRemoveParticipant(Object.keys(participant)[0]).catch(
+                error => {
+                  console.error(error)
+                }
+              )
             }}
           >
             <svg
@@ -129,10 +156,37 @@ export function ParticipantCard({
             </svg>
             <span>Excluir da sala</span>
           </StyledDropdownMenuItem>
+
+          {!(isBlocked ?? false) && !isParticipantAdm && (
+            <StyledDropdownMenuItem
+              onClick={() => {
+                handleBlockParticipant(Object.keys(participant)[0]).catch(
+                  error => {
+                    console.error(error)
+                  }
+                )
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="48"
+                viewBox="0 96 960 960"
+                width="48"
+              >
+                <path d="M480 976q-83 0-156-31.5T197 859q-54-54-85.5-127T80 576q0-83 31.5-156T197 293q54-54 127-85.5T480 176q83 0 156 31.5T763 293q54 54 85.5 127T880 576q0 83-31.5 156T763 859q-54 54-127 85.5T480 976Zm0-60q142.375 0 241.188-98.812Q820 718.375 820 576q0-60.662-21-116.831Q778 403 740 357L261 836q45 39 101.493 59.5Q418.987 916 480 916ZM221 795l478-478q-46-39-102.169-60T480 236q-142.375 0-241.188 98.812Q140 433.625 140 576q0 61.013 22 117.506Q184 750 221 795Z" />
+              </svg>
+              <span>Bloquear</span>
+            </StyledDropdownMenuItem>
+          )}
+
           {isParticipantAdm ? (
             <StyledDropdownMenuItem
-              onClick={async () => {
-                await onRemoveParticipantAdm(Object.keys(participant)[0])
+              onClick={() => {
+                handleRemoveParticipantAdm(Object.keys(participant)[0]).catch(
+                  error => {
+                    console.error(error)
+                  }
+                )
               }}
             >
               <svg
@@ -148,8 +202,12 @@ export function ParticipantCard({
           ) : (
             <StyledDropdownMenuItem
               className="add-adm"
-              onClick={async () => {
-                await onAddParticipantAdm(Object.keys(participant)[0])
+              onClick={() => {
+                handleAddParticipantAdm(Object.keys(participant)[0]).catch(
+                  error => {
+                    console.error(error)
+                  }
+                )
               }}
             >
               <svg

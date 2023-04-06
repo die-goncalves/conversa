@@ -111,6 +111,10 @@ export const ActionSection = styled.section`
   width: 100%;
   flex-direction: column;
 
+  & + section {
+    margin-top: 2rem;
+  }
+
   h2 {
     font-weight: 700;
     font-size: 1rem;
@@ -174,4 +178,22 @@ export const ActionSection = styled.section`
     line-height: 1.25rem;
     color: var(--red-300);
   }
+`
+
+export const BlockedSection = styled.section`
+  display: flex;
+  padding: 0 2rem;
+  width: 100%;
+  flex-direction: column;
+
+  h2 {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+`
+
+export const BlockedParticipantGallery = styled.div`
+  column-count: 3;
+  column-gap: 1rem;
 `

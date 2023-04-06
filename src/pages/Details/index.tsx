@@ -7,10 +7,13 @@ import { ParticipantCard } from '../../components/ParticipantCard'
 import { Progress } from '../../components/Progress'
 import {
   ActionSection,
+  BlockedParticipantGallery,
+  BlockedSection,
   ParticipantGallery,
   ParticipantSection,
   RoomDetailsContainer
 } from './styles'
+import { BlockedParticipantCard } from '../../components/BlockedParticipantCard'
 
 export function Details(): JSX.Element | null {
   const navigate = useNavigate()
@@ -41,12 +44,24 @@ export function Details(): JSX.Element | null {
             photoURL: string
           }
         >
+        blocked: Record<string, boolean>
       },
       action: any
     ) {
       switch (action.type) {
         case 'adms': {
-          return { ...state, adms: action.payload }
+          return {
+            ...state,
+            adms: action.payload as Record<
+              string,
+              {
+                displayName: string
+                email: string
+                isAnonymous: boolean
+                photoURL: string
+              }
+            >
+          }
         }
         case 'users': {
           return {
@@ -62,15 +77,53 @@ export function Details(): JSX.Element | null {
             >
           }
         }
+        case 'blocked': {
+          return {
+            ...state,
+            blocked: action.payload as Record<string, boolean>
+          }
+        }
         default:
           throw new Error('Ação desconhecida')
       }
     },
     {
       adms: {},
-      users: {}
+      users: {},
+      blocked: {}
     }
   )
+
+  const iOwnTheRoom =
+    userState.user?.uid !== undefined &&
+    Object.keys(state.adms).includes(userState.user.uid)
+  const hasMoreThanOneAdm = Object.keys(state.adms).length > 1
+
+  async function removeUserFromRoom(id: string | undefined): Promise<void> {
+    if (id !== undefined) {
+      if (iOwnTheRoom) await remove(ref(database, `rooms/${roomId}/adms/${id}`))
+      await remove(ref(database, `rooms/${roomId}/users/${id}`))
+
+      await remove(ref(database, `users/${id}/rooms/${roomId}`))
+      navigate('/dashboard')
+    }
+  }
+  async function deleteRoom(roomId: string): Promise<void> {
+    const roomParticipants = await get(ref(database, `rooms/${roomId}/users`))
+    if (roomParticipants.exists()) {
+      for (const participantId of Object.keys(roomParticipants.val())) {
+        await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
+      }
+    }
+    await remove(ref(database, `rooms/${roomId}`))
+    await remove(ref(database, `messages/${roomId}`))
+
+    navigate('/dashboard')
+  }
+  async function removeUserAdm(userId: string | undefined): Promise<void> {
+    if (userId !== undefined)
+      await remove(ref(database, `rooms/${roomId}/adms/${userId}`))
+  }
 
   useEffect(() => {
     if (userState.user === null) return
@@ -150,48 +203,29 @@ export function Details(): JSX.Element | null {
     }
   }, [roomId])
 
-  const iOwnTheRoom =
-    userState.user?.uid !== undefined &&
-    Object.keys(state.adms).includes(userState.user.uid)
-  const hasMoreThanOneAdm = Object.keys(state.adms).length > 1
-
-  async function addParticipantAdm(participantId: string): Promise<void> {
-    await set(ref(database, `rooms/${roomId}/adms/${participantId}`), true)
-  }
-  async function removeParticipantAdm(participantId: string): Promise<void> {
-    await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
-  }
-  async function removeParticipant(participantId: string): Promise<void> {
-    await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
-    await remove(ref(database, `rooms/${roomId}/users/${participantId}`))
-
-    await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
-  }
-  async function removeUserFromRoom(id: string | undefined): Promise<void> {
-    if (id !== undefined) {
-      if (iOwnTheRoom) await remove(ref(database, `rooms/${roomId}/adms/${id}`))
-      await remove(ref(database, `rooms/${roomId}/users/${id}`))
-
-      await remove(ref(database, `users/${id}/rooms/${roomId}`))
-      navigate('/dashboard')
-    }
-  }
-  async function deleteRoom(roomId: string): Promise<void> {
-    const roomParticipants = await get(ref(database, `rooms/${roomId}/users`))
-    if (roomParticipants.exists()) {
-      for (const participantId of Object.keys(roomParticipants.val())) {
-        await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
+  useEffect(() => {
+    const unsubscribe = onValue(
+      ref(database, `rooms/${roomId}/blocked`),
+      snapshot => {
+        if (snapshot.exists()) {
+          if (snapshot.key != null)
+            dispatch({
+              type: 'blocked',
+              payload: snapshot.val()
+            })
+        } else {
+          dispatch({
+            type: 'blocked',
+            payload: {}
+          })
+        }
       }
-    }
-    await remove(ref(database, `rooms/${roomId}`))
-    await remove(ref(database, `messages/${roomId}`))
+    )
 
-    navigate('/dashboard')
-  }
-  async function removeUserAdm(userId: string | undefined): Promise<void> {
-    if (userId !== undefined)
-      await remove(ref(database, `rooms/${roomId}/adms/${userId}`))
-  }
+    return () => {
+      unsubscribe()
+    }
+  }, [])
 
   if (!inTheRoom) return null
 
@@ -210,11 +244,10 @@ export function Details(): JSX.Element | null {
                   <ParticipantCard
                     key={p[0]}
                     userId={userState.user?.uid}
+                    roomId={roomId}
                     adms={state.adms}
+                    blocked={state.blocked}
                     participant={{ [p[0]]: p[1] }}
-                    onRemoveParticipant={removeParticipant}
-                    onAddParticipantAdm={addParticipantAdm}
-                    onRemoveParticipantAdm={removeParticipantAdm}
                   />
                 )
               })}
@@ -294,6 +327,26 @@ export function Details(): JSX.Element | null {
               )}
             </div>
           </ActionSection>
+
+          {iOwnTheRoom && (
+            <BlockedSection>
+              <h2>Participantes bloqueados</h2>
+
+              <BlockedParticipantGallery>
+                {Object.entries(state.blocked).map(el => {
+                  return (
+                    <BlockedParticipantCard
+                      key={`blocked-${el[0]}`}
+                      userId={userState.user?.uid}
+                      roomId={roomId}
+                      participantId={el[0]}
+                      adms={state.adms}
+                    />
+                  )
+                })}
+              </BlockedParticipantGallery>
+            </BlockedSection>
+          )}
         </>
       )}
     </RoomDetailsContainer>
