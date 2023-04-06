@@ -20,7 +20,7 @@ import {
   useRef,
   useState
 } from 'react'
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { database } from '../../services/firebaseConfig'
 import {
   createPeerConnection,
@@ -203,9 +203,12 @@ interface IPeerConnection {
   hangup: () => Promise<void>
   screenShare: () => Promise<void>
   forceStopScreenShare: () => Promise<void>
+  isMounted: boolean
 }
 
 export function usePeerConnection(): IPeerConnection {
+  const navigate = useNavigate()
+  const [isMounted, setIsMounted] = useState(false)
   const videoTrackRef = useRef<MediaStreamTrack>()
   const { callId } = useLoaderData() as { callId: string }
   const [mediaPermissionGranted, setMediaPermissionGranted] = useState(false)
@@ -365,9 +368,30 @@ export function usePeerConnection(): IPeerConnection {
 
   const userMedia = call.media.find(m => m[0] === call.userId)
 
+  // TIRA O USUÁRIO DA SALA SE NÃO ESTIVER ENTRE OS PARTICIPANTES
+  useEffect(() => {
+    if (userState.user === null) return
+
+    const unsubscribe = onValue(
+      ref(database, `rooms/${callId}/users/${userState.user.uid}`),
+      async snapshot => {
+        if (!snapshot.exists()) {
+          setIsMounted(false)
+          navigate('/dashboard')
+        } else {
+          setIsMounted(true)
+        }
+      }
+    )
+
+    return () => {
+      unsubscribe()
+    }
+  }, [userState.user])
+
   // PEDE PERMISSÃO MICROFONE E CÂMERA
   useEffect(() => {
-    void (async () => {
+    async function getUserMedia(): Promise<void> {
       if (userState.user != null) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -380,11 +404,13 @@ export function usePeerConnection(): IPeerConnection {
         })
         setMediaPermissionGranted(true)
       }
-    })()
-  }, [userState])
+    }
+    if (isMounted) void getUserMedia()
+  }, [userState.user, isMounted])
 
   // MONITORA STATUS DE CONEXÃO DO USUÁRIO
   useEffect(() => {
+    if (!isMounted) return
     if (!mediaPermissionGranted) return
 
     const connectedRef = ref(database, '.info/connected')
@@ -435,10 +461,11 @@ export function usePeerConnection(): IPeerConnection {
         onValuePresenceRef.current.unsubscribe()
       }
     }
-  }, [mediaPermissionGranted])
+  }, [mediaPermissionGranted, isMounted])
 
   // RECUPERA A LISTA DE USUÁRIOS PRESENTES NA SALA E DETECTA ADIÇÕES DE NOVOS USUÁRIOS
   useEffect(() => {
+    if (!isMounted) return
     if (!mediaPermissionGranted) return
 
     const usersRef = ref(database, `rooms/${callId}/signaling-users`)
@@ -489,10 +516,11 @@ export function usePeerConnection(): IPeerConnection {
       if (onChildAddedRef.current.unsubscribe !== null)
         onChildAddedRef.current.unsubscribe()
     }
-  }, [mediaPermissionGranted])
+  }, [mediaPermissionGranted, isMounted])
 
-  // MONITORA SAÍDA DE UM USUÁRIO DA SALA
+  // MONITORA SAÍDA DE UM USUÁRIO DA CHAMADA
   useEffect(() => {
+    if (!isMounted) return
     if (call.userId.length === 0) return
 
     if (onChildRemovedRef.current.unsubscribe !== null)
@@ -571,9 +599,10 @@ export function usePeerConnection(): IPeerConnection {
       if (onChildRemovedRef.current.unsubscribe !== null)
         onChildRemovedRef.current.unsubscribe()
     }
-  }, [call.userId])
+  }, [call.userId, isMounted])
 
   useEffect(() => {
+    if (!isMounted) return
     if (!mediaPermissionGranted) return
 
     const {
@@ -588,7 +617,13 @@ export function usePeerConnection(): IPeerConnection {
       unsubscribeCallerCandidates()
       unsubscribeCalleeCandidates()
     }
-  }, [mediaPermissionGranted, call.participants, callId, call.userId])
+  }, [
+    mediaPermissionGranted,
+    call.participants,
+    callId,
+    call.userId,
+    isMounted
+  ])
 
   // LIMPAR TODOS OS ESTADOS AO REMOVER O COMPONENTE DO DOM
   useEffect(() => {
@@ -605,6 +640,7 @@ export function usePeerConnection(): IPeerConnection {
     hangup,
     isScreenShare,
     screenShare,
-    forceStopScreenShare
+    forceStopScreenShare,
+    isMounted
   }
 }

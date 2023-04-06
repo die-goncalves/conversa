@@ -3,7 +3,7 @@ import { CallActions } from '../../components/CallActions'
 import { CallParticipants } from '../../components/CallParticipants'
 import { CallContainer } from './styles'
 
-export function Call(): JSX.Element {
+export function Call(): JSX.Element | null {
   const {
     toggleCamera,
     toggleMic,
@@ -12,8 +12,11 @@ export function Call(): JSX.Element {
     screenShare,
     forceStopScreenShare,
     call,
-    userMedia
+    userMedia,
+    isMounted
   } = usePeerConnection()
+
+  if (!isMounted) return null
 
   return (
     <CallContainer>
