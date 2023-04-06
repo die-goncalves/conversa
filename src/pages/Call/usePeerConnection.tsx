@@ -601,6 +601,27 @@ export function usePeerConnection(): IPeerConnection {
     }
   }, [call.userId, isMounted])
 
+  // MONITORA SAÍDA DE UM USUÁRIO DA SALA
+  useEffect(() => {
+    if (!isMounted) return
+    if (call.userId.length === 0) return
+
+    const unsubscribe = onChildRemoved(
+      ref(database, `rooms/${callId}/users`),
+      async snapshotUser => {
+        if (snapshotUser.exists() && snapshotUser.key !== null) {
+          if (snapshotUser.key === call.userId.split('-')[0]) {
+            navigate('/dashboard')
+          }
+        }
+      }
+    )
+
+    return () => {
+      unsubscribe()
+    }
+  }, [call.userId, isMounted])
+
   useEffect(() => {
     if (!isMounted) return
     if (!mediaPermissionGranted) return
