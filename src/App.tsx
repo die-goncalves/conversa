@@ -4,6 +4,7 @@ import { SignUp } from './pages/SignUp'
 import { Dashboard } from './pages/Dashboard'
 import { Room } from './pages/Room'
 import { Call } from './pages/Call'
+import { Details } from './pages/Details'
 import { AuthLayout } from './components/AuthLayout'
 import { ProtectedLayout } from './components/ProtectedLayout'
 import { DashboardLayout } from './components/DashboardLayout'
@@ -33,18 +34,58 @@ const router = createBrowserRouter([
                 element: <Dashboard />
               },
               {
-                path: 'room/:roomId',
-                element: <Room />,
-                loader: ({ params }) => ({
-                  roomId: params.roomId
-                })
+                path: 'room',
+                children: [
+                  {
+                    path: ':roomId',
+                    children: [
+                      {
+                        index: true,
+                        element: <Room />,
+                        loader: ({ params }) => ({
+                          roomId: params.roomId
+                        })
+                      },
+                      {
+                        path: 'detail',
+                        element: <Details />,
+                        loader: async ({ params }) => {
+                          if (params.roomId !== undefined)
+                            return {
+                              roomId: params.roomId
+                            }
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
-                path: 'call/:callId',
-                element: <Call />,
-                loader: ({ params }) => ({
-                  callId: params.callId
-                })
+                path: 'call',
+                children: [
+                  {
+                    path: ':callId',
+                    children: [
+                      {
+                        index: true,
+                        element: <Call />,
+                        loader: ({ params }) => ({
+                          callId: params.callId
+                        })
+                      },
+                      {
+                        path: 'detail',
+                        element: <Details />,
+                        loader: async ({ params }) => {
+                          if (params.callId !== undefined)
+                            return {
+                              roomId: params.callId
+                            }
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           }
