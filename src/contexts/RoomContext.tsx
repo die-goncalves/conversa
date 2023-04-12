@@ -27,7 +27,7 @@ interface IRoom {
   image: string
   timestamp: number
   adms: Record<string, boolean>
-  users: Record<string, boolean>
+  users: Record<string, { 'join-date': number }>
 }
 
 interface INewRoom {
@@ -101,6 +101,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
         const newRoomRef = push(roomListRef)
 
         if (newRoomRef.key != null) {
+          const timestamp = Date.now()
           await set(newRoomRef, {
             type,
             displayName,
@@ -108,9 +109,11 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
               [adm]: true
             },
             image: compressedFile,
-            timestamp: serverTimestamp(),
+            timestamp,
             users: {
-              [adm]: true
+              [adm]: {
+                'join-date': timestamp
+              }
             }
           })
 
@@ -137,10 +140,12 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
 
         if (!snapshotRoomByUser.exists() && snapshotRoom.exists()) {
           await set(ref(database, `users/${userId}/rooms/${roomId}`), true)
-          await set(ref(database, `rooms/${roomId}/users/${userId}`), true)
+          await set(ref(database, `rooms/${roomId}/users/${userId}`), {
+            'join-date': serverTimestamp()
+          })
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
     []
