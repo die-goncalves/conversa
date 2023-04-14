@@ -63,3 +63,42 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
     box-shadow: var(--shadow);
   }
 `
+
+interface IADMMessage {
+  type: 'enter' | 'out' | 'info'
+}
+export const ADMMessage = styled.li<IADMMessage>`
+  display: flex;
+  margin: 0 auto;
+  background: var(--gray-800);
+  padding: 1rem;
+  min-width: auto;
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  gap: 1rem;
+
+  svg {
+    fill: ${props => {
+      if (props.type === 'enter') {
+        return 'var(--green-300)'
+      }
+      if (props.type === 'out') {
+        return 'var(--red-300)'
+      }
+    }};
+    width: 1.5rem;
+    height: 1.5rem;
+    filter: drop-shadow(0px 0.3px 0.7px rgba(0, 0, 0, 0.141))
+      drop-shadow(0px 1.1px 2.2px rgba(0, 0, 0, 0.209))
+      drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.35));
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    span {
+      margin-top: 0.5rem;
+      opacity: 0.6;
+    }
+  }
+`

@@ -1,6 +1,15 @@
 import { useContext, useEffect, useReducer, useState } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import { get, onValue, ref, remove, set } from 'firebase/database'
+import {
+  child,
+  get,
+  onValue,
+  push,
+  ref,
+  remove,
+  serverTimestamp,
+  set
+} from 'firebase/database'
 import { AuthContext } from '../../contexts/AuthContext'
 import { database } from '../../services/firebaseConfig'
 import { ParticipantCard } from '../../components/ParticipantCard'
@@ -101,10 +110,19 @@ export function Details(): JSX.Element | null {
 
   async function removeUserFromRoom(id: string | undefined): Promise<void> {
     if (id !== undefined) {
+      const user = (await get(ref(database, `users/${id}`))).val() as {
+        displayName: string
+      }
+      await set(push(child(ref(database), `messages/${roomId}`)), {
+        message: `${user.displayName} saiu da sala`,
+        type: 'out',
+        timestamp: serverTimestamp()
+      })
+
       if (iOwnTheRoom) await remove(ref(database, `rooms/${roomId}/adms/${id}`))
       await remove(ref(database, `rooms/${roomId}/users/${id}`))
-
       await remove(ref(database, `users/${id}/rooms/${roomId}`))
+
       navigate('/dashboard')
     }
   }

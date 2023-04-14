@@ -143,6 +143,15 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
           await set(ref(database, `rooms/${roomId}/users/${userId}`), {
             'join-date': serverTimestamp()
           })
+
+          const user = (await get(ref(database, `users/${userId}`))).val() as {
+            displayName: string
+          }
+          await set(push(child(ref(database), `messages/${roomId}`)), {
+            message: `Bem vindo, ${user.displayName}`,
+            type: 'enter',
+            timestamp: serverTimestamp()
+          })
         }
       } catch (error) {
         console.error(error)

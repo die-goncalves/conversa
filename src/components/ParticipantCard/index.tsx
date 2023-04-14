@@ -7,7 +7,15 @@ import {
   StyledDropdownMenuContent,
   StyledDropdownMenuItem
 } from './styles'
-import { ref, remove, set } from 'firebase/database'
+import {
+  child,
+  get,
+  push,
+  ref,
+  remove,
+  serverTimestamp,
+  set
+} from 'firebase/database'
 import { database } from '../../services/firebaseConfig'
 
 interface IParticipantCard {
@@ -42,6 +50,15 @@ export function ParticipantCard({
   participant
 }: IParticipantCard): JSX.Element | null {
   async function handleRemoveParticipant(participantId: string): Promise<void> {
+    const user = (await get(ref(database, `users/${participantId}`))).val() as {
+      displayName: string
+    }
+    await set(push(child(ref(database), `messages/${roomId}`)), {
+      message: `${user.displayName} saiu da sala`,
+      type: 'out',
+      timestamp: serverTimestamp()
+    })
+
     await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
     await remove(ref(database, `rooms/${roomId}/users/${participantId}`))
 

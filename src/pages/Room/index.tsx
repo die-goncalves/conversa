@@ -20,22 +20,17 @@ import { RoomContainer, MessagesBox, ContentContainer } from './styles'
 
 const MESSAGE_PER_PAGE = 11
 
-interface IDatabaseMessage {
-  message: string
-  sender: Record<string, boolean>
-  timestamp: number
-}
-
 interface IMessage {
   id: string | null
   message: string
-  sender: {
+  sender?: {
     id: string | null
     displayName: string
     email: string
     isAnonymous: boolean
     photoURL: string
   }
+  type?: 'enter' | 'out' | 'info'
   timestamp: number
 }
 
@@ -75,33 +70,52 @@ export function Room(): JSX.Element {
           let newMessage: IMessage = {} as unknown as IMessage
 
           if (snapMessages.exists()) {
-            get(child(usersListRef, Object.keys(snapMessages.val().sender)[0]))
-              .then(snapUsers => {
-                if (snapUsers.exists()) {
-                  newMessage = {
-                    id: snapMessages.key,
-                    message: snapMessages.val().message,
-                    sender: {
-                      ...snapUsers.val(),
-                      id: snapUsers.key
-                    },
-                    timestamp: snapMessages.val().timestamp
+            if (snapMessages.val().sender === undefined) {
+              const newMessage = {
+                id: snapMessages.key,
+                message: snapMessages.val().message,
+                timestamp: snapMessages.val().timestamp,
+                type: snapMessages.val().type
+              }
+              setMessages(prevState => {
+                if (
+                  prevState.length > 0 &&
+                  prevState[prevState.length - 1].id === newMessage.id
+                )
+                  return prevState
+                return [...prevState, newMessage]
+              })
+            } else {
+              get(
+                child(usersListRef, Object.keys(snapMessages.val().sender)[0])
+              )
+                .then(snapUsers => {
+                  if (snapUsers.exists()) {
+                    newMessage = {
+                      id: snapMessages.key,
+                      message: snapMessages.val().message,
+                      sender: {
+                        ...snapUsers.val(),
+                        id: snapUsers.key
+                      },
+                      timestamp: snapMessages.val().timestamp
+                    }
+                    setMessages(prevState => {
+                      if (
+                        prevState.length > 0 &&
+                        prevState[prevState.length - 1].id === newMessage.id
+                      )
+                        return prevState
+                      return [...prevState, newMessage]
+                    })
+                  } else {
+                    console.log('Mensagem enviado por usuário desconhecido')
                   }
-                  setMessages(prevState => {
-                    if (
-                      prevState.length > 0 &&
-                      prevState[prevState.length - 1].id === newMessage.id
-                    )
-                      return prevState
-                    return [...prevState, newMessage]
-                  })
-                } else {
-                  console.log('Mensagem enviado por usuário desconhecido')
-                }
-              })
-              .catch(error => {
-                console.error(error)
-              })
+                })
+                .catch(error => {
+                  console.error(error)
+                })
+            }
           }
         }
       )
@@ -180,18 +194,31 @@ export function Room(): JSX.Element {
       const snapshot = await get(queries)
       const oldestMessagesDataSnapshot = snapshot.val() as Record<
         string,
-        IDatabaseMessage
+        {
+          message: string
+          sender?: Record<string, boolean>
+          timestamp: number
+          type?: 'enter' | 'out' | 'info'
+        }
       > | null
 
       if (oldestMessagesDataSnapshot !== null) {
         const oldestMessagesMatrix = Object.entries(oldestMessagesDataSnapshot)
 
-        let oldestMessagesTail: Array<[string, IDatabaseMessage]>
+        let oldestMessagesTail: Array<
+          [
+            string,
+            {
+              message: string
+              sender?: Record<string, boolean> | undefined
+              timestamp: number
+              type?: 'enter' | 'out' | 'info'
+            }
+          ]
+        >
         if (oldestMessagesMatrix.length === MESSAGE_PER_PAGE) {
           setHasNextPage(true)
-          const removeLastMessage = ([, ...vector]: Array<
-            [string, IDatabaseMessage]
-          >): Array<[string, IDatabaseMessage]> => vector
+          const removeLastMessage = <T,>([, ...vector]: T[]): T[] => vector
           oldestMessagesTail = removeLastMessage(oldestMessagesMatrix)
         } else {
           setHasNextPage(false)
@@ -200,23 +227,35 @@ export function Room(): JSX.Element {
 
         let oldMessagePackage: IMessage[] = []
         for (const oneMessage of oldestMessagesTail) {
-          const snapUsers = await get(
-            child(usersListRef, Object.keys(oneMessage[1].sender)[0])
-          )
-
-          if (snapUsers.exists()) {
-            const newMessage = {
-              id: oneMessage[0],
-              message: oneMessage[1].message,
-              sender: {
-                ...snapUsers.val(),
-                id: snapUsers.key
-              },
-              timestamp: oneMessage[1].timestamp
-            }
-            oldMessagePackage = [...oldMessagePackage, newMessage]
+          if (oneMessage[1].sender === undefined) {
+            oldMessagePackage = [
+              ...oldMessagePackage,
+              {
+                id: oneMessage[0],
+                message: oneMessage[1].message,
+                timestamp: oneMessage[1].timestamp,
+                type: oneMessage[1].type
+              }
+            ]
           } else {
-            console.log('Mensagem enviado por usuário desconhecido')
+            const snapUsers = await get(
+              child(usersListRef, Object.keys(oneMessage[1].sender)[0])
+            )
+
+            if (snapUsers.exists()) {
+              const newMessage = {
+                id: oneMessage[0],
+                message: oneMessage[1].message,
+                sender: {
+                  ...snapUsers.val(),
+                  id: snapUsers.key
+                },
+                timestamp: oneMessage[1].timestamp
+              }
+              oldMessagePackage = [...oldMessagePackage, newMessage]
+            } else {
+              console.log('Mensagem enviado por usuário desconhecido')
+            }
           }
         }
         setMessages(prev => [...oldMessagePackage, ...prev])
@@ -248,7 +287,7 @@ export function Room(): JSX.Element {
             <Message
               key={message.id}
               message={message}
-              sender={userState.user?.uid}
+              sender={userState.user?.uid ?? ''}
             />
           ))}
         </MessagesBox>
