@@ -73,6 +73,7 @@ export function Room(): JSX.Element | null {
     loading: false,
     have: false
   })
+  const [isBlocked, setIsBlocked] = useState<boolean>()
 
   async function getMoreOldMessages(): Promise<void> {
     setHaveMoreOldMessages(prev => ({ ...prev, loading: true }))
@@ -214,6 +215,24 @@ export function Room(): JSX.Element | null {
     }
   }, [userState.user, roomId])
 
+  // VERIFICA SE USUÁRIO ESTÁ BLOQUEADO
+  useEffect(() => {
+    const unsubscribe = onValue(
+      ref(database, `rooms/${roomId}/blocked/${userState.user?.uid ?? ''}`),
+      snapshot => {
+        if (snapshot.exists()) {
+          setIsBlocked(true)
+        } else {
+          setIsBlocked(false)
+        }
+      }
+    )
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
   // VERIFICA ÚLTIMA MENSAGEM VISTA
   useEffect(() => {
     if (userState.user === null || isInTheRoom == null) return
@@ -238,7 +257,12 @@ export function Room(): JSX.Element | null {
 
   // PRIMEIRO CARREGAMENTO DE MENSAGENS
   useEffect(() => {
-    if (isInTheRoom == null || lastViewedMessage === undefined) return
+    if (
+      isInTheRoom == null ||
+      lastViewedMessage === undefined ||
+      isBlocked === undefined
+    )
+      return
 
     async function getMessages(): Promise<void> {
       if (lastViewedMessage !== undefined) {
@@ -246,9 +270,11 @@ export function Room(): JSX.Element | null {
           query(
             ref(database, `messages/${roomId}`),
             endAt(lastViewedMessage),
+            orderByKey(),
             limitToLast(11)
           )
         )
+
         let messagesBefore
         const messageEntries = Object.entries({
           ...snapshotMessagesBefore.val()
@@ -261,12 +287,19 @@ export function Room(): JSX.Element | null {
           messagesBefore = snapshotMessagesBefore.val()
         }
 
-        const snapshotMessagesAfter = await get(
-          query(
-            ref(database, `messages/${roomId}`),
-            startAfter(lastViewedMessage)
+        let messagesAfter
+        if (isBlocked !== undefined && isBlocked) {
+          messagesAfter = null
+        } else {
+          const snapshotMessagesAfter = await get(
+            query(
+              ref(database, `messages/${roomId}`),
+              startAfter(lastViewedMessage)
+            )
           )
-        )
+          messagesAfter = snapshotMessagesAfter.val()
+        }
+
         const snapshotMessages: Record<
           string,
           {
@@ -278,7 +311,7 @@ export function Room(): JSX.Element | null {
           }
         > = {
           ...messagesBefore,
-          ...snapshotMessagesAfter.val()
+          ...messagesAfter
         }
 
         if (Object.keys(snapshotMessages).length > 0) {
@@ -332,7 +365,7 @@ export function Room(): JSX.Element | null {
     }
 
     void getMessages()
-  }, [roomId, isInTheRoom, lastViewedMessage])
+  }, [roomId, isInTheRoom, lastViewedMessage, isBlocked])
 
   // MONITORANDO ADIÇÃO DE MENSAGENS
   const unsubscribeRefOnChildAdded = useRef<{
@@ -343,7 +376,13 @@ export function Room(): JSX.Element | null {
   useEffect(() => {
     if (unsubscribeRefOnChildAdded.current.unsubscribe != null)
       unsubscribeRefOnChildAdded.current.unsubscribe()
-    if (isInTheRoom == null || lastMessageId.loading) return
+    if (
+      isInTheRoom == null ||
+      lastMessageId.loading ||
+      isBlocked === undefined ||
+      isBlocked
+    )
+      return
 
     async function dataSnapshot(snapshotMessage: DataSnapshot): Promise<void> {
       if (snapshotMessage.exists()) {
@@ -415,7 +454,7 @@ export function Room(): JSX.Element | null {
       if (unsubscribeRefOnChildAdded.current.unsubscribe != null)
         unsubscribeRefOnChildAdded.current.unsubscribe()
     }
-  }, [isInTheRoom, lastMessageId])
+  }, [isInTheRoom, lastMessageId, isBlocked])
 
   // MONITORAR SE MENSAGEM FOI VISUALIZADA
   useEffect(() => {
@@ -486,7 +525,7 @@ export function Room(): JSX.Element | null {
           ))}
         </MessagesBox>
 
-        {(hasUnreadMessages ?? false) && (
+        {(hasUnreadMessages ?? false) && isBlocked === false && (
           <FABScrollToEndOfMessages onClick={endOfMessages}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -510,7 +549,8 @@ export function Room(): JSX.Element | null {
 
         <MessageInput
           roomId={roomId}
-          userId={userState.user != null ? userState.user.uid : ''}
+          userId={userState.user?.uid ?? ''}
+          disable={isBlocked}
         />
       </ContentContainer>
     </RoomContainer>

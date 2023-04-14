@@ -25,6 +25,11 @@ export const SendMessageContainer = styled.div`
       gap: 0.5rem;
       cursor: text;
 
+      &:has(textarea:disabled) {
+        cursor: not-allowed;
+        opacity: 0.8;
+      }
+
       transition: border-color 150ms linear;
       &:has(textarea:focus-visible) {
         border-color: var(--violet-300);
@@ -63,6 +68,11 @@ export const SendMessageContainer = styled.div`
         &::-webkit-scrollbar-track {
           background: var(--gray-900);
         }
+
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.8;
+        }
       }
 
       button {
@@ -80,7 +90,7 @@ export const SendMessageContainer = styled.div`
           box-shadow 150ms linear;
 
         box-shadow: var(--shadow);
-        &:hover {
+        &:not(:disabled):hover {
           background: var(--gray-700);
           box-shadow: var(--shadow-md);
         }
@@ -94,6 +104,11 @@ export const SendMessageContainer = styled.div`
           width: 1.5rem;
           height: 1.5rem;
           fill: var(--violet-300);
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.8;
         }
       }
     }

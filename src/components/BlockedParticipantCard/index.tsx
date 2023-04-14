@@ -31,7 +31,6 @@ export function BlockedParticipantCard({
   participantId,
   adms
 }: IBlockedParticipantCard): JSX.Element | null {
-  console.log(participantId)
   const [participant, setParticipant] = useState<
     Record<
       string,

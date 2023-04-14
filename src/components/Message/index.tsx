@@ -40,7 +40,6 @@ export function MessageComponent({
     )
       return
 
-    console.log('MESSAGE COMPONENT', message, sender, roomId)
     if (observer.current != null) {
       observer.current.disconnect()
     }

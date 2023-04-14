@@ -17,10 +17,12 @@ const schema = zod.object({
 interface IMessageInputProps {
   userId: string
   roomId: string
+  disable?: boolean
 }
 export function MessageInput({
   userId,
-  roomId
+  roomId,
+  disable = false
 }: IMessageInputProps): JSX.Element {
   const { writeNewMessage } = useContext(RoomContext)
   const {
@@ -55,8 +57,8 @@ export function MessageInput({
     <SendMessageContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>
-          <textarea {...register('text')} />
-          <button type="submit">
+          <textarea {...register('text')} disabled={disable} />
+          <button type="submit" disabled={disable}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="48"
