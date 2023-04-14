@@ -30,6 +30,11 @@ export const RoomDetailsContainer = styled.div`
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
   }
+
+  div[id='progress-bar'] {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 `
 
 export const ParticipantSection = styled.section`

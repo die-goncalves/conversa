@@ -45,10 +45,38 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
       word-break: break-word;
       align-self: ${props => (props.isMe ? 'flex-end' : 'flex-start')};
     }
-    & > span {
+    footer {
+      ${props =>
+        props.isMe
+          ? {
+              display: 'grid',
+              gridTemplateColumns: '1fr auto'
+            }
+          : {
+              display: 'flex'
+            }};
+
       margin-top: 0.5rem;
-      text-align: ${props => (props.isMe ? 'right' : 'left')};
-      opacity: 0.6;
+
+      span {
+        ${props =>
+          props.isMe
+            ? {
+                marginLeft: 'auto'
+              }
+            : { marginRight: 'auto' }};
+        opacity: 0.6;
+      }
+
+      svg {
+        display: ${props => (props.isMe ? 'block' : 'none')};
+        margin-left: 1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        filter: drop-shadow(0px 0.3px 0.7px rgba(0, 0, 0, 0.141))
+          drop-shadow(0px 1.1px 2.2px rgba(0, 0, 0, 0.209))
+          drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.35));
+      }
     }
   }
 
@@ -61,6 +89,16 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
     object-fit: cover;
 
     box-shadow: var(--shadow);
+  }
+`
+
+interface IViewed {
+  isViewed: boolean
+}
+export const Viewed = styled.div<IViewed>`
+  svg {
+    fill: ${props =>
+      props.isViewed ? 'var(--violet-300)' : 'var(--gray-400)'};
   }
 `
 

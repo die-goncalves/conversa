@@ -1,6 +1,8 @@
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { timeAgo } from '../../utils/formatDate'
-import { ADMMessage, MessageContainer, RowContainer } from './styles'
+import { ADMMessage, MessageContainer, RowContainer, Viewed } from './styles'
+import { get, ref, set } from 'firebase/database'
+import { database } from '../../services/firebaseConfig'
 
 interface IMessageProps {
   message: {
@@ -13,23 +15,105 @@ interface IMessageProps {
       isAnonymous: boolean
       photoURL: string
     }
+    viewed: Record<string, boolean>
     type?: 'enter' | 'out' | 'info'
     timestamp: number
   }
   sender: string
+  roomId: string
 }
 
 export function MessageComponent({
   message,
-  sender
-}: IMessageProps): JSX.Element {
+  sender,
+  roomId
+}: IMessageProps): JSX.Element | null {
   const diffDate = timeAgo(Date.now(), message.timestamp)
   const isMe = sender === message.sender?.id
+
+  const observer = useRef<IntersectionObserver>()
+  useEffect(() => {
+    if (message.id === null || message.sender?.id === sender) return
+    if (
+      message.viewed !== undefined &&
+      message.viewed[message.id] === undefined
+    )
+      return
+
+    console.log('MESSAGE COMPONENT', message, sender, roomId)
+    if (observer.current != null) {
+      observer.current.disconnect()
+    }
+
+    async function callbackFunction(
+      entry: IntersectionObserverEntry[]
+    ): Promise<void> {
+      if (entry[0].isIntersecting) {
+        if (message.id !== null && sender !== undefined)
+          try {
+            await set(
+              ref(
+                database,
+                `messages/${roomId}/${message.id}/viewed/${sender}`
+              ),
+              true
+            )
+
+            const snapshotLastViewedMessage = await get(
+              ref(
+                database,
+                `rooms/${roomId}/users/${sender}/last-viewed-message`
+              )
+            )
+            if (snapshotLastViewedMessage.exists()) {
+              if (
+                snapshotLastViewedMessage.val().localeCompare(message.id) < 0
+              ) {
+                await set(
+                  ref(
+                    database,
+                    `rooms/${roomId}/users/${sender}/last-viewed-message`
+                  ),
+                  message.id
+                )
+              }
+            } else {
+              await set(
+                ref(
+                  database,
+                  `rooms/${roomId}/users/${sender}/last-viewed-message`
+                ),
+                message.id
+              )
+            }
+          } catch (error) {
+            console.error(error)
+          } finally {
+            observer.current?.disconnect()
+          }
+      }
+    }
+
+    observer.current = new IntersectionObserver(callbackFunction, {
+      root: null,
+      rootMargin: '0px',
+      threshold: 1
+    })
+
+    const entryElement = document.getElementById(message.id)
+    if (entryElement != null) observer.current?.observe(entryElement)
+
+    return () => {
+      observer.current?.disconnect()
+    }
+  }, [message, sender, roomId])
+
+  if (message.id === null) return null
 
   if (message.sender === undefined) {
     if (message.type === 'enter')
       return (
-        <ADMMessage type="enter">
+        <ADMMessage id={message.id ?? ''} type="enter">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="48"
@@ -46,7 +130,7 @@ export function MessageComponent({
       )
     if (message.type === 'out')
       return (
-        <ADMMessage type="out">
+        <ADMMessage id={message.id ?? ''} type="out">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="48"
@@ -64,7 +148,7 @@ export function MessageComponent({
   }
 
   return (
-    <RowContainer>
+    <RowContainer id={message.id ?? ''}>
       <MessageContainer isMe={isMe}>
         {isMe ? null : <img src={message.sender?.photoURL} alt="" />}
 
@@ -76,7 +160,26 @@ export function MessageComponent({
           )}
 
           <main>{message.message}</main>
-          <span>{diffDate}</span>
+
+          <footer>
+            <span>{diffDate}</span>
+            <Viewed
+              isViewed={
+                message.viewed !== undefined
+                  ? !(Object.keys(message.viewed).length === 0)
+                  : false
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="48"
+                viewBox="0 96 960 960"
+                width="48"
+              >
+                <path d="M294 814 70 590l43-43 181 181 43 43-43 43Zm170 0L240 590l43-43 181 181 384-384 43 43-427 427Zm0-170-43-43 257-257 43 43-257 257Z" />
+              </svg>
+            </Viewed>
+          </footer>
         </div>
       </MessageContainer>
     </RowContainer>

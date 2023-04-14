@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RoomContext } from '../../contexts/RoomContext'
+import scrollIntoView from 'scroll-into-view'
 import { SendMessageContainer } from './styles'
 
 interface IMessage {
@@ -42,11 +43,12 @@ export function MessageInput({
     })
     reset()
 
-    const rootScrollElement = document.getElementById('root-scroll')
-    if (rootScrollElement != null)
-      rootScrollElement.scroll({
-        top: rootScrollElement.scrollHeight
+    const rootScrollElement = document.getElementById('content-container')
+    if (rootScrollElement != null) {
+      scrollIntoView(rootScrollElement, {
+        align: { topOffset: -rootScrollElement.scrollHeight }
       })
+    }
   }
 
   return (

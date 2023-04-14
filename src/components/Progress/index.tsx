@@ -1,15 +1,11 @@
-import * as ProgressRadix from '@radix-ui/react-progress'
-import { ProgressContainer } from './styles'
+import { ProgressContainer, ProgressIndicator, ProgressRoot } from './styles'
 
-interface IProgressProps {
-  id?: string
-}
-export function Progress({ id }: IProgressProps): JSX.Element {
+export function Progress(): JSX.Element {
   return (
-    <ProgressContainer {...(id !== undefined && { id })}>
-      <ProgressRadix.Root className="ProgressRoot" value={null}>
-        <ProgressRadix.Indicator className="ProgressIndicator" />
-      </ProgressRadix.Root>
+    <ProgressContainer id="progress-bar">
+      <ProgressRoot value={null}>
+        <ProgressIndicator />
+      </ProgressRoot>
     </ProgressContainer>
   )
 }

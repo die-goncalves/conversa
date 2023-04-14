@@ -174,13 +174,22 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
         const messageListRef = child(ref(database), `messages/${roomId}`)
         const newMessageRef = push(messageListRef)
 
-        await set(newMessageRef, {
-          message,
-          sender: {
-            [userId]: true
-          },
-          timestamp: serverTimestamp()
-        })
+        if (newMessageRef.key != null) {
+          await set(newMessageRef, {
+            message,
+            sender: {
+              [userId]: true
+            },
+            timestamp: serverTimestamp()
+          })
+          await set(
+            ref(
+              database,
+              `rooms/${roomId}/users/${userId}/last-viewed-message`
+            ),
+            newMessageRef.key
+          )
+        }
       } catch (error) {
         console.log(error)
       }
