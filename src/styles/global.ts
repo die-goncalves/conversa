@@ -1,4 +1,5 @@
-import { createGlobalStyle } from 'styled-components'
+import { ToastContainer, type ToastContainerProps } from 'react-toastify'
+import styled, { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
   :root {
@@ -22,6 +23,14 @@ export const GlobalStyle = createGlobalStyle`
     --green-500: #22c55e;
     --green-400: #4ade80;
     --green-300: #86efac;
+
+    --blue-500: #3b82f6;
+    --blue-400: #60a5fa;
+    --blue-300: #93c5fd;
+
+    --yellow-500: #eab308;
+    --yellow-400: #facc15;
+    --yellow-300: #fde047;
 
     --shadow: 0px 0.1px 0.1px rgba(0, 0, 0, 0.19), 0px 0.2px 0.4px rgba(0, 0, 0, 0.28), 0px 1px 2px rgba(0, 0, 0, 0.47);
     --shadow-md: 0px 0.1px 0.3px rgba(0, 0, 0, 0.178), 0px 0.4px 0.9px rgba(0, 0, 0, 0.262), 0px 2px 4px rgba(0, 0, 0, 0.44);
@@ -50,5 +59,88 @@ export const GlobalStyle = createGlobalStyle`
     font: inherit;
     line-height: inherit;
     color: inherit;
+  }
+`
+
+export const StyledToastContainer = styled(ToastContainer)<ToastContainerProps>`
+  .Toastify__toast {
+    ${props => {
+      if (props.theme === 'dark') return 'background: var(--gray-400);'
+    }}
+    border-radius: 4px;
+    box-shadow: var(--shadow-2xl);
+  }
+  .Toastify__toast-icon {
+    margin-bottom: auto;
+    width: 24px;
+    height: 24px;
+  }
+  .Toastify__toast-body {
+    color: var(--violet-50);
+
+    font-family: 'Assistant', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+  }
+  .Toastify__toast--warning {
+    svg {
+      fill: var(--yellow-500);
+    }
+  }
+  .Toastify__toast--info {
+    svg {
+      fill: var(--blue-500);
+    }
+  }
+  .Toastify__toast--default {
+    svg {
+      fill: var(--gray-900);
+
+      animation: rotate-center 1s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+        infinite both;
+
+      @keyframes rotate-center {
+        0% {
+          -webkit-transform: rotate(0);
+          transform: rotate(0);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+    }
+  }
+  .Toastify__toast--success {
+    svg {
+      fill: var(--green-500);
+    }
+  }
+  .Toastify__toast--error {
+    svg {
+      fill: var(--red-500);
+    }
+  }
+  .Toastify__close-button {
+    svg {
+      ${props => {
+        if (props.theme === 'dark') return 'fill: var(--violet-300);'
+      }}
+      width: 16px;
+      height: 16px;
+    }
+  }
+  .Toastify__progress-bar--info {
+    background: var(--blue-400);
+  }
+  .Toastify__progress-bar--success {
+    background: var(--green-400);
+  }
+  .Toastify__progress-bar--warning {
+    background: var(--yellow-400);
+  }
+  .Toastify__progress-bar--error {
+    background: var(--red-400);
   }
 `

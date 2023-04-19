@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.2",
     "react-router-dom": "^6.8.1",
+    "react-toastify": "^9.1.2",
     "rect-scaler": "^1.1.0",
     "scroll-into-view": "^1.16.2",
     "styled-components": "^5.3.6",
