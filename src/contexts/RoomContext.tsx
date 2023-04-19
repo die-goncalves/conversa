@@ -19,6 +19,7 @@ import {
 } from 'firebase/database'
 import { database } from '../services/firebaseConfig'
 import { AuthContext } from './AuthContext'
+import { toast } from 'react-toastify'
 
 interface IRoom {
   id: string | null
@@ -119,12 +120,36 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
 
           await set(ref(database, `users/${adm}/rooms/${newRoomRef.key}`), true)
 
+          const user = (await get(ref(database, `users/${adm}`))).val() as {
+            displayName: string
+          }
+          const messageListRef = child(
+            ref(database),
+            `messages/${newRoomRef.key}`
+          )
+          const newMessageRef = push(messageListRef)
+          await set(newMessageRef, {
+            message: `Bem vindo, ${user.displayName}`,
+            type: 'enter',
+            timestamp: serverTimestamp()
+          })
+          await set(
+            ref(database, `rooms/${newRoomRef.key}/users/${adm}/first-message`),
+            newMessageRef.key
+          )
+          toast.success(`Sala ${displayName} criada!`)
+
           if (type === 'video')
             navigate(`/dashboard/call/${String(newRoomRef.key)}`)
           navigate(`/dashboard/room/${String(newRoomRef.key)}`)
         }
       } catch (error) {
-        console.log(error)
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error('Ocorreu um erro desconhecido.')
+        }
+        console.error(error)
       }
     },
     []
@@ -147,13 +172,28 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
           const user = (await get(ref(database, `users/${userId}`))).val() as {
             displayName: string
           }
-          await set(push(child(ref(database), `messages/${roomId}`)), {
+          const messageListRef = child(ref(database), `messages/${roomId}`)
+          const newMessageRef = push(messageListRef)
+          await set(newMessageRef, {
             message: `Bem vindo, ${user.displayName}`,
             type: 'enter',
             timestamp: serverTimestamp()
           })
+          await set(
+            ref(database, `rooms/${roomId}/users/${userId}/first-message`),
+            newMessageRef.key
+          )
+
+          toast.success('Você entrou na sala especificada!')
+        } else {
+          toast.error('Sala indisponível.')
         }
       } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error('Ocorreu um erro desconhecido.')
+        }
         console.error(error)
       }
     },
@@ -191,7 +231,12 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
           )
         }
       } catch (error) {
-        console.log(error)
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error('Ocorreu um erro desconhecido.')
+        }
+        console.error(error)
       }
     },
     []

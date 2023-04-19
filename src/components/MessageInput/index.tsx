@@ -16,7 +16,7 @@ const schema = zod.object({
 
 interface IMessageInputProps {
   userId: string
-  roomId: string
+  roomId: string | null
   disable?: boolean
 }
 export function MessageInput({
@@ -38,18 +38,20 @@ export function MessageInput({
   })
 
   const onSubmit = async (data: IMessage): Promise<void> => {
-    await writeNewMessage({
-      roomId,
-      userId,
-      message: data.text
-    })
-    reset()
-
-    const rootScrollElement = document.getElementById('content-container')
-    if (rootScrollElement != null) {
-      scrollIntoView(rootScrollElement, {
-        align: { topOffset: -rootScrollElement.scrollHeight }
+    if (roomId !== null) {
+      await writeNewMessage({
+        roomId,
+        userId,
+        message: data.text
       })
+      reset()
+
+      const rootScrollElement = document.getElementById('content-container')
+      if (rootScrollElement != null) {
+        scrollIntoView(rootScrollElement, {
+          align: { topOffset: -rootScrollElement.scrollHeight }
+        })
+      }
     }
   }
 

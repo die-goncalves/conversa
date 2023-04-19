@@ -20,7 +20,7 @@ interface IMessageProps {
     timestamp: number
   }
   sender: string
-  roomId: string
+  roomId: string | null
 }
 
 export function MessageComponent({
@@ -33,22 +33,17 @@ export function MessageComponent({
 
   const observer = useRef<IntersectionObserver>()
   useEffect(() => {
-    if (message.id === null || message.sender?.id === sender) return
-    if (
-      message.viewed !== undefined &&
-      message.viewed[message.id] === undefined
-    )
-      return
-
     if (observer.current != null) {
       observer.current.disconnect()
     }
+
+    if (message.id === null || message.sender?.id === sender) return
 
     async function callbackFunction(
       entry: IntersectionObserverEntry[]
     ): Promise<void> {
       if (entry[0].isIntersecting) {
-        if (message.id !== null && sender !== undefined)
+        if (message.id !== null && roomId !== null)
           try {
             await set(
               ref(
@@ -65,9 +60,11 @@ export function MessageComponent({
               )
             )
             if (snapshotLastViewedMessage.exists()) {
-              if (
-                snapshotLastViewedMessage.val().localeCompare(message.id) < 0
-              ) {
+              const orderMessages = [
+                snapshotLastViewedMessage.val(),
+                message.id
+              ].sort(new Intl.Collator().compare)
+              if (orderMessages[0] === snapshotLastViewedMessage.val()) {
                 await set(
                   ref(
                     database,

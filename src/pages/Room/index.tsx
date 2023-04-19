@@ -3,8 +3,8 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
-  useState
+  useReducer,
+  useRef
 } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import {
@@ -53,126 +53,269 @@ interface IMessage {
   timestamp: number
 }
 
+interface IState {
+  roomId: string | null
+  isInTheRoom: {
+    'join-date': number
+  } | null
+  messages: IMessage[]
+  lastMessageId: {
+    loading: boolean
+    id: string | null
+  }
+  lastViewedMessage: string | null | undefined
+  haveMoreOldMessages: {
+    loading: false
+    have: false
+  }
+  isBlocked: boolean | undefined
+  firstMessageId: string
+}
+enum Actions {
+  'set-room-id',
+  'set-is-in-the-room',
+  'set-raw-messages',
+  'set-old-messages',
+  'update-viewed-messages',
+  'add-messages',
+  'set-last-message-id',
+  'set-last-viewed-message',
+  'set-have-more-old-messages',
+  'set-is-blocked',
+  'set-first-message'
+}
+interface IActions {
+  type: keyof typeof Actions
+  payload?: any
+}
+
 export function Room(): JSX.Element | null {
   const navigate = useNavigate()
   const { roomId } = useLoaderData() as { roomId: string }
   const { userState } = useContext(AuthContext)
-  const [isInTheRoom, setIsInTheRoom] = useState<{
-    'join-date': number
-  } | null>(null)
-  const [messages, setMessages] = useState<IMessage[]>([])
-  const [lastMessageId, setLastMessageId] = useState<{
-    loading: boolean
-    id: string | null
-  }>({
-    loading: true,
-    id: null
-  })
-  const [lastViewedMessage, setLastViewedMessage] = useState<string | null>()
-  const [haveMoreOldMessages, setHaveMoreOldMessages] = useState({
-    loading: false,
-    have: false
-  })
-  const [isBlocked, setIsBlocked] = useState<boolean>()
-
-  async function getMoreOldMessages(): Promise<void> {
-    setHaveMoreOldMessages(prev => ({ ...prev, loading: true }))
-    try {
-      const snapshot = await get(
-        query(
-          ref(database, `messages/${roomId}`),
-          orderByKey(),
-          endBefore(messages[0].id),
-          limitToLast(11)
-        )
-      )
-      const snapshotTyped = snapshot.val() as Record<
-        string,
-        {
-          message: string
-          sender?: Record<string, boolean>
-          viewed: Record<string, boolean>
-          timestamp: number
-          type?: 'enter' | 'out' | 'info'
-        }
-      > | null
-      if (snapshotTyped !== null) {
-        const snapshotMatrix = Object.entries(snapshotTyped)
-
-        let newSnapshotMatrix: Array<
-          [
-            string,
-            {
-              message: string
-              sender?: Record<string, boolean> | undefined
-              viewed: Record<string, boolean>
-              timestamp: number
-              type?: 'enter' | 'out' | 'info'
+  const [state, dispatch] = useReducer(
+    function reducer(state: IState, actions: IActions): IState {
+      switch (actions.type) {
+        case 'set-room-id':
+          return {
+            ...state,
+            roomId: actions.payload,
+            isInTheRoom: null,
+            messages: [],
+            lastMessageId: {
+              loading: true,
+              id: null
+            },
+            lastViewedMessage: undefined,
+            haveMoreOldMessages: {
+              loading: false,
+              have: false
+            },
+            isBlocked: undefined,
+            firstMessageId: ''
+          }
+        case 'set-old-messages':
+          return { ...state, messages: [...actions.payload, ...state.messages] }
+        case 'set-raw-messages':
+          return { ...state, messages: actions.payload }
+        case 'set-is-in-the-room':
+          return { ...state, isInTheRoom: actions.payload }
+        case 'set-is-blocked':
+          return { ...state, isBlocked: actions.payload }
+        case 'set-have-more-old-messages':
+          return {
+            ...state,
+            haveMoreOldMessages: {
+              ...state.haveMoreOldMessages,
+              ...actions.payload
             }
-          ]
-        >
-        if (snapshotMatrix.length === 11) {
-          setHaveMoreOldMessages(prev => ({ ...prev, have: true }))
-          const removeLastMessage = <T,>([, ...vector]: T[]): T[] => vector
-          newSnapshotMatrix = removeLastMessage(snapshotMatrix)
-        } else {
-          setHaveMoreOldMessages(prev => ({ ...prev, have: false }))
-          newSnapshotMatrix = snapshotMatrix
+          }
+        case 'set-last-viewed-message':
+          return {
+            ...state,
+            lastViewedMessage: actions.payload
+          }
+        case 'set-last-message-id':
+          return {
+            ...state,
+            lastMessageId: {
+              ...state.lastMessageId,
+              ...actions.payload
+            }
+          }
+        case 'update-viewed-messages': {
+          const updatedMessages = state.messages.map(m => {
+            if (m.id === actions.payload.snapshotKey) {
+              return {
+                ...m,
+                viewed: { ...m.viewed, [actions.payload.userId]: true }
+              }
+            }
+            return m
+          })
+          return { ...state, messages: updatedMessages }
         }
+        case 'add-messages': {
+          if (state.messages.length === 0)
+            return { ...state, messages: [...state.messages, actions.payload] }
 
-        let newMessages: IMessage[] = []
-        for (const msg of newSnapshotMatrix) {
-          if (msg[1].sender === undefined) {
-            newMessages = [
-              ...newMessages,
+          if (
+            state.messages[state.messages.length - 1].id !== actions.payload.id
+          )
+            return { ...state, messages: [...state.messages, actions.payload] }
+
+          return state
+        }
+        default:
+          throw new Error('Ação desconhecida')
+      }
+    },
+    {
+      roomId: null,
+      isInTheRoom: null,
+      messages: [],
+      lastMessageId: {
+        loading: true,
+        id: null
+      },
+      lastViewedMessage: null,
+      haveMoreOldMessages: {
+        loading: false,
+        have: false
+      },
+      isBlocked: undefined,
+      firstMessageId: ''
+    }
+  )
+
+  const getMoreOldMessages = useCallback(async () => {
+    dispatch({ type: 'set-have-more-old-messages', payload: { loading: true } })
+    if (state.roomId !== null && userState.user !== null) {
+      try {
+        const firstMessage = (
+          await get(
+            ref(
+              database,
+              `rooms/${state.roomId}/users/${userState.user.uid}/first-message`
+            )
+          )
+        ).val() as string
+
+        const snapshot = await get(
+          query(
+            ref(database, `messages/${state.roomId}`),
+            orderByKey(),
+            startAt(firstMessage),
+            endBefore(state.messages[0].id),
+            limitToLast(11)
+          )
+        )
+        const snapshotTyped = snapshot.val() as Record<
+          string,
+          {
+            message: string
+            sender?: Record<string, boolean>
+            viewed: Record<string, boolean>
+            timestamp: number
+            type?: 'enter' | 'out' | 'info'
+          }
+        > | null
+        if (snapshotTyped !== null) {
+          const snapshotMatrix = Object.entries(snapshotTyped)
+
+          let newSnapshotMatrix: Array<
+            [
+              string,
               {
-                id: msg[0],
-                message: msg[1].message,
-                viewed: msg[1].viewed,
-                timestamp: msg[1].timestamp,
-                type: msg[1].type
+                message: string
+                sender?: Record<string, boolean> | undefined
+                viewed: Record<string, boolean>
+                timestamp: number
+                type?: 'enter' | 'out' | 'info'
               }
             ]
+          >
+          if (snapshotMatrix.length === 11) {
+            dispatch({
+              type: 'set-have-more-old-messages',
+              payload: { have: true }
+            })
+            const removeLastMessage = <T,>([, ...vector]: T[]): T[] => vector
+            newSnapshotMatrix = removeLastMessage(snapshotMatrix)
           } else {
-            const snapshotUser = await get(
-              child(ref(database, 'users'), Object.keys(msg[1].sender)[0])
-            )
-            if (snapshotUser.exists()) {
+            dispatch({
+              type: 'set-have-more-old-messages',
+              payload: { have: false }
+            })
+            newSnapshotMatrix = snapshotMatrix
+          }
+
+          let newMessages: IMessage[] = []
+          for (const msg of newSnapshotMatrix) {
+            if (msg[1].sender === undefined) {
               newMessages = [
                 ...newMessages,
                 {
                   id: msg[0],
                   message: msg[1].message,
-                  sender: {
-                    ...snapshotUser.val(),
-                    id: snapshotUser.key
-                  },
                   viewed: msg[1].viewed,
-                  timestamp: msg[1].timestamp
+                  timestamp: msg[1].timestamp,
+                  type: msg[1].type
                 }
               ]
+            } else {
+              const snapshotUser = await get(
+                child(ref(database, 'users'), Object.keys(msg[1].sender)[0])
+              )
+              if (snapshotUser.exists()) {
+                newMessages = [
+                  ...newMessages,
+                  {
+                    id: msg[0],
+                    message: msg[1].message,
+                    sender: {
+                      ...snapshotUser.val(),
+                      id: snapshotUser.key
+                    },
+                    viewed: msg[1].viewed,
+                    timestamp: msg[1].timestamp
+                  }
+                ]
+              }
             }
           }
+          dispatch({ type: 'set-old-messages', payload: newMessages })
+        } else {
+          dispatch({
+            type: 'set-have-more-old-messages',
+            payload: { have: false }
+          })
         }
-        setMessages(prev => [...newMessages, ...prev])
-      } else {
-        setHaveMoreOldMessages(prev => ({ ...prev, have: false }))
+      } catch (error) {
+        console.error(error)
+      } finally {
+        dispatch({
+          type: 'set-have-more-old-messages',
+          payload: { loading: false }
+        })
       }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setHaveMoreOldMessages(prev => ({ ...prev, loading: false }))
     }
-  }
+  }, [state.roomId, state.messages, userState.user])
 
   const hasUnreadMessages = useMemo(() => {
-    if (userState.user != null && messages.length > 1) {
-      if (messages[messages.length - 1].sender === undefined) return false
-      if (messages[messages.length - 1].sender?.id === userState.user.uid)
+    if (userState.user != null && state.messages.length > 1) {
+      if (state.messages[state.messages.length - 1].sender === undefined)
         return false
-      if (messages[messages.length - 1].viewed !== undefined) {
+      if (
+        state.messages[state.messages.length - 1].sender?.id ===
+        userState.user.uid
+      )
+        return false
+      if (state.messages[state.messages.length - 1].viewed !== undefined) {
         if (
-          messages[messages.length - 1].viewed[userState.user.uid] !== undefined
+          state.messages[state.messages.length - 1].viewed[
+            userState.user.uid
+          ] !== undefined
         )
           return false
       }
@@ -180,121 +323,206 @@ export function Room(): JSX.Element | null {
     } else {
       return null
     }
-  }, [messages, userState.user])
+  }, [state.messages, userState.user])
 
   const endOfMessages = useCallback(() => {
-    const id = messages[messages.length - 1].id
+    const id = state.messages[state.messages.length - 1].id
     if (id != null) {
       const el = document.getElementById(id) as HTMLLIElement | null
       if (el != null) {
         scrollIntoView(el, { align: { top: 1, topOffset: -104 } }) // 104 = 88[altura input] + 16[gap entre mensagens]
       }
     }
-  }, [messages])
+  }, [state.messages])
+
+  // VERIFICA TROCA DE SALA
+  useEffect(() => {
+    dispatch({ type: 'set-room-id', payload: roomId })
+  }, [roomId])
 
   // VERIFICA SE USUÁRIO ESTÁ NA SALA
+  const unsubscribeIsInTheRoom = useRef<{
+    unsubscribe: Unsubscribe | null
+  }>({
+    unsubscribe: null
+  })
   useEffect(() => {
-    if (userState.user === null) return
+    if (unsubscribeIsInTheRoom.current.unsubscribe != null)
+      unsubscribeIsInTheRoom.current.unsubscribe()
 
-    const unsubscribe = onValue(
-      ref(database, `rooms/${roomId}/users/${userState.user.uid}/join-date`),
-      async snapshot => {
-        if (!snapshot.exists()) {
-          setIsInTheRoom(null)
-          navigate('/dashboard')
-        } else {
-          setIsInTheRoom({
-            'join-date': snapshot.val()
-          })
+    if (userState.user === null || state.roomId === null) return
+
+    try {
+      unsubscribeIsInTheRoom.current.unsubscribe = onValue(
+        ref(
+          database,
+          `rooms/${state.roomId}/users/${userState.user.uid}/join-date`
+        ),
+        async snapshot => {
+          if (!snapshot.exists()) {
+            dispatch({ type: 'set-is-in-the-room', payload: null })
+            navigate('/dashboard')
+          } else {
+            dispatch({
+              type: 'set-is-in-the-room',
+              payload: {
+                'join-date': snapshot.val()
+              }
+            })
+          }
         }
-      }
-    )
+      )
+    } catch (error) {
+      console.error(error)
+    }
 
     return () => {
-      unsubscribe()
+      if (unsubscribeIsInTheRoom.current.unsubscribe != null)
+        unsubscribeIsInTheRoom.current.unsubscribe()
     }
-  }, [userState.user, roomId])
+  }, [userState.user, state.roomId])
 
   // VERIFICA SE USUÁRIO ESTÁ BLOQUEADO
+  const unsubscribeIsBlocked = useRef<{
+    unsubscribe: Unsubscribe | null
+  }>({
+    unsubscribe: null
+  })
   useEffect(() => {
-    const unsubscribe = onValue(
-      ref(database, `rooms/${roomId}/blocked/${userState.user?.uid ?? ''}`),
-      snapshot => {
-        if (snapshot.exists()) {
-          setIsBlocked(true)
-        } else {
-          setIsBlocked(false)
+    if (unsubscribeIsBlocked.current.unsubscribe != null)
+      unsubscribeIsBlocked.current.unsubscribe()
+    if (userState.user === null || state.roomId === null) return
+
+    try {
+      unsubscribeIsBlocked.current.unsubscribe = onValue(
+        ref(database, `rooms/${state.roomId}/blocked/${userState.user.uid}`),
+        snapshot => {
+          if (snapshot.exists()) {
+            dispatch({ type: 'set-is-blocked', payload: true })
+          } else {
+            dispatch({ type: 'set-is-blocked', payload: false })
+          }
         }
-      }
-    )
+      )
+    } catch (error) {
+      console.error(error)
+    }
 
     return () => {
-      unsubscribe()
+      if (unsubscribeIsBlocked.current.unsubscribe != null)
+        unsubscribeIsBlocked.current.unsubscribe()
     }
-  }, [])
+  }, [userState.user, state.roomId])
 
   // VERIFICA ÚLTIMA MENSAGEM VISTA
   useEffect(() => {
-    if (userState.user === null || isInTheRoom == null) return
-
-    const unsubscribe = onValue(
-      ref(
-        database,
-        `rooms/${roomId}/users/${userState.user.uid}/last-viewed-message`
-      ),
-      async snapshotLastViewedMessage => {
-        if (snapshotLastViewedMessage.exists()) {
-          setLastViewedMessage(snapshotLastViewedMessage.val())
-        }
-      },
-      { onlyOnce: true }
+    if (
+      userState.user === null ||
+      state.isInTheRoom === null ||
+      state.roomId === null
     )
+      return
 
-    return () => {
-      unsubscribe()
+    async function getLastViewedMessage(): Promise<void> {
+      if (userState.user !== null && state.roomId !== null) {
+        const snapshotLastViewedMessage = await get(
+          ref(
+            database,
+            `rooms/${state.roomId}/users/${userState.user.uid}/last-viewed-message`
+          )
+        )
+        if (snapshotLastViewedMessage.exists()) {
+          dispatch({
+            type: 'set-last-viewed-message',
+            payload: snapshotLastViewedMessage.val()
+          })
+        } else {
+          dispatch({
+            type: 'set-last-viewed-message',
+            payload: null
+          })
+        }
+      }
     }
-  }, [isInTheRoom, userState.user, roomId])
+
+    try {
+      void getLastViewedMessage()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [state.roomId, state.isInTheRoom, userState.user])
 
   // PRIMEIRO CARREGAMENTO DE MENSAGENS
   useEffect(() => {
     if (
-      isInTheRoom == null ||
-      lastViewedMessage === undefined ||
-      isBlocked === undefined
+      userState.user === null ||
+      state.roomId === null ||
+      state.isInTheRoom === null ||
+      state.lastViewedMessage === undefined ||
+      state.isBlocked === undefined
     )
       return
 
     async function getMessages(): Promise<void> {
-      if (lastViewedMessage !== undefined) {
-        const snapshotMessagesBefore = await get(
-          query(
-            ref(database, `messages/${roomId}`),
-            endAt(lastViewedMessage),
-            orderByKey(),
-            limitToLast(11)
+      if (
+        state.roomId !== null &&
+        userState.user !== null &&
+        state.lastViewedMessage !== undefined
+      ) {
+        const firstMessage = (
+          await get(
+            ref(
+              database,
+              `rooms/${state.roomId}/users/${userState.user.uid}/first-message`
+            )
           )
-        )
+        ).val() as string
+
+        let snapshotMessagesBefore
+        if (state.lastViewedMessage === null) {
+          const snapshot = await get(
+            ref(database, `messages/${state.roomId}/${firstMessage}`)
+          )
+          if (snapshot.key != null)
+            snapshotMessagesBefore = { [snapshot.key]: snapshot.val() }
+        } else {
+          snapshotMessagesBefore = (
+            await get(
+              query(
+                ref(database, `messages/${state.roomId}`),
+                startAt(firstMessage),
+                endAt(state.lastViewedMessage),
+                orderByKey(),
+                limitToLast(11)
+              )
+            )
+          ).val()
+        }
+
+        const messageEntries = Object.entries({
+          ...snapshotMessagesBefore
+        })
 
         let messagesBefore
-        const messageEntries = Object.entries({
-          ...snapshotMessagesBefore.val()
-        })
         if (messageEntries.length === 11) {
-          setHaveMoreOldMessages(prev => ({ ...prev, have: true }))
+          dispatch({
+            type: 'set-have-more-old-messages',
+            payload: { have: true }
+          })
           const [first, ...rest] = messageEntries
           messagesBefore = Object.fromEntries(rest)
         } else {
-          messagesBefore = snapshotMessagesBefore.val()
+          messagesBefore = snapshotMessagesBefore
         }
 
         let messagesAfter
-        if (isBlocked !== undefined && isBlocked) {
+        if (state.isBlocked !== undefined && state.isBlocked) {
           messagesAfter = null
         } else {
           const snapshotMessagesAfter = await get(
             query(
-              ref(database, `messages/${roomId}`),
-              startAfter(lastViewedMessage)
+              ref(database, `messages/${state.roomId}`),
+              startAfter(state.lastViewedMessage)
             )
           )
           messagesAfter = snapshotMessagesAfter.val()
@@ -350,22 +578,34 @@ export function Room(): JSX.Element | null {
             }
           }
 
-          setMessages(newMessages)
-          setLastMessageId({
-            loading: false,
-            id: newMessages[newMessages.length - 1].id
+          dispatch({ type: 'set-raw-messages', payload: newMessages })
+          dispatch({
+            type: 'set-last-message-id',
+            payload: {
+              loading: false,
+              id: newMessages[newMessages.length - 1].id
+            }
           })
         } else {
-          setLastMessageId({
-            loading: false,
-            id: null
+          dispatch({
+            type: 'set-last-message-id',
+            payload: {
+              loading: false,
+              id: null
+            }
           })
         }
       }
     }
 
     void getMessages()
-  }, [roomId, isInTheRoom, lastViewedMessage, isBlocked])
+  }, [
+    state.roomId,
+    state.isInTheRoom,
+    state.lastViewedMessage,
+    state.isBlocked,
+    userState.user
+  ])
 
   // MONITORANDO ADIÇÃO DE MENSAGENS
   const unsubscribeRefOnChildAdded = useRef<{
@@ -376,11 +616,12 @@ export function Room(): JSX.Element | null {
   useEffect(() => {
     if (unsubscribeRefOnChildAdded.current.unsubscribe != null)
       unsubscribeRefOnChildAdded.current.unsubscribe()
+
     if (
-      isInTheRoom == null ||
-      lastMessageId.loading ||
-      isBlocked === undefined ||
-      isBlocked
+      state.roomId === null ||
+      state.isInTheRoom === null ||
+      state.lastMessageId.loading ||
+      state.isBlocked === undefined
     )
       return
 
@@ -394,14 +635,7 @@ export function Room(): JSX.Element | null {
             timestamp: snapshotMessage.val().timestamp,
             type: snapshotMessage.val().type
           }
-          setMessages(prev => {
-            if (prev.length === 0) return [...prev, newMessage]
-            if (prev[prev.length - 1].id !== newMessage.id) {
-              return [...prev, newMessage]
-            } else {
-              return prev
-            }
-          })
+          dispatch({ type: 'add-messages', payload: newMessage })
         } else {
           const snapshotUser = await get(
             child(
@@ -421,31 +655,24 @@ export function Room(): JSX.Element | null {
               timestamp: snapshotMessage.val().timestamp
             }
 
-            setMessages(prev => {
-              if (prev.length === 0) return [...prev, newMessage]
-              if (prev[prev.length - 1].id !== newMessage.id) {
-                return [...prev, newMessage]
-              } else {
-                return prev
-              }
-            })
+            dispatch({ type: 'add-messages', payload: newMessage })
           }
         }
       }
     }
 
-    if (lastMessageId.id != null) {
+    if (state.lastMessageId.id != null) {
       unsubscribeRefOnChildAdded.current.unsubscribe = onChildAdded(
         query(
-          ref(database, `messages/${roomId}`),
-          startAt(lastMessageId.id),
+          ref(database, `messages/${state.roomId}`),
+          startAt(state.lastMessageId.id),
           orderByKey()
         ),
         dataSnapshot
       )
     } else {
       unsubscribeRefOnChildAdded.current.unsubscribe = onChildAdded(
-        ref(database, `messages/${roomId}`),
+        ref(database, `messages/${state.roomId}`),
         dataSnapshot
       )
     }
@@ -454,78 +681,75 @@ export function Room(): JSX.Element | null {
       if (unsubscribeRefOnChildAdded.current.unsubscribe != null)
         unsubscribeRefOnChildAdded.current.unsubscribe()
     }
-  }, [isInTheRoom, lastMessageId, isBlocked])
+  }, [state.roomId, state.isInTheRoom, state.lastMessageId, state.isBlocked])
 
   // MONITORAR SE MENSAGEM FOI VISUALIZADA
+  const unsubscribeUpdateViewedMessages = useRef<{
+    unsubscribe: Unsubscribe | null
+  }>({
+    unsubscribe: null
+  })
   useEffect(() => {
-    if (userState.user === null) return
+    if (unsubscribeUpdateViewedMessages.current.unsubscribe != null)
+      unsubscribeUpdateViewedMessages.current.unsubscribe()
 
-    const unsubscribe = onChildChanged(
-      ref(database, `messages/${roomId}`),
-      snapshot => {
-        setMessages(prev => {
-          return prev.map(m => {
-            if (m.id === snapshot.key) {
-              if (snapshot.key != null && userState.user !== null)
-                return {
-                  ...m,
-                  viewed: { ...m.viewed, [userState.user?.uid]: true }
-                }
+    if (userState.user === null || state.roomId === null) return
+
+    try {
+      unsubscribeUpdateViewedMessages.current.unsubscribe = onChildChanged(
+        ref(database, `messages/${state.roomId}`),
+        snapshot => {
+          dispatch({
+            type: 'update-viewed-messages',
+            payload: {
+              userId: userState.user?.uid,
+              snapshotKey: snapshot.key
             }
-            return m
           })
-        })
-      }
-    )
+        }
+      )
+    } catch (error) {
+      console.error(error)
+    }
 
     return () => {
-      unsubscribe()
+      if (unsubscribeUpdateViewedMessages.current.unsubscribe != null)
+        unsubscribeUpdateViewedMessages.current.unsubscribe()
     }
-  }, [roomId, userState.user])
+  }, [state.roomId, userState.user])
 
   // SCROLLBAR: IR ATÈ A ÚLTIMA MENSAGEM VISUALIZADA
   useEffect(() => {
-    if (lastMessageId.loading || lastViewedMessage == null) return
+    if (state.lastMessageId.loading || state.lastViewedMessage == null) return
+
     const el = document.getElementById(
-      lastViewedMessage
+      state.lastViewedMessage
     ) as HTMLLIElement | null
     if (el != null) {
       scrollIntoView(el, { align: { top: 1, topOffset: -104 } }) // 104 = 88[altura input] + 16[gap entre mensagens]
     }
-  }, [lastMessageId.loading, lastViewedMessage])
+  }, [state.lastMessageId.loading, state.lastViewedMessage])
 
-  // LIMPAR ESTADOS AO DESMONTAR COMPONENTE
-  useEffect(() => {
-    return () => {
-      setIsInTheRoom(null)
-      setLastViewedMessage(undefined)
-      setMessages([])
-      setLastMessageId({ loading: true, id: '' })
-      setHaveMoreOldMessages({
-        loading: false,
-        have: false
-      })
-    }
-  }, [roomId])
-
-  if (isInTheRoom == null) return null
+  if (state.isInTheRoom == null) return null
 
   return (
     <RoomContainer>
       <ContentContainer id="content-container">
-        {(lastMessageId.loading || haveMoreOldMessages.loading) && <Progress />}
+        {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) && (
+          <Progress />
+        )}
         <MessagesBox>
-          {messages.map(message => (
+          {state.messages.map(message => (
             <Message
               key={message.id}
-              roomId={roomId}
+              roomId={state.roomId}
               message={message}
               sender={userState.user?.uid ?? ''}
             />
           ))}
         </MessagesBox>
 
-        {(hasUnreadMessages ?? false) && isBlocked === false && (
+        {(hasUnreadMessages ?? false) && state.isBlocked === false && (
           <FABScrollToEndOfMessages onClick={endOfMessages}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -538,9 +762,9 @@ export function Room(): JSX.Element | null {
           </FABScrollToEndOfMessages>
         )}
 
-        {!lastMessageId.loading && haveMoreOldMessages.have && (
+        {!state.lastMessageId.loading && state.haveMoreOldMessages.have && (
           <FABGetOldMessages
-            disabled={haveMoreOldMessages.loading}
+            disabled={state.haveMoreOldMessages.loading}
             onClick={getMoreOldMessages}
           >
             Carregar mais mensagens
@@ -548,9 +772,9 @@ export function Room(): JSX.Element | null {
         )}
 
         <MessageInput
-          roomId={roomId}
+          roomId={state.roomId}
           userId={userState.user?.uid ?? ''}
-          disable={isBlocked}
+          disable={state.isBlocked}
         />
       </ContentContainer>
     </RoomContainer>
