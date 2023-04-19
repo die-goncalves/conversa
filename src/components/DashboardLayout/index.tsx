@@ -1,49 +1,23 @@
-import { type FormEvent, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useOutlet } from 'react-router-dom'
-import { AuthContext } from '../../contexts/AuthContext'
-import { RoomContext } from '../../contexts/RoomContext'
 import { LogoSVG } from '../LogoSVG'
 import { NavLink } from '../NavLink'
+import { FormJoinRoom } from '../FormJoinRoom'
+import { AuthContext } from '../../contexts/AuthContext'
+import { RoomContext } from '../../contexts/RoomContext'
 import {
   ActionsBox,
   DashboardLayoutContainer,
   Header,
   LogoBox,
   RoomsBox,
-  SidebarContainer,
-  FormNewRoom
+  SidebarContainer
 } from './styles'
-import { get, ref } from 'firebase/database'
-import { database } from '../../services/firebaseConfig'
 
 export function DashboardLayout(): JSX.Element {
   const outlet = useOutlet()
-  const { rooms, writeNewMember } = useContext(RoomContext)
-  const { userState, onSignOut } = useContext(AuthContext)
-
-  async function handleSubmit(ev: FormEvent): Promise<void> {
-    ev.preventDefault()
-    const form = ev.currentTarget as unknown as { roomId: HTMLInputElement }
-    const roomId = form.roomId.value
-
-    const res = await get(
-      ref(database, `rooms/${roomId}/blocked/${userState.user?.uid ?? ''}`)
-    )
-
-    if (!res.exists()) {
-      try {
-        if (userState.user != null) {
-          await writeNewMember({
-            userId: userState.user?.uid,
-            roomId
-          })
-          form.roomId.value = ''
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }
+  const { rooms } = useContext(RoomContext)
+  const { onSignOut } = useContext(AuthContext)
 
   const typedRooms = useMemo(() => {
     return rooms.reduce(
@@ -72,14 +46,7 @@ export function DashboardLayout(): JSX.Element {
           <button onClick={onSignOut}>Sair</button>
         </ActionsBox>
 
-        <FormNewRoom>
-          <header>Entrar em sala</header>
-
-          <form onSubmit={handleSubmit}>
-            <input type="text" name="roomId" />
-            <button type="submit">Entrar</button>
-          </form>
-        </FormNewRoom>
+        <FormJoinRoom />
 
         {typedRooms.chat !== 0 && (
           <RoomsBox>
