@@ -10,6 +10,7 @@ import {
   set
 } from 'firebase/database'
 import { database } from '../../services/firebaseConfig'
+import { toast } from 'react-toastify'
 import {
   DropdownMenuParticipantCard,
   ParticipantCardContainer,
@@ -53,16 +54,27 @@ export function BlockedParticipantCard({
   async function handleUnblockParticipant(
     participantId: string
   ): Promise<void> {
-    await remove(ref(database, `rooms/${roomId}/blocked/${participantId}`))
+    try {
+      const userDisplayName = (
+        await get(ref(database, `users/${participantId}/displayName`))
+      ).val() as string
 
-    const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
-      displayName: string
+      await remove(ref(database, `rooms/${roomId}/blocked/${participantId}`))
+
+      const roomDisplayName = (
+        await get(ref(database, `rooms/${roomId}/displayName`))
+      ).val() as string
+
+      await set(push(child(ref(database), `notifications/${participantId}`)), {
+        message: `Você foi desbloqueado da sala ${roomDisplayName}`,
+        status: 'unread',
+        timestamp: serverTimestamp()
+      })
+      toast.success(`${userDisplayName} foi desbloqueado da sala.`)
+    } catch (error) {
+      toast.error('Desbloqueio fracassou.')
+      console.error(error)
     }
-    await set(push(child(ref(database), `notifications/${participantId}`)), {
-      message: `Você foi desbloqueado da sala ${room.displayName}`,
-      status: 'unread',
-      timestamp: serverTimestamp()
-    })
   }
 
   const isUserAdm = useMemo(() => {

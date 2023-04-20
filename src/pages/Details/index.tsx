@@ -10,10 +10,12 @@ import {
   serverTimestamp,
   set
 } from 'firebase/database'
+import { toast } from 'react-toastify'
 import { AuthContext } from '../../contexts/AuthContext'
 import { database } from '../../services/firebaseConfig'
 import { ParticipantCard } from '../../components/ParticipantCard'
 import { Progress } from '../../components/Progress'
+import { BlockedParticipantCard } from '../../components/BlockedParticipantCard'
 import {
   ActionSection,
   BlockedParticipantGallery,
@@ -22,7 +24,6 @@ import {
   ParticipantSection,
   RoomDetailsContainer
 } from './styles'
-import { BlockedParticipantCard } from '../../components/BlockedParticipantCard'
 
 export function Details(): JSX.Element | null {
   const navigate = useNavigate()
@@ -109,38 +110,65 @@ export function Details(): JSX.Element | null {
   const hasMoreThanOneAdm = Object.keys(state.adms).length > 1
 
   async function removeUserFromRoom(id: string | undefined): Promise<void> {
-    if (id !== undefined) {
-      const user = (await get(ref(database, `users/${id}`))).val() as {
-        displayName: string
+    try {
+      if (id !== undefined) {
+        const userDisplayName = (
+          await get(ref(database, `users/${id}/displayName`))
+        ).val() as string
+
+        await set(push(child(ref(database), `messages/${roomId}`)), {
+          message: `${userDisplayName} saiu da sala`,
+          type: 'out',
+          timestamp: serverTimestamp()
+        })
+
+        if (iOwnTheRoom)
+          await remove(ref(database, `rooms/${roomId}/adms/${id}`))
+        await remove(ref(database, `rooms/${roomId}/users/${id}`))
+        await remove(ref(database, `users/${id}/rooms/${roomId}`))
+
+        toast.success('Você saiu da sala.')
+        navigate('/dashboard')
       }
-      await set(push(child(ref(database), `messages/${roomId}`)), {
-        message: `${user.displayName} saiu da sala`,
-        type: 'out',
-        timestamp: serverTimestamp()
-      })
-
-      if (iOwnTheRoom) await remove(ref(database, `rooms/${roomId}/adms/${id}`))
-      await remove(ref(database, `rooms/${roomId}/users/${id}`))
-      await remove(ref(database, `users/${id}/rooms/${roomId}`))
-
-      navigate('/dashboard')
+    } catch (error) {
+      toast.error('Falha ao sair da sala.')
+      console.error(error)
     }
   }
+
   async function deleteRoom(roomId: string): Promise<void> {
-    const roomParticipants = await get(ref(database, `rooms/${roomId}/users`))
-    if (roomParticipants.exists()) {
-      for (const participantId of Object.keys(roomParticipants.val())) {
-        await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
-      }
-    }
-    await remove(ref(database, `rooms/${roomId}`))
-    await remove(ref(database, `messages/${roomId}`))
+    try {
+      const roomDisplayName = (
+        await get(ref(database, `rooms/${roomId}/displayName`))
+      ).val() as string
 
-    navigate('/dashboard')
+      const roomParticipants = await get(ref(database, `rooms/${roomId}/users`))
+      if (roomParticipants.exists()) {
+        for (const participantId of Object.keys(roomParticipants.val())) {
+          await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
+        }
+      }
+      await remove(ref(database, `messages/${roomId}`))
+      await remove(ref(database, `rooms/${roomId}`))
+
+      toast.success(`Sala ${roomDisplayName} excluída.`)
+      navigate('/dashboard')
+    } catch (error) {
+      toast.error('Falha ao excluir sala.')
+      console.error(error)
+    }
   }
+
   async function removeUserAdm(userId: string | undefined): Promise<void> {
-    if (userId !== undefined)
-      await remove(ref(database, `rooms/${roomId}/adms/${userId}`))
+    try {
+      if (userId !== undefined) {
+        await remove(ref(database, `rooms/${roomId}/adms/${userId}`))
+        toast.success('Você não é mais administrador da sala.')
+      }
+    } catch (error) {
+      toast.error('Falha ao remover permissão de administrador.')
+      console.error(error)
+    }
   }
 
   useEffect(() => {

@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth'
 import { child, get, ref, set } from 'firebase/database'
 import { auth, database } from '../services/firebaseConfig'
+import { toast } from 'react-toastify'
 
 const googleProvider = new GoogleAuthProvider()
 
@@ -28,16 +29,12 @@ interface IEmailAndPassword {
 }
 
 async function addUserToRoom(userId: string, roomId: string): Promise<void> {
-  try {
-    const roomSnapshot = await get(
-      child(ref(database), `users/${userId}/rooms/${roomId}`)
-    )
-    if (!roomSnapshot.exists()) {
-      await set(ref(database, `users/${userId}/rooms/${roomId}`), true)
-      await set(ref(database, `rooms/${roomId}/users/${userId}`), true)
-    }
-  } catch (error) {
-    console.log(error)
+  const roomSnapshot = await get(
+    child(ref(database), `users/${userId}/rooms/${roomId}`)
+  )
+  if (!roomSnapshot.exists()) {
+    await set(ref(database, `users/${userId}/rooms/${roomId}`), true)
+    await set(ref(database, `rooms/${roomId}/users/${userId}`), true)
   }
 }
 
@@ -48,20 +45,16 @@ async function writeUserData({
   photoURL,
   isAnonymous
 }: IUserData): Promise<void> {
-  try {
-    const userSnapshot = await get(child(ref(database), `users/${uid}`))
-    if (!userSnapshot.exists()) {
-      await set(ref(database, 'users/' + uid), {
-        displayName,
-        email,
-        photoURL,
-        isAnonymous
-      })
+  const userSnapshot = await get(child(ref(database), `users/${uid}`))
+  if (!userSnapshot.exists()) {
+    await set(ref(database, 'users/' + uid), {
+      displayName,
+      email,
+      photoURL,
+      isAnonymous
+    })
 
-      await addUserToRoom(uid, import.meta.env.VITE_APP_GLOBAL_ROOM_CHAT_ID)
-    }
-  } catch (error) {
-    console.log(error)
+    await addUserToRoom(uid, import.meta.env.VITE_APP_GLOBAL_ROOM_CHAT_ID)
   }
 }
 
@@ -132,8 +125,10 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         photoURL: user.photoURL,
         isAnonymous: false
       })
+      toast.success('Sessão iniciada.')
       navigate('dashboard')
     } catch (error) {
+      toast.error('Falha ao iniciar sessão.')
       console.error(error)
     }
   }
@@ -147,8 +142,10 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }: IEmailAndPassword) => {
     try {
       await signInWithEmailAndPassword(auth, email, password)
+      toast.success('Sessão iniciada.')
       navigate('dashboard')
     } catch (error) {
+      toast.error('Falha ao iniciar sessão.')
       console.error(error)
     }
   }
@@ -163,8 +160,10 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         photoURL: user.photoURL,
         isAnonymous: user.isAnonymous
       })
+      toast.success('Sessão iniciada.')
       navigate('dashboard')
     } catch (error) {
+      toast.error('Falha ao iniciar sessão.')
       console.error(error)
     }
   }
@@ -179,8 +178,10 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         photoURL: '/anonym_avatar.png',
         isAnonymous: user.isAnonymous
       })
+      toast.success('Sessão iniciada.')
       navigate('dashboard')
     } catch (error) {
+      toast.error('Falha ao iniciar sessão.')
       console.log(error)
     }
   }
@@ -188,7 +189,9 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const onSignOut: () => Promise<void> = async () => {
     try {
       await auth.signOut()
+      toast.error('Sessão encerrada.')
     } catch (error) {
+      toast.error('Falha ao encerrar sessão.')
       console.error(error)
     }
   }

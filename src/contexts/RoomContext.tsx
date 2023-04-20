@@ -144,11 +144,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
           navigate(`/dashboard/room/${String(newRoomRef.key)}`)
         }
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message)
-        } else {
-          toast.error('Ocorreu um erro desconhecido.')
-        }
+        toast.error('Falha ao criar sala.')
         console.error(error)
       }
     },
@@ -186,14 +182,10 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
 
           toast.success('Você entrou na sala especificada!')
         } else {
-          toast.error('Sala indisponível.')
+          toast.error('Falha ao entrar em sala.')
         }
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message)
-        } else {
-          toast.error('Ocorreu um erro desconhecido.')
-        }
+        toast.error('Falha ao entrar em sala.')
         console.error(error)
       }
     },
@@ -231,11 +223,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
           )
         }
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message)
-        } else {
-          toast.error('Ocorreu um erro desconhecido.')
-        }
+        toast.error('Falha ao enviar mensagem.')
         console.error(error)
       }
     },
