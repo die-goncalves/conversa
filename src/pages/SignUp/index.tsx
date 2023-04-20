@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -118,7 +119,7 @@ export function SignUp(): JSX.Element {
         </Main>
 
         <Footer>
-          <a href="/signin">Fazer login</a>
+          <Link to="signin">Fazer login</Link>
         </Footer>
       </SignUpContainer>
     </PageContainer>
