@@ -122,7 +122,13 @@ export const Main = styled.main`
       box-shadow 150ms linear;
 
     box-shadow: var(--shadow);
-    &:hover {
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.8;
+    }
+
+    &:not(:disabled):hover {
       background: var(--gray-600);
       box-shadow: var(--shadow-md);
     }
@@ -140,6 +146,14 @@ export const Main = styled.main`
 
     & + button {
       margin-top: 1rem;
+    }
+
+    svg {
+      margin-left: auto;
+      width: 1.5rem;
+      height: 1.5rem;
+      fill: var(--yellow-300);
+      opacity: 0.6;
     }
 
     &:nth-child(n + 5) {
