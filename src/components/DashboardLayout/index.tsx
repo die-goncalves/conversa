@@ -36,7 +36,7 @@ export function DashboardLayout(): JSX.Element {
     <DashboardLayoutContainer>
       <SidebarContainer>
         <Header>
-          <LogoBox>
+          <LogoBox to={'/dashboard'} id="logo-svg-container">
             <LogoSVG />
             <span>Conversa</span>
           </LogoBox>

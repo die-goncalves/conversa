@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 export const DashboardLayoutContainer = styled.div`
@@ -63,7 +64,7 @@ export const RoomContainer = styled(StyledHeader)`
   z-index: 4;
 `
 
-export const LogoBox = styled.div`
+export const LogoBox = styled(Link)`
   display: flex;
   align-items: center;
 
@@ -73,6 +74,22 @@ export const LogoBox = styled.div`
 
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
+    transition: opacity 150ms linear;
+  }
+  text-decoration: none;
+
+  transition: opacity 150ms linear, outline-offset 150ms linear;
+  &:hover {
+    span {
+      opacity: 0.8;
+    }
+  }
+  &:focus-visible {
+    border-radius: 1px;
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--violet-300);
   }
 `
 

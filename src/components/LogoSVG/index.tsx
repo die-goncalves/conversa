@@ -19,7 +19,7 @@ export function LogoSVG(): JSX.Element {
   }, [])
 
   return (
-    <LogoSVGContainer id="logo-svg-container">
+    <LogoSVGContainer>
       <svg
         viewBox="0 0 256 256"
         preserveAspectRatio="xMinYMid meet"
