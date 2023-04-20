@@ -120,28 +120,33 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
 
           await set(ref(database, `users/${adm}/rooms/${newRoomRef.key}`), true)
 
-          const user = (await get(ref(database, `users/${adm}`))).val() as {
-            displayName: string
-          }
-          const messageListRef = child(
-            ref(database),
-            `messages/${newRoomRef.key}`
-          )
-          const newMessageRef = push(messageListRef)
-          await set(newMessageRef, {
-            message: `Bem vindo, ${user.displayName}`,
-            type: 'enter',
-            timestamp: serverTimestamp()
-          })
-          await set(
-            ref(database, `rooms/${newRoomRef.key}/users/${adm}/first-message`),
-            newMessageRef.key
-          )
-          toast.success(`Sala ${displayName} criada!`)
-
-          if (type === 'video')
+          if (type !== 'video') {
+            const user = (await get(ref(database, `users/${adm}`))).val() as {
+              displayName: string
+            }
+            const messageListRef = child(
+              ref(database),
+              `messages/${newRoomRef.key}`
+            )
+            const newMessageRef = push(messageListRef)
+            await set(newMessageRef, {
+              message: `Bem vindo, ${user.displayName}`,
+              type: 'enter',
+              timestamp: serverTimestamp()
+            })
+            await set(
+              ref(
+                database,
+                `rooms/${newRoomRef.key}/users/${adm}/first-message`
+              ),
+              newMessageRef.key
+            )
+            toast.success(`Sala ${displayName} criada!`)
+            navigate(`/dashboard/room/${String(newRoomRef.key)}`)
+          } else {
+            toast.success(`Sala ${displayName} criada!`)
             navigate(`/dashboard/call/${String(newRoomRef.key)}`)
-          navigate(`/dashboard/room/${String(newRoomRef.key)}`)
+          }
         }
       } catch (error) {
         toast.error('Falha ao criar sala.')
