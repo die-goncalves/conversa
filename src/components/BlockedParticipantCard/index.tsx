@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { get, ref, remove } from 'firebase/database'
+import {
+  child,
+  get,
+  push,
+  ref,
+  remove,
+  serverTimestamp,
+  set
+} from 'firebase/database'
 import { database } from '../../services/firebaseConfig'
 import {
   DropdownMenuParticipantCard,
@@ -46,6 +54,15 @@ export function BlockedParticipantCard({
     participantId: string
   ): Promise<void> {
     await remove(ref(database, `rooms/${roomId}/blocked/${participantId}`))
+
+    const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
+      displayName: string
+    }
+    await set(push(child(ref(database), `notifications/${participantId}`)), {
+      message: `Você foi desbloqueado da sala ${room.displayName}`,
+      status: 'unread',
+      timestamp: serverTimestamp()
+    })
   }
 
   const isUserAdm = useMemo(() => {

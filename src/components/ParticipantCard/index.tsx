@@ -59,22 +59,61 @@ export function ParticipantCard({
       timestamp: serverTimestamp()
     })
 
+    const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
+      displayName: string
+    }
+    await set(push(child(ref(database), `notifications/${participantId}`)), {
+      message: `Você foi expulso da sala ${room.displayName}`,
+      status: 'unread',
+      timestamp: serverTimestamp()
+    })
+
     await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
     await remove(ref(database, `rooms/${roomId}/users/${participantId}`))
 
     await remove(ref(database, `users/${participantId}/rooms/${roomId}`))
   }
+
   async function handleAddParticipantAdm(participantId: string): Promise<void> {
     await set(ref(database, `rooms/${roomId}/adms/${participantId}`), true)
     await remove(ref(database, `rooms/${roomId}/blocked/${participantId}`))
+
+    const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
+      displayName: string
+    }
+    await set(push(child(ref(database), `notifications/${participantId}`)), {
+      message: `Você virou administrador da sala ${room.displayName}`,
+      status: 'unread',
+      timestamp: serverTimestamp()
+    })
   }
+
   async function handleRemoveParticipantAdm(
     participantId: string
   ): Promise<void> {
     await remove(ref(database, `rooms/${roomId}/adms/${participantId}`))
+
+    const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
+      displayName: string
+    }
+    await set(push(child(ref(database), `notifications/${participantId}`)), {
+      message: `Você não é mais administrador da sala ${room.displayName}`,
+      status: 'unread',
+      timestamp: serverTimestamp()
+    })
   }
+
   async function handleBlockParticipant(participantId: string): Promise<void> {
     await set(ref(database, `rooms/${roomId}/blocked/${participantId}`), true)
+
+    const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
+      displayName: string
+    }
+    await set(push(child(ref(database), `notifications/${participantId}`)), {
+      message: `Você foi bloqueado na sala ${room.displayName}`,
+      status: 'unread',
+      timestamp: serverTimestamp()
+    })
   }
 
   const isParticipantAdm = useMemo(() => {

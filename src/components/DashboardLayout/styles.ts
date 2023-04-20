@@ -41,6 +41,8 @@ export const SidebarContainer = styled.div`
 
 export const Header = styled.div`
   position: sticky;
+  display: flex;
+  justify-content: space-between;
   top: 0;
   z-index: 5;
   padding: 1rem 2rem;

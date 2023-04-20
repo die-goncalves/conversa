@@ -1,4 +1,4 @@
-import { formatDistance } from 'date-fns'
+import { format, formatDistance } from 'date-fns'
 import ptBr from 'date-fns/locale/pt-BR'
 
 function timeAgo(forwardDate: number, backwardDate: number): string {
@@ -10,4 +10,10 @@ function timeAgo(forwardDate: number, backwardDate: number): string {
   return `~ ${result}`
 }
 
-export { timeAgo }
+function notificationFormat(timestamp: number): string {
+  return format(timestamp, "HH:mm:ss dd'/'MM'/'yyyy", {
+    locale: ptBr
+  })
+}
+
+export { timeAgo, notificationFormat }

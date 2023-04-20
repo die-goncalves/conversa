@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react'
 import { useOutlet } from 'react-router-dom'
 import { LogoSVG } from '../LogoSVG'
 import { NavLink } from '../NavLink'
+import { Notification } from '../Notification'
 import { FormJoinRoom } from '../FormJoinRoom'
 import { AuthContext } from '../../contexts/AuthContext'
 import { RoomContext } from '../../contexts/RoomContext'
@@ -40,6 +41,8 @@ export function DashboardLayout(): JSX.Element {
             <LogoSVG />
             <span>Conversa</span>
           </LogoBox>
+
+          <Notification />
         </Header>
 
         <ActionsBox>
