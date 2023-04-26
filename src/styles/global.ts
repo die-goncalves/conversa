@@ -79,7 +79,7 @@ export const GlobalStyle = createGlobalStyle`
       line-height: 1.5rem;
     }
   }
-  @media (min-width: 480px) { 
+  @media (min-width: 412px) { 
     body {
       font-size: 1rem;
       line-height: 1.5rem;

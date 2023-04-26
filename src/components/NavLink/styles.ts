@@ -9,9 +9,17 @@ export const NavLinkContainer = styled.div`
   img {
     border-radius: 4px;
     margin-right: 1rem;
-    width: 1.5rem;
-    height: 1.5rem;
+
     object-fit: cover;
+
+    @media (min-width: 320px) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    @media (min-width: 412px) {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
   }
 
   & > a:first-of-type {
