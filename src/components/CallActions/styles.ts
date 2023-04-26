@@ -1,11 +1,17 @@
 import styled from 'styled-components'
 
 export const CallOptionsContainer = styled.div`
-  margin: 2rem 0;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
+
+  @media (min-width: 320px) {
+    margin-left: auto;
+  }
+  @media (min-width: 640px) {
+    margin: 2rem 0;
+  }
 `
 
 export const IconButton = styled.button`

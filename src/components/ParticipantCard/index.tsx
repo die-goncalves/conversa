@@ -1,13 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useMemo } from 'react'
 import {
-  DropdownMenuParticipantCard,
-  ParticipantCardContainer,
-  StyledDropdownMenuArrow,
-  StyledDropdownMenuContent,
-  StyledDropdownMenuItem
-} from './styles'
-import {
   child,
   get,
   push,
@@ -18,6 +11,13 @@ import {
 } from 'firebase/database'
 import { toast } from 'react-toastify'
 import { database } from '../../services/firebaseConfig'
+import {
+  DropdownMenuParticipantCard,
+  ParticipantCardContainer,
+  StyledDropdownMenuArrow,
+  StyledDropdownMenuContent,
+  StyledDropdownMenuItem
+} from './styles'
 
 interface IParticipantCard {
   userId: string | undefined

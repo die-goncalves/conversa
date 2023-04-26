@@ -3,14 +3,15 @@ import styled from 'styled-components'
 export const DashboardContainer = styled.div`
   position: relative;
   display: flex;
-  flex: 1;
-  background: var(--gray-900);
+  width: 100vw;
+  height: 100svh;
 
   overflow: auto;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
 
   &::-webkit-scrollbar {
     width: 1vw;
+    height: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -32,19 +33,56 @@ export const DashboardContainer = styled.div`
 
 export const ContentContainer = styled.div`
   position: relative;
-  width: 100%;
-  height: inherit;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`
+
+export const StyledHeader = styled.header`
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 16px;
+  gap: 16px;
+
+  a {
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      font-weight: 400;
+      transition: opacity 150ms linear;
+      color: var(--violet-50);
+    }
+    text-decoration: none;
+
+    transition: opacity 150ms linear, outline-offset 150ms linear;
+    &:hover {
+      span {
+        opacity: 0.8;
+      }
+    }
+    &:focus-visible {
+      border-radius: 1px;
+      outline-style: solid;
+      outline-width: 2px;
+      outline-offset: 2px;
+      outline-color: var(--violet-300);
+    }
+  }
 `
 
 export const FormContainer = styled.div`
   position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  display: flex;
+  flex-direction: column;
 
-  width: 30rem;
-  height: fit-content;
-  padding: 2rem;
   border-radius: 4px;
   background: var(--gray-800);
   box-shadow: var(--shadow);
@@ -52,8 +90,16 @@ export const FormContainer = styled.div`
   h1 {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+
+    @media (min-width: 320px) {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      font-weight: 600;
+    }
+    @media (min-width: 640px) {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
   }
 
   form {
@@ -71,7 +117,8 @@ export const FormContainer = styled.div`
 
       & > div {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
+        /* justify-content: space-between; */
 
         & + div {
           margin-left: 1rem;
@@ -87,11 +134,7 @@ export const FormContainer = styled.div`
           width: 1px;
 
           &:focus-visible + label {
-            border-radius: 1px;
-            outline-style: solid;
-            outline-width: 2px;
-            outline-offset: 2px;
-            outline-color: var(--violet-300);
+            border-color: var(--violet-300);
           }
 
           &:checked + label svg {
@@ -111,17 +154,22 @@ export const FormContainer = styled.div`
         }
 
         label {
-          width: 5rem;
           display: flex;
           flex-direction: column;
           align-items: center;
+          width: 5rem;
+          border-radius: 4px;
+          border: 2px solid transparent;
+          padding: 4px;
           gap: 0.5rem;
           cursor: pointer;
+          outline: 0;
 
-          transition: outline-offset 150ms linear;
+          transition: border-color 150ms linear;
+
           svg {
-            width: 2.5rem;
-            height: 2.5rem;
+            width: 40px;
+            height: 40px;
 
             transition: fill 150ms linear, filter 150ms linear;
             fill: var(--gray-500);
@@ -163,19 +211,11 @@ export const FormContainer = styled.div`
       }
 
       input[type='file'] {
-        display: flex;
-        flex-direction: row;
-
-        font-family: 'Assistant', sans-serif;
-        font-size: 1rem;
-        line-height: 1.5rem;
-        font-weight: 400;
-        color: var(--violet-50);
+        position: relative;
+        padding: 8px;
 
         cursor: pointer;
 
-        height: 3.75rem;
-        padding: 0.5rem;
         border-radius: 4px;
         border: 2px dashed var(--gray-700);
 
@@ -203,16 +243,31 @@ export const FormContainer = styled.div`
           background: var(--gray-700);
           cursor: pointer;
 
-          font-family: 'Assistant', sans-serif;
-          font-size: 1rem;
-          line-height: 1.5rem;
-          font-weight: 400;
-          color: var(--violet-50);
-
           transition: background-color 150ms linear, border-color 150ms linear,
             box-shadow 150ms linear;
 
           box-shadow: var(--shadow);
+
+          @media (min-width: 320px) {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+
+            padding: 0;
+          }
+          @media (min-width: 640px) {
+            display: flex;
+          }
+        }
+
+        @media (min-width: 320px) {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        @media (min-width: 640px) {
+          height: 3.75rem;
         }
       }
     }
@@ -252,5 +307,21 @@ export const FormContainer = styled.div`
         border-color: var(--violet-300);
       }
     }
+  }
+
+  @media (min-width: 320px) {
+    margin: 16px;
+    padding: 8px;
+    top: calc(50% - 56px);
+    transform: translateY(-50%);
+  }
+  @media (min-width: 640px) {
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+
+    width: 30rem;
+    height: fit-content;
+    padding: 2rem;
   }
 `

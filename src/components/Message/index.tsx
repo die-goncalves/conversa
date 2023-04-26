@@ -1,8 +1,8 @@
-import { memo, useEffect, useRef } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { timeAgo } from '../../utils/formatDate'
-import { ADMMessage, MessageContainer, RowContainer, Viewed } from './styles'
 import { get, ref, set } from 'firebase/database'
 import { database } from '../../services/firebaseConfig'
+import { ADMMessage, MessageContainer, RowContainer, Viewed } from './styles'
 
 interface IMessageProps {
   message: {
@@ -29,7 +29,11 @@ export function MessageComponent({
   roomId
 }: IMessageProps): JSX.Element | null {
   const diffDate = timeAgo(Date.now(), message.timestamp)
-  const isMe = sender === message.sender?.id
+  const [isMe, setIsMe] = useState(() => sender === message.sender?.id)
+  const [iHaveSeen, setIHaveSeen] = useState(() =>
+    Object.keys(message.viewed ?? {}).includes(sender)
+  )
+  const [isVisible, setIsVisible] = useState<boolean>()
 
   const observer = useRef<IntersectionObserver>()
   useEffect(() => {
@@ -37,56 +41,14 @@ export function MessageComponent({
       observer.current.disconnect()
     }
 
-    if (message.id === null || message.sender?.id === sender) return
+    if (message.id === null) return
 
     async function callbackFunction(
       entry: IntersectionObserverEntry[]
     ): Promise<void> {
       if (entry[0].isIntersecting) {
-        if (message.id !== null && roomId !== null)
-          try {
-            await set(
-              ref(
-                database,
-                `messages/${roomId}/${message.id}/viewed/${sender}`
-              ),
-              true
-            )
-
-            const snapshotLastViewedMessage = await get(
-              ref(
-                database,
-                `rooms/${roomId}/users/${sender}/last-viewed-message`
-              )
-            )
-            if (snapshotLastViewedMessage.exists()) {
-              const orderMessages = [
-                snapshotLastViewedMessage.val(),
-                message.id
-              ].sort(new Intl.Collator().compare)
-              if (orderMessages[0] === snapshotLastViewedMessage.val()) {
-                await set(
-                  ref(
-                    database,
-                    `rooms/${roomId}/users/${sender}/last-viewed-message`
-                  ),
-                  message.id
-                )
-              }
-            } else {
-              await set(
-                ref(
-                  database,
-                  `rooms/${roomId}/users/${sender}/last-viewed-message`
-                ),
-                message.id
-              )
-            }
-          } catch (error) {
-            console.error(error)
-          } finally {
-            observer.current?.disconnect()
-          }
+        setIsVisible(true)
+        observer.current?.disconnect()
       }
     }
 
@@ -102,7 +64,74 @@ export function MessageComponent({
     return () => {
       observer.current?.disconnect()
     }
-  }, [message, sender, roomId])
+  }, [message.id])
+
+  useEffect(() => {
+    if (!(isVisible ?? false) || iHaveSeen || isMe) return
+
+    async function storeLastViewedMessage(): Promise<void> {
+      if (message.id !== null && roomId !== null)
+        try {
+          await set(
+            ref(database, `messages/${roomId}/${message.id}/viewed/${sender}`),
+            true
+          )
+
+          const snapshotLastViewedMessage = await get(
+            ref(database, `rooms/${roomId}/users/${sender}/last-viewed-message`)
+          )
+
+          if (snapshotLastViewedMessage.exists()) {
+            const timestampLastViewedMessage = (
+              await get(
+                ref(
+                  database,
+                  `messages/${roomId}/${
+                    snapshotLastViewedMessage.val() as string
+                  }/timestamp`
+                )
+              )
+            ).val()
+
+            const orderMessages = [
+              timestampLastViewedMessage,
+              message.timestamp
+            ].sort((a, b) => a - b)
+            if (orderMessages[0] === timestampLastViewedMessage) {
+              await set(
+                ref(
+                  database,
+                  `rooms/${roomId}/users/${sender}/last-viewed-message`
+                ),
+                message.id
+              )
+            }
+          } else {
+            await set(
+              ref(
+                database,
+                `rooms/${roomId}/users/${sender}/last-viewed-message`
+              ),
+              message.id
+            )
+          }
+        } catch (error) {
+          console.error(error)
+        } finally {
+          observer.current?.disconnect()
+        }
+    }
+
+    void storeLastViewedMessage()
+  }, [
+    message.id,
+    message.timestamp,
+    roomId,
+    sender,
+    isVisible,
+    iHaveSeen,
+    isMe
+  ])
 
   if (message.id === null) return null
 

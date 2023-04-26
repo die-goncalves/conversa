@@ -1,6 +1,16 @@
 import { ToastContainer, type ToastContainerProps } from 'react-toastify'
 import styled, { createGlobalStyle } from 'styled-components'
 
+// @media (min-width: 320px) {  }
+// @media (min-width: 360px) {  }
+// @media (min-width: 412px) {  }
+// @media (min-width: 640px) {  }
+// @media (min-width: 768px) {  }
+// @media (min-width: 1024px) {  }
+// @media (min-width: 1280px) {  }
+// @media (min-width: 1366px) {  }
+// @media (min-width: 1440px) {  }
+
 export const GlobalStyle = createGlobalStyle`
   :root {
     --gray-900: #1F1E20;
@@ -50,15 +60,34 @@ export const GlobalStyle = createGlobalStyle`
     color: var(--violet-50);
 
     font-family: 'Assistant', sans-serif;
-    font-size: 1rem;
-    line-height: 1.5rem;
     font-weight: 400;
   }
 
-  button, textarea, input, select, a {
+  button, textarea, input, input::file-selector-button, select, a {
     font: inherit;
     line-height: inherit;
     color: inherit;
+  }
+
+  @media (min-width: 320px) { 
+    body {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+    h1 {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+  @media (min-width: 480px) { 
+    body {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+    h1 {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
   }
 `
 
@@ -82,6 +111,15 @@ export const StyledToastContainer = styled(ToastContainer)<ToastContainerProps>`
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 400;
+
+    @media (min-width: 320px) {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+    @media (min-width: 640px) {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
   }
   .Toastify__toast--warning {
     svg {

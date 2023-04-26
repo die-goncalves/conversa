@@ -14,6 +14,7 @@ import {
   Separator,
   SignInContainer
 } from './styles'
+import { useMediaQuery } from 'react-responsive'
 
 const schema = zod.object({
   email: zod
@@ -25,6 +26,9 @@ const schema = zod.object({
 type Schema = zod.infer<typeof schema>
 
 export function SignIn(): JSX.Element {
+  const isSmallScreen = useMediaQuery({
+    query: '(min-width: 320px) and (max-width: 639px)'
+  })
   const {
     onSignInWithEmailAndPassword,
     onSignInWithGoogle,
@@ -52,12 +56,20 @@ export function SignIn(): JSX.Element {
   return (
     <PageContainer>
       <SignInContainer>
-        <LogoBox>
-          <LogoSVG />
-          <span>Conversa</span>
-        </LogoBox>
+        {!isSmallScreen && (
+          <LogoBox>
+            <LogoSVG />
+            <span>Conversa</span>
+          </LogoBox>
+        )}
 
         <Header>
+          {isSmallScreen && (
+            <LogoBox>
+              <LogoSVG />
+              <span>Conversa</span>
+            </LogoBox>
+          )}
           <h1>Faça o seu login</h1>
         </Header>
 

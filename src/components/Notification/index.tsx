@@ -1,4 +1,9 @@
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { onValue, ref, remove, set } from 'firebase/database'
+import { database } from '../../services/firebaseConfig'
+import { AuthContext } from '../../contexts/AuthContext'
+import { notificationFormat } from '../../utils/formatDate'
 import {
   NotificationButton,
   StyledDropdownMenuArrow,
@@ -7,11 +12,6 @@ import {
   StyledDropdownMenuItemClearAll,
   StyledDropdownMenuItemEmptyList
 } from './styles'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { onValue, ref, remove, set } from 'firebase/database'
-import { database } from '../../services/firebaseConfig'
-import { AuthContext } from '../../contexts/AuthContext'
-import { notificationFormat, timeAgo } from '../../utils/formatDate'
 
 interface INotification {
   id: string

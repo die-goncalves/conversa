@@ -3,14 +3,16 @@ import styled from 'styled-components'
 export const RoomContainer = styled.div`
   position: relative;
   display: flex;
-  flex: 1;
-  background: var(--gray-900);
+  flex-direction: column;
+  width: 100vw;
+  height: 100svh;
 
   overflow: auto;
   scrollbar-gutter: stable;
 
   &::-webkit-scrollbar {
     width: 1vw;
+    height: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -30,17 +32,27 @@ export const RoomContainer = styled.div`
   }
 `
 
+export const StyledHeader = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 56px;
+  padding: 8px 16px;
+  gap: 16px;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`
+
 export const ContentContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: auto;
-
-  & > div[id='progress-bar'] {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+  height: 100%;
 `
 
 export const MessagesBox = styled.ul`
@@ -48,10 +60,19 @@ export const MessagesBox = styled.ul`
   flex-direction: column;
   list-style: none;
   gap: 1rem;
-  margin-top: 2rem;
-  margin-right: 2rem;
-  margin-bottom: 1rem;
-  margin-left: 2rem;
+
+  @media (min-width: 320px) {
+    margin-top: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 0rem;
+    margin-left: 1rem;
+  }
+  @media (min-width: 640px) {
+    margin-top: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 1rem;
+    margin-left: 2rem;
+  }
 `
 
 export const Loader = styled.div`
@@ -62,8 +83,6 @@ export const Loader = styled.div`
 
 export const FABScrollToEndOfMessages = styled.button`
   position: fixed;
-  right: 48px;
-  bottom: 104px;
   box-sizing: border-box;
   display: flex;
   height: 2.5rem;
@@ -94,12 +113,19 @@ export const FABScrollToEndOfMessages = styled.button`
     height: 1.5rem;
     fill: var(--violet-300);
   }
+
+  @media (min-width: 320px) {
+    right: 28px;
+    bottom: 88px;
+  }
+  @media (min-width: 640px) {
+    right: 48px;
+    bottom: 104px;
+  }
 `
 
 export const FABGetOldMessages = styled.button`
-  position: absolute;
-  top: 32px;
-  right: 32px;
+  /* position: absolute; */
   box-sizing: border-box;
   display: flex;
   height: 2.5rem;
@@ -129,5 +155,14 @@ export const FABGetOldMessages = styled.button`
   &:disabled {
     cursor: wait;
     opacity: 0.8;
+  }
+
+  @media (min-width: 320px) {
+    /* top: 16px;
+    right: 16px; */
+  }
+  @media (min-width: 640px) {
+    /* top: 32px;
+    right: 32px; */
   }
 `

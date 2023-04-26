@@ -4,7 +4,8 @@ export const RoomDetailsContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: 100vw;
+  height: 100svh;
 
   background: var(--gray-900);
 
@@ -13,6 +14,7 @@ export const RoomDetailsContainer = styled.div`
 
   &::-webkit-scrollbar {
     width: 1vw;
+    height: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -30,94 +32,72 @@ export const RoomDetailsContainer = styled.div`
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
   }
+`
 
-  div[id='progress-bar'] {
-    padding-left: 2rem;
-    padding-right: 2rem;
+export const StyledHeader = styled.header`
+  @media (min-width: 320px) {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 8px 16px;
+    gap: 16px;
   }
 `
 
 export const ParticipantSection = styled.section`
   display: flex;
-  padding: 0 2rem;
   width: 100%;
   flex-direction: column;
 
-  margin-top: 2rem;
   & + section {
-    margin-top: 2rem;
+    @media (min-width: 320px) {
+      margin-top: 1rem;
+    }
+    @media (min-width: 640px) {
+      margin-top: 2rem;
+    }
   }
 
   h2 {
     font-weight: 700;
     font-size: 1rem;
     margin-bottom: 1rem;
+
+    @media (min-width: 320px) {
+    }
+  }
+
+  @media (min-width: 320px) {
+    margin-top: 1rem;
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) {
+    margin-top: 2rem;
+    padding: 0 2rem;
   }
 `
 
 export const ParticipantGallery = styled.div`
-  /* display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 1rem; */
   column-count: 3;
   column-gap: 1rem;
 
-  /* & > div {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-    background: var(--gray-800);
-    box-shadow: var(--shadow);
-    border-radius: 4px;
-
-    &.adm {
-      & > div:last-of-type {
-        display: flex;
-        flex: 1;
-        svg {
-          margin: auto;
-          width: 1.5rem;
-          height: 1.5rem;
-          fill: var(--violet-300);
-        }
-      }
-    }
-
-    & > div:first-of-type {
-      display: flex;
-      flex-direction: column;
-
-      & > span:first-of-type {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-        font-weight: 500;
-      }
-      & > span:last-of-type {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-        font-weight: 400;
-        opacity: 0.6;
-      }
-    }
-    img {
-      width: 3.5rem;
-      height: 3.5rem;
-      margin-right: 0.5rem;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-  } */
+  @media (min-width: 320px) {
+    column-count: 1;
+  }
 `
 
 export const ActionSection = styled.section`
   display: flex;
-  padding: 0 2rem;
   width: 100%;
   flex-direction: column;
 
   & + section {
-    margin-top: 2rem;
+    @media (min-width: 320px) {
+      margin-top: 1rem;
+    }
+    @media (min-width: 640px) {
+      margin-top: 2rem;
+    }
   }
 
   h2 {
@@ -138,6 +118,10 @@ export const ActionSection = styled.section`
     box-shadow: var(--shadow);
     border-radius: 4px;
     cursor: pointer;
+
+    span {
+      text-align: start;
+    }
 
     & + button {
       margin-top: 1rem;
@@ -183,11 +167,17 @@ export const ActionSection = styled.section`
     line-height: 1.25rem;
     color: var(--red-300);
   }
+
+  @media (min-width: 320px) {
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0 2rem;
+  }
 `
 
 export const BlockedSection = styled.section`
   display: flex;
-  padding: 0 2rem;
   width: 100%;
   flex-direction: column;
 
@@ -196,9 +186,20 @@ export const BlockedSection = styled.section`
     font-size: 1rem;
     margin-bottom: 1rem;
   }
+
+  @media (min-width: 320px) {
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0 2rem;
+  }
 `
 
 export const BlockedParticipantGallery = styled.div`
   column-count: 3;
   column-gap: 1rem;
+
+  @media (min-width: 320px) {
+    column-count: 1;
+  }
 `

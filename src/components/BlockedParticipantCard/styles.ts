@@ -17,46 +17,39 @@ const DefaultParticipantCard = css`
   box-shadow: var(--shadow);
   border-radius: 4px;
 
-  &.adm {
-    & > div:last-of-type {
-      display: flex;
-      flex: 1;
-      svg {
-        margin: auto;
-        width: 1.5rem;
-        height: 1.5rem;
-        fill: var(--violet-300);
-      }
-    }
-  }
-
-  & > div:first-of-type {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    & > span:first-of-type {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      font-weight: 500;
-    }
-    & > span:last-of-type {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      font-weight: 400;
-      opacity: 0.6;
-    }
-  }
   img {
     height: 100%;
     margin-right: 0.5rem;
     border-radius: 4px;
     object-fit: cover;
   }
-`
 
-export const ParticipantCardContainer = styled.div`
-  ${DefaultParticipantCard}
+  & > div:first-of-type {
+    display: flex;
+    padding-right: 8px;
+    flex-direction: column;
+    flex: 1;
+    &,
+    & > * {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & > span:first-of-type {
+      text-align: start;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      font-weight: 500;
+    }
+    & > span:last-of-type {
+      text-align: start;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      font-weight: 400;
+      opacity: 0.6;
+    }
+  }
 `
 
 export const DropdownMenuParticipantCard = styled.button`

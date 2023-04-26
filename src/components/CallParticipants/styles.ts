@@ -4,7 +4,13 @@ export const CallWrapper = styled.div`
   display: flex;
   flex: 1;
   overflow: hidden;
-  margin: 2rem 2rem 0;
+
+  @media (min-width: 320px) {
+    flex-direction: column;
+  }
+  @media (min-width: 640px) {
+    margin: 2rem 2rem 0;
+  }
 `
 
 export const CallParticipantsContainer = styled.div`

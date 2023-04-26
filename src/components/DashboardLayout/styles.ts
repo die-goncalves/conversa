@@ -37,6 +37,10 @@ export const SidebarContainer = styled.div`
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
   }
+
+  @media (min-width: 320px) {
+    /* display: none; */
+  }
 `
 
 export const Header = styled.div`

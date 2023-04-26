@@ -2,8 +2,8 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { RoomContext } from '../../contexts/RoomContext'
 import scrollIntoView from 'scroll-into-view'
+import { RoomContext } from '../../contexts/RoomContext'
 import { SendMessageContainer } from './styles'
 
 interface IMessage {

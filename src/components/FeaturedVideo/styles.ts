@@ -2,8 +2,17 @@ import styled from 'styled-components'
 
 export const FeaturedVideoContainer = styled.div`
   position: relative;
-  width: 80%;
-  margin-right: 2rem;
+
+  @media (min-width: 320px) {
+    display: flex;
+    padding: 0.5rem 1rem 0rem;
+    width: 100%;
+    height: 80%;
+  }
+  @media (min-width: 640px) {
+    width: 80%;
+    margin-right: 2rem;
+  }
 `
 
 export const VideoBox = styled.div`

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {
   child,
@@ -13,7 +13,6 @@ import { database } from '../../services/firebaseConfig'
 import { toast } from 'react-toastify'
 import {
   DropdownMenuParticipantCard,
-  ParticipantCardContainer,
   StyledDropdownMenuArrow,
   StyledDropdownMenuContent,
   StyledDropdownMenuItem
@@ -21,24 +20,12 @@ import {
 
 interface IBlockedParticipantCard {
   roomId: string
-  userId: string | undefined
   participantId: string
-  adms: Record<
-    string,
-    {
-      displayName: string
-      email: string
-      isAnonymous: boolean
-      photoURL: string
-    }
-  >
 }
 
 export function BlockedParticipantCard({
   roomId,
-  userId,
-  participantId,
-  adms
+  participantId
 }: IBlockedParticipantCard): JSX.Element | null {
   const [participant, setParticipant] = useState<
     Record<
@@ -77,10 +64,6 @@ export function BlockedParticipantCard({
     }
   }
 
-  const isUserAdm = useMemo(() => {
-    return userId !== undefined && Object.keys(adms).includes(userId)
-  }, [userId, adms])
-
   useEffect(() => {
     void (async () => {
       const res = await get(ref(database, `users/${participantId}`))
@@ -91,18 +74,6 @@ export function BlockedParticipantCard({
   }, [participantId])
 
   if (participant === undefined) return null
-
-  if (!isUserAdm) {
-    return (
-      <ParticipantCardContainer>
-        <img src={Object.values(participant)[0].photoURL} alt="" />
-        <div>
-          <span>{Object.values(participant)[0].displayName}</span>
-          <span>{Object.values(participant)[0].email}</span>
-        </div>
-      </ParticipantCardContainer>
-    )
-  }
 
   return (
     <DropdownMenu.Root modal>

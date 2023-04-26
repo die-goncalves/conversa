@@ -2,8 +2,14 @@ import styled from 'styled-components'
 
 export const RowContainer = styled.li`
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 3rem 1fr;
+
+  @media (min-width: 320px) {
+    display: flex;
+  }
+  @media (min-width: 640px) {
+    display: grid;
+    grid-template-columns: 1fr 3rem 1fr;
+  }
 `
 
 interface IMessageContainerProps {
@@ -15,32 +21,44 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
   justify-content: ${props => (props.isMe ? 'flex-end' : 'flex-start')};
   grid-column-start: ${props => (props.isMe ? 3 : 1)};
   flex: 1;
-  gap: 0.5rem;
 
   & > div {
     display: flex;
     flex-direction: column;
-    background: var(--gray-800);
-    padding: 1rem;
-    min-width: 50%;
+    background: ${props =>
+      props.isMe ? 'var(--gray-700)' : 'var(--gray-800)'};
     border-radius: 4px;
-    box-shadow: var(--shadow);
+
+    box-shadow: ${props => (props.isMe ? 'var(--shadow-md)' : 'var(--shadow)')};
+    min-width: 50%;
 
     header {
       display: flex;
-      padding: 0.5rem 1rem;
-      background: var(--gray-700);
       border-radius: 4px;
-      box-shadow: var(--shadow);
 
       span {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 1rem;
-        line-height: 1.5rem;
+        @media (min-width: 320px) {
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+        }
+        @media (min-width: 640px) {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 1rem;
+          line-height: 1.5rem;
+        }
+      }
+
+      @media (min-width: 320px) {
+        padding: 0.5rem 0.5rem 0;
+      }
+      @media (min-width: 640px) {
+        padding: 0.5rem 1rem;
+        background: var(--gray-700);
+        box-shadow: var(--shadow);
       }
     }
     main {
-      margin-top: 0.5rem;
+      margin-top: ${props => (props.isMe ? 0 : '0.5rem')};
       border-radius: 4px;
       word-break: break-word;
       align-self: ${props => (props.isMe ? 'flex-end' : 'flex-start')};
@@ -78,17 +96,36 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
           drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.35));
       }
     }
+
+    @media (min-width: 320px) {
+      padding: 0.5rem;
+      max-width: 80%;
+    }
+    @media (min-width: 640px) {
+      gap: 0.5rem;
+      padding: 1rem;
+    }
   }
 
   img {
     position: sticky;
     top: 8px;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 4px;
     object-fit: cover;
+    margin-top: 8px;
+    margin-bottom: 8px;
 
     box-shadow: var(--shadow);
+
+    @media (min-width: 320px) {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 4px 0 0 4px;
+    }
+    @media (min-width: 640px) {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 4px;
+    }
   }
 `
 
@@ -109,11 +146,10 @@ export const ADMMessage = styled.li<IADMMessage>`
   display: flex;
   margin: 0 auto;
   background: var(--gray-800);
-  padding: 1rem;
+
   min-width: auto;
   border-radius: 4px;
   box-shadow: var(--shadow);
-  gap: 1rem;
 
   svg {
     fill: ${props => {
@@ -138,5 +174,14 @@ export const ADMMessage = styled.li<IADMMessage>`
       margin-top: 0.5rem;
       opacity: 0.6;
     }
+  }
+
+  @media (min-width: 320px) {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  @media (min-width: 640px) {
+    padding: 1rem;
+    gap: 1rem;
   }
 `

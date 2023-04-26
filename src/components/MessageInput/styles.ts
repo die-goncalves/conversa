@@ -6,7 +6,6 @@ export const SendMessageContainer = styled.div`
   position: sticky;
   bottom: 0;
   width: 100%;
-  padding: 1rem 2rem;
   background: var(--gray-900);
 
   form {
@@ -112,5 +111,12 @@ export const SendMessageContainer = styled.div`
         }
       }
     }
+  }
+
+  @media (min-width: 320px) {
+    padding: 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 1rem 2rem;
   }
 `

@@ -60,7 +60,6 @@ export const NotificationButton = styled.button`
 `
 
 export const StyledDropdownMenuContent = styled(DropdownMenuContent)`
-  min-width: 320px;
   background-color: var(--gray-700);
   border-radius: 4px;
   padding: 0.5rem;
@@ -110,6 +109,14 @@ export const StyledDropdownMenuContent = styled(DropdownMenuContent)`
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
   }
+
+  @media (min-width: 320px) {
+    min-width: 240px;
+    max-width: 320px;
+  }
+  @media (min-width: 640px) {
+    min-width: 320px;
+  }
 `
 
 interface IStyledDropdownMenuItemNotification {
@@ -120,11 +127,9 @@ export const StyledDropdownMenuItemNotification = styled(
 )<IStyledDropdownMenuItemNotification>`
   display: flex;
   align-items: center;
-  height: 3.5rem;
   width: 100%;
   background-color: transparent;
   border: 2px solid transparent;
-  padding: 0 1rem;
   border-radius: 4px;
 
   ${props =>
@@ -164,14 +169,23 @@ export const StyledDropdownMenuItemNotification = styled(
     box-shadow 150ms linear;
 
   svg {
-    margin-right: 1rem;
     width: 1.5rem;
     height: 1.5rem;
+
+    @media (min-width: 320px) {
+      margin-right: 0.5rem;
+    }
+    @media (min-width: 640px) {
+      margin-right: 1rem;
+    }
   }
 
   & div {
     display: flex;
     flex-direction: column;
+    p {
+      overflow-wrap: break-word;
+    }
     span {
       font-size: 0.875rem;
       line-height: 1.25rem;
@@ -179,6 +193,14 @@ export const StyledDropdownMenuItemNotification = styled(
       opacity: 0.6;
       margin-top: 0.25rem;
     }
+  }
+
+  @media (min-width: 320px) {
+    padding: 0 0.5rem;
+  }
+  @media (min-width: 640px) {
+    height: 3.5rem;
+    padding: 0 1rem;
   }
 `
 

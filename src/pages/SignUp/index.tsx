@@ -14,6 +14,7 @@ import {
   Separator,
   SignUpContainer
 } from './styles'
+import { useMediaQuery } from 'react-responsive'
 
 const schema = zod.object({
   email: zod
@@ -25,6 +26,9 @@ const schema = zod.object({
 type Schema = zod.infer<typeof schema>
 
 export function SignUp(): JSX.Element {
+  const isSmallScreen = useMediaQuery({
+    query: '(min-width: 320px) and (max-width: 639px)'
+  })
   const {
     onCreateUserWithEmailAndPassword,
     onSignInWithGoogle,
@@ -52,12 +56,20 @@ export function SignUp(): JSX.Element {
   return (
     <PageContainer>
       <SignUpContainer>
-        <LogoBox>
-          <LogoSVG />
-          <span>Conversa</span>
-        </LogoBox>
+        {!isSmallScreen && (
+          <LogoBox>
+            <LogoSVG />
+            <span>Conversa</span>
+          </LogoBox>
+        )}
 
         <Header>
+          {isSmallScreen && (
+            <LogoBox>
+              <LogoSVG />
+              <span>Conversa</span>
+            </LogoBox>
+          )}
           <h1>Faça o seu cadastro</h1>
         </Header>
 

@@ -2,33 +2,77 @@ import styled from 'styled-components'
 
 export const PageContainer = styled.div`
   width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
+  height: 100svh;
+
+  overflow: auto;
+  scrollbar-gutter: auto;
+
+  &::-webkit-scrollbar {
+    width: 1vw;
+    height: 1vw;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: var(--gray-600);
+    box-shadow: var(--shadow-lg);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-700);
+    box-shadow: var(--shadow-md);
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: var(--gray-800);
+    box-shadow: var(--shadow);
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--gray-900);
+  }
+
+  @media (min-width: 320px) {
+    background: var(--gray-800);
+  }
+  @media (min-width: 640px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `
 
 export const SignUpContainer = styled.div`
   position: relative;
-  width: 30rem;
-  padding: 2rem;
-  border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
-  background: var(--gray-800);
   margin: auto;
-  box-shadow: var(--shadow);
+
+  @media (min-width: 320px) {
+    width: 100%;
+    padding: 1rem;
+  }
+  @media (min-width: 640px) {
+    width: 30rem;
+    padding: 2rem;
+    border-radius: 4px;
+    background: var(--gray-800);
+    box-shadow: var(--shadow);
+  }
 `
 
 export const Header = styled.header`
   display: flex;
-  margin: 0 auto;
 
   h1 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+  }
+
+  @media (min-width: 320px) {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 640px) {
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
   }
 `
 
@@ -221,13 +265,6 @@ export const Footer = styled.footer`
 export const LogoBox = styled.div`
   display: flex;
   align-items: center;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  padding: 0.5rem;
-  background: var(--gray-800);
-  border-radius: 0.5rem;
 
   span {
     margin-left: 0.5rem;
@@ -235,5 +272,17 @@ export const LogoBox = styled.div`
 
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
+  }
+
+  @media (min-width: 320px) {
+  }
+  @media (min-width: 640px) {
+    border-radius: 4px;
+    padding: 0.5rem;
+    background: var(--gray-800);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
   }
 `

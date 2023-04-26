@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { largestRect } from 'rect-scaler'
+import { useMediaQuery } from 'react-responsive'
 import { DefaultVideo } from '../DefaultVideo'
 import { FeaturedVideo } from '../FeaturedVideo'
 import { CallParticipantsContainer, CallWrapper, FlexWrapper } from './styles'
@@ -30,6 +31,9 @@ interface ICallParticipants {
 }
 
 export function CallParticipants({ call }: ICallParticipants): JSX.Element {
+  const isSmallScreen = useMediaQuery({
+    query: '(min-width: 320px) and (max-width: 639px)'
+  })
   const [featuredDefaultVideo, setFeaturedDefaultVideo] =
     useState<HTMLVideoElement | null>(null)
   const resizeObserverRef = useRef<ResizeObserver>()
@@ -43,7 +47,7 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
 
     resizeObserverRef.current = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect
-      const margin = 8
+      const margin = isSmallScreen ? 16 : 8
 
       const numRects =
         featuredDefaultVideo !== null && call.participants.length > 1
@@ -66,7 +70,13 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
         if (defaultVideoContainerElement !== null) {
           defaultVideoContainerElement.style.width = `${sizes.width}px`
           defaultVideoContainerElement.style.height = `${sizes.height}px`
-          defaultVideoContainerElement.style.margin = `${sizes.margin}px`
+          if (isSmallScreen) {
+            defaultVideoContainerElement.style.margin = `${
+              sizes.margin / 2
+            }px ${sizes.margin}px`
+          } else {
+            defaultVideoContainerElement.style.margin = `${sizes.margin}px`
+          }
         }
       })
     })
@@ -78,7 +88,7 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
     return () => {
       resizeObserverRef.current?.disconnect()
     }
-  }, [call.participants, featuredDefaultVideo])
+  }, [call.participants, featuredDefaultVideo, isSmallScreen])
 
   const handleAddFeaturedVideo = (id: string): void => {
     const videoEl = document.getElementById(id) as HTMLVideoElement

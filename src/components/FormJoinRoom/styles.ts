@@ -5,8 +5,8 @@ export const FormJoinRoomContainer = styled.form`
   flex-direction: column;
   background: var(--gray-800);
   box-shadow: var(--shadow);
-  margin: 1rem;
-  padding: 1rem;
+  /* margin: 1rem;
+  padding: 1rem; */
   border-radius: 4px;
 
   label {

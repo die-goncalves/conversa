@@ -1,10 +1,18 @@
-import { useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RoomContext } from '../../contexts/RoomContext'
 import { AuthContext } from '../../contexts/AuthContext'
-import { ContentContainer, DashboardContainer, FormContainer } from './styles'
+import {
+  ContentContainer,
+  DashboardContainer,
+  FormContainer,
+  StyledHeader
+} from './styles'
+import { SidebarMenu } from '../../components/SidebarMenu'
+import { Link } from 'react-router-dom'
+import { LogoSVG } from '../../components/LogoSVG'
 
 const schema = zod.object({
   room: zod.string().min(1, { message: 'Campo obrigatório' }),
@@ -13,7 +21,7 @@ const schema = zod.object({
     .refine(files => Object.entries(files).length >= 1, {
       message: 'Campo obrigatório'
     }),
-  type: zod.enum(['chat', 'voice', 'video'], {
+  type: zod.enum(['chat', 'video'], {
     invalid_type_error: 'Nenhuma opção selecionada'
   })
 })
@@ -47,6 +55,14 @@ export function Dashboard(): JSX.Element {
   return (
     <DashboardContainer>
       <ContentContainer>
+        <StyledHeader>
+          <SidebarMenu />
+          <Link to={'/dashboard'}>
+            <LogoSVG />
+            <span>Conversa</span>
+          </Link>
+        </StyledHeader>
+
         <FormContainer>
           <h1>Criação de sala</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -75,30 +91,6 @@ export function Dashboard(): JSX.Element {
                       <path d="M240 657h313v-60H240v60Zm0-130h480v-60H240v60Zm0-130h480v-60H240v60ZM80 976V236q0-23 18-41.5t42-18.5h680q23 0 41.5 18.5T880 236v520q0 23-18.5 41.5T820 816H240L80 976Zm60-145 75-75h605V236H140v595Zm0-595v595-595Z" />
                     </svg>
                     <span>Texto</span>
-                  </label>
-                </div>
-
-                <div>
-                  <input
-                    id="voice"
-                    type="radio"
-                    value="voice"
-                    {...register('type', { required: true })}
-                    {...(errors.type != null && {
-                      'aria-invalid': true,
-                      'aria-describedby': 'type_error'
-                    })}
-                  />
-                  <label htmlFor="voice">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="48"
-                      viewBox="0 96 960 960"
-                      width="48"
-                    >
-                      <path d="M480 633q-43 0-72-30.917-29-30.916-29-75.083V276q0-41.667 29.441-70.833Q437.882 176 479.941 176t71.559 29.167Q581 234.333 581 276v251q0 44.167-29 75.083Q523 633 480 633Zm0-228Zm-30 531V800q-106-11-178-89t-72-184h60q0 91 64.288 153t155.5 62Q571 742 635.5 680 700 618 700 527h60q0 106-72 184t-178 89v136h-60Zm30-363q18 0 29.5-13.5T521 527V276q0-17-11.788-28.5Q497.425 236 480 236q-17.425 0-29.212 11.5Q439 259 439 276v251q0 19 11.5 32.5T480 573Z" />
-                    </svg>
-                    <span>Voz</span>
                   </label>
                 </div>
 

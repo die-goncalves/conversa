@@ -30,12 +30,15 @@ import { database } from '../../services/firebaseConfig'
 import { Progress } from '../../components/Progress'
 import { Message } from '../../components/Message'
 import { MessageInput } from '../../components/MessageInput'
+import { SidebarMenu } from '../../components/SidebarMenu'
+import { Notification } from '../../components/Notification'
 import {
   RoomContainer,
   MessagesBox,
   ContentContainer,
   FABScrollToEndOfMessages,
-  FABGetOldMessages
+  FABGetOldMessages,
+  StyledHeader
 } from './styles'
 
 interface IMessage {
@@ -734,10 +737,26 @@ export function Room(): JSX.Element | null {
 
   return (
     <RoomContainer>
-      <ContentContainer id="content-container">
-        {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) && (
-          <Progress />
+      {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) && (
+        <Progress />
+      )}
+
+      <StyledHeader>
+        <div>
+          <SidebarMenu />
+          <Notification />
+        </div>
+
+        {!state.lastMessageId.loading && state.haveMoreOldMessages.have && (
+          <FABGetOldMessages
+            disabled={state.haveMoreOldMessages.loading}
+            onClick={getMoreOldMessages}
+          >
+            Carregar mais mensagens
+          </FABGetOldMessages>
         )}
+      </StyledHeader>
+      <ContentContainer id="content-container">
         <MessagesBox>
           {state.messages.map(message => (
             <Message
@@ -760,15 +779,6 @@ export function Room(): JSX.Element | null {
               <path d="M480 856 240 616l42-42 198 198 198-198 42 42-240 240Zm0-253L240 363l42-42 198 198 198-198 42 42-240 240Z" />
             </svg>
           </FABScrollToEndOfMessages>
-        )}
-
-        {!state.lastMessageId.loading && state.haveMoreOldMessages.have && (
-          <FABGetOldMessages
-            disabled={state.haveMoreOldMessages.loading}
-            onClick={getMoreOldMessages}
-          >
-            Carregar mais mensagens
-          </FABGetOldMessages>
         )}
 
         <MessageInput

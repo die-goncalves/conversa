@@ -159,6 +159,10 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
   const writeNewMember = useCallback(
     async ({ roomId, userId }: { roomId: string; userId: string }) => {
       try {
+        const roomType = (
+          await get(ref(database, `rooms/${roomId}/type`))
+        ).val() as string
+
         const snapshotRoomByUser = await get(
           child(ref(database), `users/${userId}/rooms/${roomId}`)
         )
@@ -170,20 +174,24 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
             'join-date': serverTimestamp()
           })
 
-          const user = (await get(ref(database, `users/${userId}`))).val() as {
-            displayName: string
+          if (roomType !== 'video') {
+            const user = (
+              await get(ref(database, `users/${userId}`))
+            ).val() as {
+              displayName: string
+            }
+            const messageListRef = child(ref(database), `messages/${roomId}`)
+            const newMessageRef = push(messageListRef)
+            await set(newMessageRef, {
+              message: `Bem vindo, ${user.displayName}`,
+              type: 'enter',
+              timestamp: serverTimestamp()
+            })
+            await set(
+              ref(database, `rooms/${roomId}/users/${userId}/first-message`),
+              newMessageRef.key
+            )
           }
-          const messageListRef = child(ref(database), `messages/${roomId}`)
-          const newMessageRef = push(messageListRef)
-          await set(newMessageRef, {
-            message: `Bem vindo, ${user.displayName}`,
-            type: 'enter',
-            timestamp: serverTimestamp()
-          })
-          await set(
-            ref(database, `rooms/${roomId}/users/${userId}/first-message`),
-            newMessageRef.key
-          )
 
           toast.success('Você entrou na sala especificada!')
         } else {

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useReducer, useState } from 'react'
+import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import {
   child,
@@ -22,44 +22,101 @@ import {
   BlockedSection,
   ParticipantGallery,
   ParticipantSection,
-  RoomDetailsContainer
+  RoomDetailsContainer,
+  StyledHeader
 } from './styles'
+import { SidebarMenu } from '../../components/SidebarMenu'
+
+interface IState {
+  roomId: string | null
+  room: {
+    displayName: string
+    image: string
+    timestamp: number
+    type: 'chat' | 'voice'
+  } | null
+  iAmAdm: boolean | null
+  hasMoreThanOneAdm: boolean | null
+  iAmInTheRoom: boolean | null
+  adms: Record<
+    string,
+    {
+      displayName: string
+      email: string
+      isAnonymous: boolean
+      photoURL: string
+    }
+  >
+  users: Record<
+    string,
+    {
+      displayName: string
+      email: string
+      isAnonymous: boolean
+      photoURL: string
+    }
+  >
+  blocked: Record<string, boolean>
+}
+enum Actions {
+  'set-room-id',
+  'set-i-am-adm',
+  'set-i-am-in-the-room',
+  'set-adms',
+  'set-users',
+  'set-blocked',
+  'has-more-than-one-adm'
+}
+interface IActions {
+  type: keyof typeof Actions
+  payload?: any
+}
 
 export function Details(): JSX.Element | null {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
-  const [inTheRoom, setInTheRoom] = useState(false)
   const { userState } = useContext(AuthContext)
   const { roomId } = useLoaderData() as {
     roomId: string
   }
-  const [state, dispatch] = useReducer(
-    function reducer(
-      state: {
-        adms: Record<
-          string,
-          {
-            displayName: string
-            email: string
-            isAnonymous: boolean
-            photoURL: string
-          }
-        >
-        users: Record<
-          string,
-          {
-            displayName: string
-            email: string
-            isAnonymous: boolean
-            photoURL: string
-          }
-        >
-        blocked: Record<string, boolean>
-      },
-      action: any
-    ) {
+  const [detail, dispatch] = useReducer(
+    function reducer(state: IState, action: IActions) {
       switch (action.type) {
-        case 'adms': {
+        case 'set-room-id': {
+          const typedPayload = action.payload as {
+            id: string | null
+            room: {
+              displayName: string
+              image: string
+              timestamp: number
+              type: 'chat' | 'voice'
+            }
+          }
+          return {
+            ...state,
+            roomId: typedPayload.id,
+            room: typedPayload.room
+          }
+        }
+        case 'set-i-am-adm': {
+          return {
+            ...state,
+            iAmAdm: Object.keys(state.adms).includes(action.payload)
+          }
+        }
+        case 'has-more-than-one-adm': {
+          return {
+            ...state,
+            hasMoreThanOneAdm: Object.keys(state.adms).length > 1
+          }
+        }
+        case 'set-i-am-in-the-room': {
+          return {
+            ...state,
+            iAmInTheRoom: action.payload
+          }
+        }
+        case 'set-adms': {
           return {
             ...state,
             adms: action.payload as Record<
@@ -73,7 +130,7 @@ export function Details(): JSX.Element | null {
             >
           }
         }
-        case 'users': {
+        case 'set-users': {
           return {
             ...state,
             users: action.payload as Record<
@@ -87,7 +144,7 @@ export function Details(): JSX.Element | null {
             >
           }
         }
-        case 'blocked': {
+        case 'set-blocked': {
           return {
             ...state,
             blocked: action.payload as Record<string, boolean>
@@ -98,43 +155,69 @@ export function Details(): JSX.Element | null {
       }
     },
     {
+      roomId: null,
+      room: null,
+      iAmAdm: null,
+      hasMoreThanOneAdm: null,
+      iAmInTheRoom: null,
       adms: {},
       users: {},
       blocked: {}
     }
   )
 
-  const iOwnTheRoom =
-    userState.user?.uid !== undefined &&
-    Object.keys(state.adms).includes(userState.user.uid)
-  const hasMoreThanOneAdm = Object.keys(state.adms).length > 1
-
-  async function removeUserFromRoom(id: string | undefined): Promise<void> {
-    try {
-      if (id !== undefined) {
-        const userDisplayName = (
-          await get(ref(database, `users/${id}/displayName`))
-        ).val() as string
-
-        await set(push(child(ref(database), `messages/${roomId}`)), {
-          message: `${userDisplayName} saiu da sala`,
-          type: 'out',
-          timestamp: serverTimestamp()
-        })
-
-        if (iOwnTheRoom)
-          await remove(ref(database, `rooms/${roomId}/adms/${id}`))
-        await remove(ref(database, `rooms/${roomId}/users/${id}`))
-        await remove(ref(database, `users/${id}/rooms/${roomId}`))
-
-        toast.success('Você saiu da sala.')
-        navigate('/dashboard')
+  useEffect(() => {
+    async function getRoomInfo(): Promise<void> {
+      const room = (await get(ref(database, `rooms/${roomId}`))).val() as {
+        displayName: string
+        image: string
+        timestamp: number
+        type: 'chat' | 'voice'
       }
-    } catch (error) {
-      toast.error('Falha ao sair da sala.')
-      console.error(error)
+
+      dispatch({ type: 'set-room-id', payload: { id: roomId, room } })
     }
-  }
+    void getRoomInfo()
+  }, [roomId])
+
+  useEffect(() => {
+    if (detail.roomId != null)
+      dispatch({ type: 'set-i-am-adm', payload: userState.user?.uid })
+  }, [detail.roomId, detail.adms, userState.user])
+
+  useEffect(() => {
+    if (detail.roomId != null) dispatch({ type: 'has-more-than-one-adm' })
+  }, [detail.roomId, detail.adms])
+
+  const removeUserFromRoom = useCallback(
+    async (id: string | undefined) => {
+      try {
+        if (id !== undefined && detail.roomId != null) {
+          const userDisplayName = (
+            await get(ref(database, `users/${id}/displayName`))
+          ).val() as string
+
+          await set(push(child(ref(database), `messages/${detail.roomId}`)), {
+            message: `${userDisplayName} saiu da sala`,
+            type: 'out',
+            timestamp: serverTimestamp()
+          })
+
+          if (detail.iAmAdm ?? false)
+            await remove(ref(database, `rooms/${detail.roomId}/adms/${id}`))
+          await remove(ref(database, `rooms/${detail.roomId}/users/${id}`))
+          await remove(ref(database, `users/${id}/rooms/${detail.roomId}`))
+
+          toast.success('Você saiu da sala.')
+          navigate('/dashboard')
+        }
+      } catch (error) {
+        toast.error('Falha ao sair da sala.')
+        console.error(error)
+      }
+    },
+    [detail.roomId, detail.iAmAdm]
+  )
 
   async function deleteRoom(roomId: string): Promise<void> {
     try {
@@ -159,29 +242,32 @@ export function Details(): JSX.Element | null {
     }
   }
 
-  async function removeUserAdm(userId: string | undefined): Promise<void> {
-    try {
-      if (userId !== undefined) {
-        await remove(ref(database, `rooms/${roomId}/adms/${userId}`))
-        toast.success('Você não é mais administrador da sala.')
+  const removeUserAdm = useCallback(
+    async (userId: string | undefined) => {
+      try {
+        if (userId !== undefined && detail.roomId != null) {
+          await remove(ref(database, `rooms/${detail.roomId}/adms/${userId}`))
+          toast.success('Você não é mais administrador da sala.')
+        }
+      } catch (error) {
+        toast.error('Falha ao remover permissão de administrador.')
+        console.error(error)
       }
-    } catch (error) {
-      toast.error('Falha ao remover permissão de administrador.')
-      console.error(error)
-    }
-  }
+    },
+    [detail.roomId]
+  )
 
   useEffect(() => {
-    if (userState.user === null) return
+    if (userState.user === null || detail.roomId === null) return
 
     const unsubscribe = onValue(
-      ref(database, `rooms/${roomId}/users/${userState.user.uid}`),
+      ref(database, `rooms/${detail.roomId}/users/${userState.user.uid}`),
       async snapshot => {
         if (!snapshot.exists()) {
-          setInTheRoom(false)
+          dispatch({ type: 'set-i-am-in-the-room', payload: false })
           navigate('/dashboard')
         } else {
-          setInTheRoom(true)
+          dispatch({ type: 'set-i-am-in-the-room', payload: true })
         }
       }
     )
@@ -189,14 +275,16 @@ export function Details(): JSX.Element | null {
     return () => {
       unsubscribe()
     }
-  }, [userState.user, roomId])
+  }, [userState.user, detail.roomId])
 
   useEffect(() => {
+    if (detail.roomId === null) return
+
     const unsubscribe = onValue(
-      ref(database, `rooms/${roomId}/adms`),
+      ref(database, `rooms/${detail.roomId}/adms`),
       async snapshot => {
         if (snapshot.exists()) {
-          dispatch({ type: 'adms', payload: snapshot.val() })
+          dispatch({ type: 'set-adms', payload: snapshot.val() })
         }
       }
     )
@@ -204,11 +292,13 @@ export function Details(): JSX.Element | null {
     return () => {
       unsubscribe()
     }
-  }, [roomId])
+  }, [detail.roomId])
 
   useEffect(() => {
+    if (detail.roomId === null) return
+
     const unsubscribe = onValue(
-      ref(database, `rooms/${roomId}/users`),
+      ref(database, `rooms/${detail.roomId}/users`),
       async snapshot => {
         if (snapshot.exists()) {
           let users: Record<
@@ -239,7 +329,7 @@ export function Details(): JSX.Element | null {
             }
           }
           setLoading(false)
-          dispatch({ type: 'users', payload: users })
+          dispatch({ type: 'set-users', payload: users })
         }
       }
     )
@@ -247,21 +337,23 @@ export function Details(): JSX.Element | null {
     return () => {
       unsubscribe()
     }
-  }, [roomId])
+  }, [detail.roomId])
 
   useEffect(() => {
+    if (detail.roomId === null) return
+
     const unsubscribe = onValue(
-      ref(database, `rooms/${roomId}/blocked`),
+      ref(database, `rooms/${detail.roomId}/blocked`),
       snapshot => {
         if (snapshot.exists()) {
           if (snapshot.key != null)
             dispatch({
-              type: 'blocked',
+              type: 'set-blocked',
               payload: snapshot.val()
             })
         } else {
           dispatch({
-            type: 'blocked',
+            type: 'set-blocked',
             payload: {}
           })
         }
@@ -271,62 +363,92 @@ export function Details(): JSX.Element | null {
     return () => {
       unsubscribe()
     }
-  }, [])
+  }, [detail.roomId])
 
-  if (!inTheRoom) return null
+  if (detail.iAmInTheRoom !== true) return null
 
   return (
     <RoomDetailsContainer>
-      {loading ? (
-        <Progress />
-      ) : (
-        <>
-          <ParticipantSection>
-            <h2>{Object.entries(state.users).length} participantes</h2>
+      {loading && <Progress />}
 
-            <ParticipantGallery>
-              {Object.entries(state.users).map(p => {
-                return (
-                  <ParticipantCard
-                    key={p[0]}
-                    userId={userState.user?.uid}
-                    roomId={roomId}
-                    adms={state.adms}
-                    blocked={state.blocked}
-                    participant={{ [p[0]]: p[1] }}
-                  />
-                )
-              })}
-            </ParticipantGallery>
-          </ParticipantSection>
+      <StyledHeader>
+        <SidebarMenu />
 
-          <ActionSection>
-            <h2>Ações do usuário</h2>
+        <span>{detail.room?.displayName}</span>
+      </StyledHeader>
 
-            <div>
-              {iOwnTheRoom && (
-                <button
-                  onClick={async () => {
-                    await deleteRoom(roomId)
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="48"
-                    viewBox="0 96 960 960"
-                    width="48"
-                  >
-                    <path d="m361 757 119-121 120 121 47-48-119-121 119-121-47-48-120 121-119-121-48 48 120 121-120 121 48 48ZM261 936q-24 0-42-18t-18-42V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306Zm-438 0v570-570Z" />
-                  </svg>
-                  Excluir sala
-                </button>
-              )}
+      <ParticipantSection>
+        <h2>{Object.entries(detail.users).length} participantes</h2>
 
+        <ParticipantGallery>
+          {Object.entries(detail.users).map(p => {
+            return (
+              <ParticipantCard
+                key={p[0]}
+                userId={userState.user?.uid}
+                roomId={roomId}
+                adms={detail.adms}
+                blocked={detail.blocked}
+                participant={{ [p[0]]: p[1] }}
+              />
+            )
+          })}
+        </ParticipantGallery>
+      </ParticipantSection>
+
+      <ActionSection>
+        <h2>Ações do usuário</h2>
+
+        <div>
+          {(detail.iAmAdm ?? false) && (
+            <button
+              onClick={async () => {
+                await deleteRoom(roomId)
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="48"
+                viewBox="0 96 960 960"
+                width="48"
+              >
+                <path d="m361 757 119-121 120 121 47-48-119-121 119-121-47-48-120 121-119-121-48 48 120 121-120 121 48 48ZM261 936q-24 0-42-18t-18-42V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306Zm-438 0v570-570Z" />
+              </svg>
+              <span>Excluir sala</span>
+            </button>
+          )}
+
+          <button
+            onClick={async () => {
+              await removeUserFromRoom(userState.user?.uid)
+            }}
+            disabled={
+              (detail.iAmAdm ?? false) && !(detail.hasMoreThanOneAdm ?? false)
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="48"
+              viewBox="0 96 960 960"
+              width="48"
+            >
+              <path d="M180 936q-24 0-42-18t-18-42V276q0-24 18-42t42-18h291v60H180v600h291v60H180Zm486-185-43-43 102-102H375v-60h348L621 444l43-43 176 176-174 174Z" />
+            </svg>
+            <span>Sair da sala</span>
+          </button>
+          {(detail.iAmAdm ?? false) && !(detail.hasMoreThanOneAdm ?? false) && (
+            <span role="alert">
+              Para sair indique um novo administrador para a sala.
+            </span>
+          )}
+
+          {(detail.iAmAdm ?? false) && (
+            <>
               <button
                 onClick={async () => {
-                  await removeUserFromRoom(userState.user?.uid)
+                  await removeUserAdm(userState.user?.uid)
                 }}
-                disabled={iOwnTheRoom && !hasMoreThanOneAdm}
+                disabled={!(detail.hasMoreThanOneAdm ?? false)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -334,67 +456,40 @@ export function Details(): JSX.Element | null {
                   viewBox="0 96 960 960"
                   width="48"
                 >
-                  <path d="M180 936q-24 0-42-18t-18-42V276q0-24 18-42t42-18h291v60H180v600h291v60H180Zm486-185-43-43 102-102H375v-60h348L621 444l43-43 176 176-174 174Z" />
+                  <path d="m743 761-45-46q20-35 31-89.5t11-93.5V336l-260-96-188 69-46-46 234-88 320 119v238q0 59.444-15 117.722Q770 708 743 761Zm67 238L670 861q-44 44-90 72t-100 42q-143-39-231.5-164.431Q160 685.137 160 532V349L55 244l43-43 755 755-43 43ZM426 616Zm73-101Zm-19 398q42.071-14.02 80.535-39.51Q599 848 628 818L220 409v123q0 130.103 73 236.552Q366 875 480 913Z" />
                 </svg>
-                Sair da sala
+                <span>Remover permissão de administrador</span>
               </button>
-              {iOwnTheRoom && !hasMoreThanOneAdm && (
+
+              {!(detail.hasMoreThanOneAdm ?? false) && (
                 <span role="alert">
-                  Para sair indique um novo administrador para a sala.
+                  Para remover sua permissão de administrador indique um novo
+                  para a sala.
                 </span>
               )}
-
-              {iOwnTheRoom && (
-                <>
-                  <button
-                    onClick={async () => {
-                      await removeUserAdm(userState.user?.uid)
-                    }}
-                    disabled={!hasMoreThanOneAdm}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="48"
-                      viewBox="0 96 960 960"
-                      width="48"
-                    >
-                      <path d="m743 761-45-46q20-35 31-89.5t11-93.5V336l-260-96-188 69-46-46 234-88 320 119v238q0 59.444-15 117.722Q770 708 743 761Zm67 238L670 861q-44 44-90 72t-100 42q-143-39-231.5-164.431Q160 685.137 160 532V349L55 244l43-43 755 755-43 43ZM426 616Zm73-101Zm-19 398q42.071-14.02 80.535-39.51Q599 848 628 818L220 409v123q0 130.103 73 236.552Q366 875 480 913Z" />
-                    </svg>
-                    Remover permissão de administrador
-                  </button>
-
-                  {!hasMoreThanOneAdm && (
-                    <span role="alert">
-                      Para remover sua permissão de administrador indique um
-                      novo para a sala.
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
-          </ActionSection>
-
-          {iOwnTheRoom && (
-            <BlockedSection>
-              <h2>Participantes bloqueados</h2>
-
-              <BlockedParticipantGallery>
-                {Object.entries(state.blocked).map(el => {
-                  return (
-                    <BlockedParticipantCard
-                      key={`blocked-${el[0]}`}
-                      userId={userState.user?.uid}
-                      roomId={roomId}
-                      participantId={el[0]}
-                      adms={state.adms}
-                    />
-                  )
-                })}
-              </BlockedParticipantGallery>
-            </BlockedSection>
+            </>
           )}
-        </>
-      )}
+        </div>
+      </ActionSection>
+
+      {(detail.iAmAdm ?? false) &&
+        Object.entries(detail.blocked).length > 0 && (
+          <BlockedSection>
+            <h2>Participantes bloqueados</h2>
+
+            <BlockedParticipantGallery>
+              {Object.entries(detail.blocked).map(el => {
+                return (
+                  <BlockedParticipantCard
+                    key={`blocked-${el[0]}`}
+                    roomId={detail.roomId ?? ''}
+                    participantId={el[0]}
+                  />
+                )
+              })}
+            </BlockedParticipantGallery>
+          </BlockedSection>
+        )}
     </RoomDetailsContainer>
   )
 }
