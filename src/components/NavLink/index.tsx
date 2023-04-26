@@ -1,4 +1,8 @@
+import { useContext, useEffect, useState } from 'react'
 import { useLocation, Link } from 'react-router-dom'
+import { limitToLast, onValue, query, ref } from 'firebase/database'
+import { database } from '../../services/firebaseConfig'
+import { AuthContext } from '../../contexts/AuthContext'
 import { NavLinkContainer } from './styles'
 
 interface INavLink {
@@ -14,22 +18,75 @@ export function NavLink({
   roomType,
   roomDisplayName
 }: INavLink): JSX.Element {
+  const { userState } = useContext(AuthContext)
+  const [hasNewMessage, setHasNewMessage] = useState<boolean>()
   const active = useLocation().pathname.includes(roomId)
+
+  useEffect(() => {
+    if (roomType !== 'chat' || userState.user === null) return
+
+    const unsubscribe = onValue(
+      query(ref(database, `messages/${roomId}`), limitToLast(1)),
+      snapshot => {
+        if (snapshot.exists()) {
+          const message = Object.entries(snapshot.val())[0] as unknown as [
+            string,
+            {
+              message: string
+              sender?: Record<string, boolean>
+              timestamp: number
+              viewed?: Record<string, boolean>
+            }
+          ]
+
+          if (userState.user != null) {
+            if (
+              Object.keys(message[1]?.sender ?? {}).includes(
+                userState.user.uid
+              ) ||
+              Object.keys(message[1]?.viewed ?? {}).includes(userState.user.uid)
+            ) {
+              setHasNewMessage(false)
+            } else {
+              setHasNewMessage(true)
+            }
+          }
+        }
+      }
+    )
+
+    return () => {
+      unsubscribe()
+    }
+  }, [roomId, roomType, userState])
+
   return (
     <NavLinkContainer>
-      <div>
-        <img src={roomImage} alt="" />
-        <Link
-          to={
-            roomType === 'chat'
-              ? `/dashboard/room/${roomId}`
-              : `/dashboard/call/${roomId}`
-          }
-          className={active ? 'active' : ''}
-        >
-          {roomDisplayName}
-        </Link>
-      </div>
+      <img src={roomImage} alt="" />
+
+      <Link
+        to={
+          roomType === 'chat'
+            ? `/dashboard/room/${roomId}`
+            : `/dashboard/call/${roomId}`
+        }
+        className={active ? 'active' : ''}
+      >
+        {roomDisplayName}
+      </Link>
+
+      {(hasNewMessage ?? false) && (
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="48"
+            viewBox="0 96 960 960"
+            width="48"
+          >
+            <path d="M480 856q-115 0-197.5-82.5T200 576q0-115 82.5-197.5T480 296q115 0 197.5 82.5T760 576q0 115-82.5 197.5T480 856Z" />
+          </svg>
+        </div>
+      )}
 
       <Link
         to={
