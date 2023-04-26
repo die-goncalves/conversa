@@ -6,7 +6,7 @@ import { GlobalStyle, StyledToastContainer } from './styles/global'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  <React.Fragment>
     <GlobalStyle />
     <StyledToastContainer
       position="top-right"
@@ -111,5 +111,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       }}
     />
     <App />
-  </React.StrictMode>
+  </React.Fragment>
 )
