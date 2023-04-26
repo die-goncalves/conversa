@@ -621,7 +621,7 @@ export function Room(): JSX.Element | null {
       state.roomId === null ||
       state.isInTheRoom === null ||
       state.lastMessageId.loading ||
-      state.isBlocked === undefined
+      (state.isBlocked ?? true)
     )
       return
 
