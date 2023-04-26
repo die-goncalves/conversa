@@ -2,14 +2,18 @@ import styled from 'styled-components'
 
 export const FeaturedVideoContainer = styled.div`
   position: relative;
+  display: flex;
 
   @media (min-width: 320px) {
-    display: flex;
     padding: 0.5rem 1rem 0rem;
     width: 100%;
     height: 80%;
   }
   @media (min-width: 640px) {
+    padding: 0rem 1.5rem 0rem;
+    height: 70%;
+  }
+  @media (min-width: 768px) {
     width: 80%;
     margin-right: 2rem;
   }

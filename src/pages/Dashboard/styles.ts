@@ -29,52 +29,41 @@ export const DashboardContainer = styled.div`
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
   }
+
+  @media (min-width: 320px) {
+    background: var(--gray-800);
+  }
+  @media (min-width: 640px) {
+    background: var(--gray-900);
+  }
 `
 
 export const ContentContainer = styled.div`
   position: relative;
   display: flex;
-  flex: 1;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
+
+  & > div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
 `
 
 export const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   height: 56px;
-  padding: 0 16px;
-  gap: 16px;
+  gap: 1rem;
 
-  a {
-    display: flex;
-    align-items: center;
-
-    span {
-      margin-left: 0.5rem;
-      margin-right: 0.5rem;
-
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
-      line-height: 1.5rem;
-      font-weight: 400;
-      transition: opacity 150ms linear;
-      color: var(--violet-50);
-    }
-    text-decoration: none;
-
-    transition: opacity 150ms linear, outline-offset 150ms linear;
-    &:hover {
-      span {
-        opacity: 0.8;
-      }
-    }
-    &:focus-visible {
-      border-radius: 1px;
-      outline-style: solid;
-      outline-width: 2px;
-      outline-offset: 2px;
-      outline-color: var(--violet-300);
-    }
+  @media (min-width: 320px) {
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0 1.5rem;
   }
 `
 
@@ -82,10 +71,6 @@ export const FormContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-
-  border-radius: 4px;
-  background: var(--gray-800);
-  box-shadow: var(--shadow);
 
   h1 {
     text-align: center;
@@ -237,9 +222,7 @@ export const FormContainer = styled.div`
           align-items: center;
           justify-content: center;
           height: 2.5rem;
-          padding-right: 1.5rem;
-          padding-left: 1.5rem;
-          border-radius: 0.25rem;
+          border-radius: 4px;
           background: var(--gray-700);
           cursor: pointer;
 
@@ -252,20 +235,17 @@ export const FormContainer = styled.div`
             display: block;
             width: 100%;
             margin-bottom: 8px;
-
             padding: 0;
           }
           @media (min-width: 640px) {
-            display: flex;
+            display: inline-block;
+            width: auto;
+            margin-bottom: 0;
+            padding-right: 1.5rem;
+            padding-left: 1.5rem;
           }
         }
 
-        @media (min-width: 320px) {
-          width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
         @media (min-width: 640px) {
           height: 3.75rem;
         }
@@ -310,18 +290,16 @@ export const FormContainer = styled.div`
   }
 
   @media (min-width: 320px) {
-    margin: 16px;
-    padding: 8px;
-    top: calc(50% - 56px);
-    transform: translateY(-50%);
+    width: 100%;
+    padding: 1rem;
   }
   @media (min-width: 640px) {
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    border-radius: 4px;
+    background: var(--gray-800);
+    box-shadow: var(--shadow);
 
     width: 30rem;
     height: fit-content;
-    padding: 2rem;
+    padding: 1.5rem; /* padding: 2rem; */
   }
 `

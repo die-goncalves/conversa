@@ -117,6 +117,6 @@ export const SendMessageContainer = styled.div`
     padding: 1rem;
   }
   @media (min-width: 640px) {
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
   }
 `

@@ -169,6 +169,7 @@ export const StyledDropdownMenuItemNotification = styled(
     box-shadow 150ms linear;
 
   svg {
+    flex: none;
     width: 1.5rem;
     height: 1.5rem;
 
@@ -199,7 +200,6 @@ export const StyledDropdownMenuItemNotification = styled(
     padding: 0 0.5rem;
   }
   @media (min-width: 640px) {
-    height: 3.5rem;
     padding: 0 1rem;
   }
 `

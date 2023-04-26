@@ -1,15 +1,8 @@
 import styled from 'styled-components'
 
 export const RowContainer = styled.li`
+  display: flex;
   position: relative;
-
-  @media (min-width: 320px) {
-    display: flex;
-  }
-  @media (min-width: 640px) {
-    display: grid;
-    grid-template-columns: 1fr 3rem 1fr;
-  }
 `
 
 interface IMessageContainerProps {
@@ -19,7 +12,6 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
   position: relative;
   display: flex;
   justify-content: ${props => (props.isMe ? 'flex-end' : 'flex-start')};
-  grid-column-start: ${props => (props.isMe ? 3 : 1)};
   flex: 1;
 
   & > div {
@@ -36,20 +28,8 @@ export const MessageContainer = styled.div<IMessageContainerProps>`
       display: flex;
       border-radius: 4px;
 
-      span {
-        @media (min-width: 320px) {
-          font-size: 0.875rem;
-          line-height: 1.25rem;
-        }
-        @media (min-width: 640px) {
-          font-family: 'Montserrat', sans-serif;
-          font-size: 1rem;
-          line-height: 1.5rem;
-        }
-      }
-
       @media (min-width: 320px) {
-        padding: 0.5rem 0.5rem 0;
+        padding: 0;
       }
       @media (min-width: 640px) {
         padding: 0.5rem 1rem;

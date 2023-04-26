@@ -34,6 +34,9 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
   const isSmallScreen = useMediaQuery({
     query: '(min-width: 320px) and (max-width: 639px)'
   })
+  const isMediumScreen = useMediaQuery({
+    query: '(min-width: 640px) and (max-width: 1023px)'
+  })
   const [featuredDefaultVideo, setFeaturedDefaultVideo] =
     useState<HTMLVideoElement | null>(null)
   const resizeObserverRef = useRef<ResizeObserver>()
@@ -47,7 +50,8 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
 
     resizeObserverRef.current = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect
-      const margin = isSmallScreen ? 16 : 8
+      console.log({ width, height })
+      const margin = isSmallScreen ? 16 : isMediumScreen ? 24 : 32
 
       const numRects =
         featuredDefaultVideo !== null && call.participants.length > 1
@@ -70,13 +74,7 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
         if (defaultVideoContainerElement !== null) {
           defaultVideoContainerElement.style.width = `${sizes.width}px`
           defaultVideoContainerElement.style.height = `${sizes.height}px`
-          if (isSmallScreen) {
-            defaultVideoContainerElement.style.margin = `${
-              sizes.margin / 2
-            }px ${sizes.margin}px`
-          } else {
-            defaultVideoContainerElement.style.margin = `${sizes.margin}px`
-          }
+          defaultVideoContainerElement.style.margin = `${sizes.margin / 2}px`
         }
       })
     })
@@ -88,7 +86,7 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
     return () => {
       resizeObserverRef.current?.disconnect()
     }
-  }, [call.participants, featuredDefaultVideo, isSmallScreen])
+  }, [call.participants, featuredDefaultVideo, isSmallScreen, isMediumScreen])
 
   const handleAddFeaturedVideo = (id: string): void => {
     const videoEl = document.getElementById(id) as HTMLVideoElement

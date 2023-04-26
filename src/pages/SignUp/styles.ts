@@ -33,8 +33,12 @@ export const PageContainer = styled.div`
   }
   @media (min-width: 640px) {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 2.75rem 0;
+    /*
+      justify-content: center;
+      align-items: center;
+    */
+    background: var(--gray-900);
   }
 `
 
@@ -42,7 +46,8 @@ export const SignUpContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  margin: auto;
+  align-items: center;
+  justify-content: center;
 
   @media (min-width: 320px) {
     width: 100%;
@@ -50,7 +55,8 @@ export const SignUpContainer = styled.div`
   }
   @media (min-width: 640px) {
     width: 30rem;
-    padding: 2rem;
+    margin: auto;
+    padding: 1.5rem; // padding: 2rem;
     border-radius: 4px;
     background: var(--gray-800);
     box-shadow: var(--shadow);
@@ -70,8 +76,6 @@ export const Header = styled.header`
     margin-bottom: 1rem;
   }
   @media (min-width: 640px) {
-    flex-direction: column;
-    align-items: center;
     margin: 0 auto;
   }
 `
@@ -205,6 +209,10 @@ export const Main = styled.main`
         filter: invert(100%);
       }
     }
+  }
+
+  @media (min-width: 320px) {
+    width: 100%;
   }
 `
 

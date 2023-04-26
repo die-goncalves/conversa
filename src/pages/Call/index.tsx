@@ -8,7 +8,7 @@ import { Fragment } from 'react'
 
 export function Call(): JSX.Element | null {
   const isSmallScreen = useMediaQuery({
-    query: '(min-width: 320px) and (max-width: 639px)'
+    query: '(min-width: 320px) and (max-width: 767px)'
   })
   const {
     toggleCamera,

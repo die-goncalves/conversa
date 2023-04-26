@@ -35,12 +35,16 @@ export const RoomDetailsContainer = styled.div`
 `
 
 export const StyledHeader = styled.header`
+  display: flex;
+  align-items: center;
+
+  height: 56px;
+  gap: 1rem;
   @media (min-width: 320px) {
-    display: flex;
-    align-items: center;
-    height: 56px;
-    padding: 8px 16px;
-    gap: 16px;
+    padding: 0.5rem 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0.5rem 1.5rem;
   }
 `
 
@@ -54,7 +58,7 @@ export const ParticipantSection = styled.section`
       margin-top: 1rem;
     }
     @media (min-width: 640px) {
-      margin-top: 2rem;
+      margin-top: 1.5rem;
     }
   }
 
@@ -62,9 +66,6 @@ export const ParticipantSection = styled.section`
     font-weight: 700;
     font-size: 1rem;
     margin-bottom: 1rem;
-
-    @media (min-width: 320px) {
-    }
   }
 
   @media (min-width: 320px) {
@@ -72,8 +73,8 @@ export const ParticipantSection = styled.section`
     padding: 0 1rem;
   }
   @media (min-width: 640px) {
-    margin-top: 2rem;
-    padding: 0 2rem;
+    margin-top: 1.5rem;
+    padding: 0 1.5rem;
   }
 `
 
@@ -83,6 +84,9 @@ export const ParticipantGallery = styled.div`
 
   @media (min-width: 320px) {
     column-count: 1;
+  }
+  @media (min-width: 640px) {
+    column-count: 2;
   }
 `
 
@@ -96,7 +100,7 @@ export const ActionSection = styled.section`
       margin-top: 1rem;
     }
     @media (min-width: 640px) {
-      margin-top: 2rem;
+      margin-top: 1.5rem;
     }
   }
 
@@ -172,7 +176,7 @@ export const ActionSection = styled.section`
     padding: 0 1rem;
   }
   @media (min-width: 640px) {
-    padding: 0 2rem;
+    padding: 0 1.5rem;
   }
 `
 
@@ -191,7 +195,7 @@ export const BlockedSection = styled.section`
     padding: 0 1rem;
   }
   @media (min-width: 640px) {
-    padding: 0 2rem;
+    padding: 0 1.5rem;
   }
 `
 
@@ -201,5 +205,8 @@ export const BlockedParticipantGallery = styled.div`
 
   @media (min-width: 320px) {
     column-count: 1;
+  }
+  @media (min-width: 640px) {
+    column-count: 2;
   }
 `

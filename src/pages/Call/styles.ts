@@ -9,7 +9,7 @@ export const CallContainer = styled.div`
     flex-direction: column;
     background: var(--gray-900);
   }
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -23,8 +23,14 @@ export const StyledHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   height: 56px;
-  padding: 8px 16px;
-  gap: 16px;
+  gap: 1rem;
+
+  @media (min-width: 320px) {
+    padding: 0.5rem 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0.5rem 1.5rem;
+  }
 `
 
 export const StyledCall = styled.div`

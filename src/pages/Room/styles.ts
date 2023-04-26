@@ -37,13 +37,19 @@ export const StyledHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   height: 56px;
-  padding: 8px 16px;
   gap: 16px;
 
   & > div {
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  @media (min-width: 320px) {
+    padding: 0.5rem 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0.5rem 1.5rem;
   }
 `
 
@@ -68,10 +74,9 @@ export const MessagesBox = styled.ul`
     margin-left: 1rem;
   }
   @media (min-width: 640px) {
-    margin-top: 2rem;
-    margin-right: 2rem;
-    margin-bottom: 1rem;
-    margin-left: 2rem;
+    margin-top: 1.5rem;
+    margin-right: 1.5rem;
+    margin-left: 1.5rem;
   }
 `
 
@@ -115,11 +120,11 @@ export const FABScrollToEndOfMessages = styled.button`
   }
 
   @media (min-width: 320px) {
-    right: 28px;
-    bottom: 88px;
+    right: calc(24px + 1vw);
+    bottom: 104px;
   }
   @media (min-width: 640px) {
-    right: 48px;
+    right: calc(32px + 1vw);
     bottom: 104px;
   }
 `

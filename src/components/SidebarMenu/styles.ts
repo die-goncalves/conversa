@@ -31,15 +31,19 @@ export const StyledTrigger = styled(DialogTrigger)`
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: var(--gray-800);
   cursor: pointer;
   transition: background-color 150ms linear, border-color 150ms linear,
     box-shadow 150ms linear;
 
   box-shadow: var(--shadow);
   &:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
+    @media (min-width: 320px) {
+      background: var(--gray-600);
+      box-shadow: var(--shadow-md);
+    }
+    @media (min-width: 640px) {
+      background: var(--gray-700);
+    }
   }
 
   outline: 0;
@@ -51,6 +55,13 @@ export const StyledTrigger = styled(DialogTrigger)`
     width: 24px;
     height: 24px;
     fill: var(--violet-50);
+  }
+
+  @media (min-width: 320px) {
+    background: var(--gray-700);
+  }
+  @media (min-width: 640px) {
+    background: var(--gray-800);
   }
 `
 
@@ -119,7 +130,6 @@ export const StyledTitle = styled(DialogTitle)`
   align-items: center;
   justify-content: space-between;
   height: 56px;
-  padding: 0 16px;
 
   a {
     display: flex;
@@ -130,8 +140,7 @@ export const StyledTitle = styled(DialogTitle)`
     border-radius: 4px;
 
     span {
-      /* margin-left: 0.5rem;
-      margin-right: 0.5rem; */
+      margin-right: 0.5rem;
 
       font-family: 'Montserrat', sans-serif;
       font-size: 1rem;
@@ -154,13 +163,26 @@ export const StyledTitle = styled(DialogTitle)`
       border-color: var(--violet-300);
     }
   }
+
+  @media (min-width: 320px) {
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0 1.5rem;
+  }
 `
 
 export const StyledMain = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px 16px;
-  gap: 12px;
+  gap: 0.75rem;
+
+  @media (min-width: 320px) {
+    padding: 0.75rem 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 1rem 1.5rem;
+  }
 `
 
 export const StyledClose = styled(DialogClose)`

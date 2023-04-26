@@ -3,8 +3,7 @@ import styled from 'styled-components'
 export const NavLinkContainer = styled.div`
   display: flex;
   align-items: center;
-  /* padding: 0 1rem; */
-  padding-left: 8px;
+  padding-left: 0.5rem;
 
   img {
     border-radius: 4px;
@@ -43,17 +42,11 @@ export const NavLinkContainer = styled.div`
       outline-color: var(--violet-300);
     }
     &.active {
+      line-height: 1.75rem;
       text-decoration-line: underline;
       text-decoration-style: wavy;
       text-decoration-thickness: 2px;
       text-decoration-color: var(--violet-300);
-
-      @media (min-width: 320px) {
-        line-height: 1.75rem;
-      }
-      @media (min-width: 640px) {
-        line-height: 1.25rem;
-      }
     }
   }
 
