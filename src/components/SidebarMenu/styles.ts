@@ -117,17 +117,21 @@ export const StyledContent = styled(DialogContent)`
 export const StyledTitle = styled(DialogTitle)`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 56px;
   padding: 0 16px;
-  gap: 16px;
 
   a {
     display: flex;
     align-items: center;
+    box-sizing: border-box;
+    height: 40px;
+    border: 2px solid transparent;
+    border-radius: 4px;
 
     span {
-      margin-left: 0.5rem;
-      margin-right: 0.5rem;
+      /* margin-left: 0.5rem;
+      margin-right: 0.5rem; */
 
       font-family: 'Montserrat', sans-serif;
       font-size: 1rem;
@@ -138,18 +142,16 @@ export const StyledTitle = styled(DialogTitle)`
     }
     text-decoration: none;
 
-    transition: opacity 150ms linear, outline-offset 150ms linear;
+    transition: opacity 150ms linear, border-color 150ms linear;
     &:hover {
       span {
         opacity: 0.8;
       }
     }
+
+    outline: 0;
     &:focus-visible {
-      border-radius: 1px;
-      outline-style: solid;
-      outline-width: 2px;
-      outline-offset: 2px;
-      outline-color: var(--violet-300);
+      border-color: var(--violet-300);
     }
   }
 `

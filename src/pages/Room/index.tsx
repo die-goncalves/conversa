@@ -31,7 +31,6 @@ import { Progress } from '../../components/Progress'
 import { Message } from '../../components/Message'
 import { MessageInput } from '../../components/MessageInput'
 import { SidebarMenu } from '../../components/SidebarMenu'
-import { Notification } from '../../components/Notification'
 import {
   RoomContainer,
   MessagesBox,
@@ -742,10 +741,7 @@ export function Room(): JSX.Element | null {
       )}
 
       <StyledHeader>
-        <div>
-          <SidebarMenu />
-          <Notification />
-        </div>
+        <SidebarMenu />
 
         {!state.lastMessageId.loading && state.haveMoreOldMessages.have && (
           <FABGetOldMessages
