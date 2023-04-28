@@ -2,19 +2,16 @@ import styled from 'styled-components'
 
 export const CallWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: calc(100svh - 56px);
   overflow: hidden;
-
-  @media (min-width: 320px) {
-    flex-direction: column;
-  }
-  @media (min-width: 1024px) {
-    margin: 2rem 2rem 0;
-  }
 `
 
-export const CallParticipantsContainer = styled.div`
+interface ICallParticipantsContainer {
+  hasFeaturedVideo: HTMLVideoElement | null
+}
+export const CallParticipantsContainer = styled.div<ICallParticipantsContainer>`
   overflow: hidden;
   display: flex;
   flex: 1;
@@ -26,7 +23,12 @@ export const CallParticipantsContainer = styled.div`
     padding: 0 1.5rem;
   }
   @media (min-width: 768px) {
-    padding: 1.5rem 1.5rem 0;
+    padding: ${props =>
+      props.hasFeaturedVideo != null ? '0 1.5rem 0' : '1.5rem 1.5rem 0'};
+  }
+  @media (min-width: 1024px) {
+    padding: ${props =>
+      props.hasFeaturedVideo != null ? '0 2rem 0' : '2rem 2rem 0'};
   }
 `
 

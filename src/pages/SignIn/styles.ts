@@ -33,11 +33,7 @@ export const PageContainer = styled.div`
   }
   @media (min-width: 640px) {
     display: flex;
-    padding: 2.75rem 0 1rem;
-    /*
-      justify-content: center;
-      align-items: center;
-    */
+    padding: 2.75rem 0;
     background: var(--gray-900);
   }
 `
@@ -56,10 +52,13 @@ export const SignInContainer = styled.div`
   @media (min-width: 640px) {
     width: 30rem;
     margin: auto;
-    padding: 1.5rem; // padding: 2rem;
+    padding: 1.5rem;
     border-radius: 4px;
     background: var(--gray-800);
     box-shadow: var(--shadow);
+  }
+  @media (min-width: 1024px) {
+    padding: 2rem;
   }
 `
 

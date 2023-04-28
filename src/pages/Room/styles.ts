@@ -69,6 +69,9 @@ export const ContentContainer = styled.div`
   @media (min-width: 768px) {
     width: 60%;
   }
+  @media (min-width: 1024px) {
+    width: 65%;
+  }
 `
 
 export const MessagesBox = styled.ul`
@@ -88,6 +91,11 @@ export const MessagesBox = styled.ul`
     margin-right: 1.5rem;
     margin-left: 1.5rem;
   }
+  @media (min-width: 1024px) {
+    margin-top: 2rem;
+    margin-right: 2rem;
+    margin-left: 2rem;
+  }
 `
 
 export const Loader = styled.div`
@@ -100,41 +108,48 @@ export const FABScrollToEndOfMessages = styled.button`
   position: fixed;
   box-sizing: border-box;
   display: flex;
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 40px;
+  width: 40px;
   border-radius: 4px;
-  border: 2px solid transparent;
+  border: none;
   align-items: center;
   justify-content: center;
-  background: var(--gray-800);
+  background: var(--violet-300);
   cursor: pointer;
 
-  transition: background-color 150ms linear, border-color 150ms linear,
+  transition: background-color 150ms linear, outline-color 150ms linear,
     box-shadow 150ms linear;
 
   box-shadow: var(--shadow);
   &:hover {
-    background: var(--gray-700);
+    background: var(--violet-400);
     box-shadow: var(--shadow-md);
   }
 
-  outline: 0;
+  outline-color: transparent;
   &:focus-visible {
-    border-color: var(--violet-300);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--violet-300);
   }
 
   svg {
-    width: 1.5rem;
-    height: 1.5rem;
-    fill: var(--violet-300);
+    width: 24px;
+    height: 24px;
+    fill: var(--gray-800);
   }
 
   @media (min-width: 320px) {
-    right: calc(24px + 1vw);
+    right: calc(26px + 1vw);
     bottom: 104px;
   }
   @media (min-width: 640px) {
-    right: calc(32px + 1vw);
+    right: calc(34px + 1vw);
+    bottom: 104px;
+  }
+  @media (min-width: 1024px) {
+    right: calc(42px + 1vw);
     bottom: 104px;
   }
 `
@@ -142,28 +157,32 @@ export const FABScrollToEndOfMessages = styled.button`
 export const FABGetOldMessages = styled.button`
   box-sizing: border-box;
   display: flex;
-  height: 2.5rem;
+  height: 40px;
   padding: 0 1rem;
   border-radius: 4px;
-  border: 2px solid transparent;
+  border: none;
   align-items: center;
   justify-content: center;
-  background: var(--gray-800);
-  color: var(--violet-300);
+  background: var(--violet-300);
+  color: var(--gray-900);
+  font-weight: 500;
   cursor: pointer;
 
-  transition: background-color 150ms linear, border-color 150ms linear,
+  transition: background-color 150ms linear, outline-color 150ms linear,
     box-shadow 150ms linear;
 
   box-shadow: var(--shadow);
   &:not(:disabled):hover {
-    background: var(--gray-700);
+    background: var(--violet-400);
     box-shadow: var(--shadow-md);
   }
 
-  outline: 0;
+  outline-color: transparent;
   &:focus-visible {
-    border-color: var(--violet-300);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--violet-300);
   }
 
   &:disabled {
@@ -175,5 +194,10 @@ export const FABGetOldMessages = styled.button`
     position: absolute;
     top: 24px;
     right: 24px;
+  }
+  @media (min-width: 1024px) {
+    position: absolute;
+    top: 32px;
+    right: 32px;
   }
 `

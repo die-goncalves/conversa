@@ -166,6 +166,12 @@ export const StyledSidebarContent = styled.aside`
     flex: none;
     width: 40%;
   }
+  @media (min-width: 1024px) {
+    position: sticky;
+    top: 0;
+    flex: none;
+    width: 35%;
+  }
 `
 
 export const StyledTitle = styled(DialogTitle)`

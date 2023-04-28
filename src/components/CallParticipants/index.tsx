@@ -51,7 +51,7 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
     resizeObserverRef.current = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect
       console.log({ width, height })
-      const margin = isSmallScreen ? 16 : isMediumScreen ? 24 : 32
+      const margin = isSmallScreen ? 8 : isMediumScreen ? 12 : 16
 
       const numRects =
         featuredDefaultVideo !== null && call.participants.length > 1
@@ -74,7 +74,7 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
         if (defaultVideoContainerElement !== null) {
           defaultVideoContainerElement.style.width = `${sizes.width}px`
           defaultVideoContainerElement.style.height = `${sizes.height}px`
-          defaultVideoContainerElement.style.margin = `${sizes.margin / 2}px`
+          defaultVideoContainerElement.style.margin = `${sizes.margin}px`
         }
       })
     })
@@ -128,7 +128,10 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
         />
       )}
 
-      <CallParticipantsContainer id="call-participants">
+      <CallParticipantsContainer
+        id="call-participants"
+        hasFeaturedVideo={featuredDefaultVideo}
+      >
         <FlexWrapper>
           {call.participants.map(ps => {
             return (

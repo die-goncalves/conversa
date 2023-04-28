@@ -256,6 +256,13 @@ export const FormContainer = styled.div`
             margin-bottom: 8px;
             padding: 0;
           }
+          @media (min-width: 1024px) {
+            display: inline-block;
+            width: auto;
+            margin-bottom: 0;
+            padding-right: 1.5rem;
+            padding-left: 1.5rem;
+          }
         }
 
         @media (min-width: 640px) {
@@ -320,5 +327,9 @@ export const FormContainer = styled.div`
   @media (min-width: 768px) {
     width: 100%;
     margin: 2rem;
+  }
+  @media (min-width: 1024px) {
+    width: 30rem;
+    margin: 0;
   }
 `

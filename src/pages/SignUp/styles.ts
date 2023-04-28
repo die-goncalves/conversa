@@ -34,10 +34,6 @@ export const PageContainer = styled.div`
   @media (min-width: 640px) {
     display: flex;
     padding: 2.75rem 0;
-    /*
-      justify-content: center;
-      align-items: center;
-    */
     background: var(--gray-900);
   }
 `
@@ -60,6 +56,9 @@ export const SignUpContainer = styled.div`
     border-radius: 4px;
     background: var(--gray-800);
     box-shadow: var(--shadow);
+  }
+  @media (min-width: 1024px) {
+    padding: 2rem;
   }
 `
 

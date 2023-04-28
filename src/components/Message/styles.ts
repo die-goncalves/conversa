@@ -21,6 +21,10 @@ export const MessageLine = styled.li<IMessageLine>`
       max-width: ${props => (props.isMe ? 'calc(70% - 3.25rem)' : '70%')};
       min-width: ${props => (props.isMe ? 'calc(50% - 3.25rem)' : '50%')};
     }
+    @media (min-width: 1024px) {
+      max-width: ${props => (props.isMe ? 'calc(70% - 4rem)' : '70%')};
+      min-width: ${props => (props.isMe ? 'calc(50% - 4rem)' : '50%')};
+    }
   }
 
   img {
@@ -40,6 +44,10 @@ export const MessageLine = styled.li<IMessageLine>`
     @media (min-width: 640px) {
       width: 3.25rem;
       height: 3.25rem;
+    }
+    @media (min-width: 1024px) {
+      width: 4rem;
+      height: 4rem;
     }
   }
 
@@ -68,6 +76,10 @@ export const MessageLine = styled.li<IMessageLine>`
     @media (min-width: 768px) {
       padding: 0.5rem;
     }
+    @media (min-width: 1024px) {
+      padding: 1rem;
+      width: ${props => (props.isMe ? '100%' : 'calc(100% - 4rem)')};
+    }
   }
 
   header {
@@ -85,6 +97,11 @@ export const MessageLine = styled.li<IMessageLine>`
       padding: 0;
       background: transparent;
       box-shadow: none;
+    }
+    @media (min-width: 1024px) {
+      padding: 0.5rem 1rem;
+      background: var(--gray-700);
+      box-shadow: var(--shadow);
     }
   }
   main {
@@ -185,5 +202,9 @@ export const ADMMessage = styled.li<IADMMessage>`
   @media (min-width: 768px) {
     padding: 0.5rem;
     gap: 0.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding: 1rem;
+    gap: 1rem;
   }
 `
