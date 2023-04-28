@@ -12,7 +12,7 @@ export const CallContainer = styled.div`
   @media (min-width: 768px) {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex: 1;
     background: var(--gray-900);
   }

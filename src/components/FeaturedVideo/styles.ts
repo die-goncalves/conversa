@@ -14,8 +14,8 @@ export const FeaturedVideoContainer = styled.div`
     height: 70%;
   }
   @media (min-width: 768px) {
-    width: 80%;
-    margin-right: 2rem;
+    height: 70%;
+    padding: 1.5rem 1.5rem 0rem;
   }
 `
 

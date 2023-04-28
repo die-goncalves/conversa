@@ -26,7 +26,7 @@ export function Call(): JSX.Element | null {
 
   return (
     <CallContainer>
-      {isSmallScreen && (
+      {isSmallScreen ? (
         <StyledHeader>
           <SidebarMenu />
 
@@ -42,13 +42,16 @@ export function Call(): JSX.Element | null {
             />
           )}
         </StyledHeader>
+      ) : (
+        <SidebarMenu />
       )}
+
       {isSmallScreen ? (
         <StyledCall>
           <CallParticipants call={call} />
         </StyledCall>
       ) : (
-        <Fragment>
+        <StyledCall>
           <CallParticipants call={call} />
 
           {userMedia != null && (
@@ -62,7 +65,7 @@ export function Call(): JSX.Element | null {
               onForceStopScreenShare={forceStopScreenShare}
             />
           )}
-        </Fragment>
+        </StyledCall>
       )}
     </CallContainer>
   )

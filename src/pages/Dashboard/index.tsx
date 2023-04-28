@@ -11,6 +11,7 @@ import {
   FormContainer,
   StyledHeader
 } from './styles'
+import { useMediaQuery } from 'react-responsive'
 
 const schema = zod.object({
   room: zod.string().min(1, { message: 'Campo obrigatório' }),
@@ -26,6 +27,9 @@ const schema = zod.object({
 type Schema = zod.infer<typeof schema>
 
 export function Dashboard(): JSX.Element {
+  const isLargerThan768 = useMediaQuery({
+    query: '(min-width: 768px)'
+  })
   const { writeNewRoom } = useContext(RoomContext)
   const { userState } = useContext(AuthContext)
   const {
@@ -53,9 +57,13 @@ export function Dashboard(): JSX.Element {
   return (
     <DashboardContainer>
       <ContentContainer>
-        <StyledHeader>
+        {isLargerThan768 ? (
           <SidebarMenu />
-        </StyledHeader>
+        ) : (
+          <StyledHeader>
+            <SidebarMenu />
+          </StyledHeader>
+        )}
 
         <div>
           <FormContainer>

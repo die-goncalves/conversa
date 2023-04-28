@@ -3,18 +3,20 @@ import styled from 'styled-components'
 
 export const ProgressContainer = styled.div`
   position: absolute;
-  width: 100%;
+  left: 0;
+  right: 0;
   padding: 0;
   z-index: 99999;
 `
 export const ProgressRoot = styled(ProgressRadix.Root)`
-  position: fixed;
+  position: relative;
   display: flex;
   overflow: hidden;
   background: var(--gray-800);
   box-shadow: var(--shadow);
   border-radius: 2px;
-  width: 100%;
+  left: 0;
+  right: 0;
   height: 2px;
   padding: 0 2px;
 

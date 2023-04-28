@@ -51,6 +51,12 @@ export const ContentContainer = styled.div`
     align-items: center;
     justify-content: center;
   }
+  @media (min-width: 320px) {
+    flex-direction: column;
+  }
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 `
 
 export const StyledHeader = styled.header`
@@ -244,10 +250,19 @@ export const FormContainer = styled.div`
             padding-right: 1.5rem;
             padding-left: 1.5rem;
           }
+          @media (min-width: 768px) {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 0;
+          }
         }
 
         @media (min-width: 640px) {
           height: 3.75rem;
+        }
+        @media (min-width: 768px) {
+          height: auto;
         }
       }
     }
@@ -300,6 +315,10 @@ export const FormContainer = styled.div`
 
     width: 30rem;
     height: fit-content;
-    padding: 1.5rem; /* padding: 2rem; */
+    padding: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    width: 100%;
+    margin: 2rem;
   }
 `

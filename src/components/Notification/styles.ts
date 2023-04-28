@@ -202,6 +202,9 @@ export const StyledDropdownMenuItemNotification = styled(
   @media (min-width: 640px) {
     padding: 0 1rem;
   }
+  @media (min-width: 768px) {
+    padding: 0.5rem 1rem;
+  }
 `
 
 export const StyledDropdownMenuItemClearAll = styled(DropdownMenuItem)`

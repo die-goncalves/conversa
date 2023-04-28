@@ -9,8 +9,8 @@ export const CallOptionsContainer = styled.div`
   @media (min-width: 320px) {
     margin-left: auto;
   }
-  @media (min-width: 640px) {
-    margin: 2rem 0;
+  @media (min-width: 768px) {
+    margin: 1.5rem 0;
   }
 `
 

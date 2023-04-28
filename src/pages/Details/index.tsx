@@ -26,6 +26,7 @@ import {
   StyledHeader
 } from './styles'
 import { SidebarMenu } from '../../components/SidebarMenu'
+import { useMediaQuery } from 'react-responsive'
 
 interface IState {
   roomId: string | null
@@ -73,6 +74,9 @@ interface IActions {
 }
 
 export function Details(): JSX.Element | null {
+  const isLargerThan768 = useMediaQuery({
+    query: '(min-width: 768px)'
+  })
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const { userState } = useContext(AuthContext)
@@ -371,84 +375,45 @@ export function Details(): JSX.Element | null {
     <RoomDetailsContainer>
       {loading && <Progress />}
 
-      <StyledHeader>
+      {isLargerThan768 ? (
         <SidebarMenu />
+      ) : (
+        <StyledHeader>
+          <SidebarMenu />
 
-        <span>{detail.room?.displayName}</span>
-      </StyledHeader>
+          <span>{detail.room?.displayName}</span>
+        </StyledHeader>
+      )}
 
-      <ParticipantSection>
-        <h2>{Object.entries(detail.users).length} participantes</h2>
+      <div>
+        <ParticipantSection>
+          <h2>{Object.entries(detail.users).length} participantes</h2>
 
-        <ParticipantGallery>
-          {Object.entries(detail.users).map(p => {
-            return (
-              <ParticipantCard
-                key={p[0]}
-                userId={userState.user?.uid}
-                roomId={roomId}
-                adms={detail.adms}
-                blocked={detail.blocked}
-                participant={{ [p[0]]: p[1] }}
-              />
-            )
-          })}
-        </ParticipantGallery>
-      </ParticipantSection>
+          <ParticipantGallery>
+            {Object.entries(detail.users).map(p => {
+              return (
+                <ParticipantCard
+                  key={p[0]}
+                  userId={userState.user?.uid}
+                  roomId={roomId}
+                  adms={detail.adms}
+                  blocked={detail.blocked}
+                  participant={{ [p[0]]: p[1] }}
+                />
+              )
+            })}
+          </ParticipantGallery>
+        </ParticipantSection>
 
-      <ActionSection>
-        <h2>Ações do usuário</h2>
+        <ActionSection>
+          <h2>Ações do usuário</h2>
 
-        <div>
-          {(detail.iAmAdm ?? false) && (
-            <button
-              onClick={async () => {
-                await deleteRoom(roomId)
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="48"
-                viewBox="0 96 960 960"
-                width="48"
-              >
-                <path d="m361 757 119-121 120 121 47-48-119-121 119-121-47-48-120 121-119-121-48 48 120 121-120 121 48 48ZM261 936q-24 0-42-18t-18-42V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306Zm-438 0v570-570Z" />
-              </svg>
-              <span>Excluir sala</span>
-            </button>
-          )}
-
-          <button
-            onClick={async () => {
-              await removeUserFromRoom(userState.user?.uid)
-            }}
-            disabled={
-              (detail.iAmAdm ?? false) && !(detail.hasMoreThanOneAdm ?? false)
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="48"
-              viewBox="0 96 960 960"
-              width="48"
-            >
-              <path d="M180 936q-24 0-42-18t-18-42V276q0-24 18-42t42-18h291v60H180v600h291v60H180Zm486-185-43-43 102-102H375v-60h348L621 444l43-43 176 176-174 174Z" />
-            </svg>
-            <span>Sair da sala</span>
-          </button>
-          {(detail.iAmAdm ?? false) && !(detail.hasMoreThanOneAdm ?? false) && (
-            <span role="alert">
-              Para sair indique um novo administrador para a sala.
-            </span>
-          )}
-
-          {(detail.iAmAdm ?? false) && (
-            <>
+          <div>
+            {(detail.iAmAdm ?? false) && (
               <button
                 onClick={async () => {
-                  await removeUserAdm(userState.user?.uid)
+                  await deleteRoom(roomId)
                 }}
-                disabled={!(detail.hasMoreThanOneAdm ?? false)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -456,40 +421,86 @@ export function Details(): JSX.Element | null {
                   viewBox="0 96 960 960"
                   width="48"
                 >
-                  <path d="m743 761-45-46q20-35 31-89.5t11-93.5V336l-260-96-188 69-46-46 234-88 320 119v238q0 59.444-15 117.722Q770 708 743 761Zm67 238L670 861q-44 44-90 72t-100 42q-143-39-231.5-164.431Q160 685.137 160 532V349L55 244l43-43 755 755-43 43ZM426 616Zm73-101Zm-19 398q42.071-14.02 80.535-39.51Q599 848 628 818L220 409v123q0 130.103 73 236.552Q366 875 480 913Z" />
+                  <path d="m361 757 119-121 120 121 47-48-119-121 119-121-47-48-120 121-119-121-48 48 120 121-120 121 48 48ZM261 936q-24 0-42-18t-18-42V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306Zm-438 0v570-570Z" />
                 </svg>
-                <span>Remover permissão de administrador</span>
+                <span>Excluir sala</span>
               </button>
+            )}
 
-              {!(detail.hasMoreThanOneAdm ?? false) && (
+            <button
+              onClick={async () => {
+                await removeUserFromRoom(userState.user?.uid)
+              }}
+              disabled={
+                (detail.iAmAdm ?? false) && !(detail.hasMoreThanOneAdm ?? false)
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="48"
+                viewBox="0 96 960 960"
+                width="48"
+              >
+                <path d="M180 936q-24 0-42-18t-18-42V276q0-24 18-42t42-18h291v60H180v600h291v60H180Zm486-185-43-43 102-102H375v-60h348L621 444l43-43 176 176-174 174Z" />
+              </svg>
+              <span>Sair da sala</span>
+            </button>
+            {(detail.iAmAdm ?? false) &&
+              !(detail.hasMoreThanOneAdm ?? false) && (
                 <span role="alert">
-                  Para remover sua permissão de administrador indique um novo
-                  para a sala.
+                  Para sair indique um novo administrador para a sala.
                 </span>
               )}
-            </>
+
+            {(detail.iAmAdm ?? false) && (
+              <>
+                <button
+                  onClick={async () => {
+                    await removeUserAdm(userState.user?.uid)
+                  }}
+                  disabled={!(detail.hasMoreThanOneAdm ?? false)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="48"
+                    viewBox="0 96 960 960"
+                    width="48"
+                  >
+                    <path d="m743 761-45-46q20-35 31-89.5t11-93.5V336l-260-96-188 69-46-46 234-88 320 119v238q0 59.444-15 117.722Q770 708 743 761Zm67 238L670 861q-44 44-90 72t-100 42q-143-39-231.5-164.431Q160 685.137 160 532V349L55 244l43-43 755 755-43 43ZM426 616Zm73-101Zm-19 398q42.071-14.02 80.535-39.51Q599 848 628 818L220 409v123q0 130.103 73 236.552Q366 875 480 913Z" />
+                  </svg>
+                  <span>Remover permissão de administrador</span>
+                </button>
+
+                {!(detail.hasMoreThanOneAdm ?? false) && (
+                  <span role="alert">
+                    Para remover sua permissão de administrador indique um novo
+                    para a sala.
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        </ActionSection>
+
+        {(detail.iAmAdm ?? false) &&
+          Object.entries(detail.blocked).length > 0 && (
+            <BlockedSection>
+              <h2>Participantes bloqueados</h2>
+
+              <BlockedParticipantGallery>
+                {Object.entries(detail.blocked).map(el => {
+                  return (
+                    <BlockedParticipantCard
+                      key={`blocked-${el[0]}`}
+                      roomId={detail.roomId ?? ''}
+                      participantId={el[0]}
+                    />
+                  )
+                })}
+              </BlockedParticipantGallery>
+            </BlockedSection>
           )}
-        </div>
-      </ActionSection>
-
-      {(detail.iAmAdm ?? false) &&
-        Object.entries(detail.blocked).length > 0 && (
-          <BlockedSection>
-            <h2>Participantes bloqueados</h2>
-
-            <BlockedParticipantGallery>
-              {Object.entries(detail.blocked).map(el => {
-                return (
-                  <BlockedParticipantCard
-                    key={`blocked-${el[0]}`}
-                    roomId={detail.roomId ?? ''}
-                    participantId={el[0]}
-                  />
-                )
-              })}
-            </BlockedParticipantGallery>
-          </BlockedSection>
-        )}
+      </div>
     </RoomDetailsContainer>
   )
 }

@@ -39,6 +39,7 @@ import {
   FABGetOldMessages,
   StyledHeader
 } from './styles'
+import { useMediaQuery } from 'react-responsive'
 
 interface IMessage {
   id: string | null
@@ -92,6 +93,9 @@ interface IActions {
 }
 
 export function Room(): JSX.Element | null {
+  const isLargerThan768 = useMediaQuery({
+    query: '(min-width: 768px)'
+  })
   const navigate = useNavigate()
   const { roomId } = useLoaderData() as { roomId: string }
   const { userState } = useContext(AuthContext)
@@ -734,25 +738,33 @@ export function Room(): JSX.Element | null {
 
   if (state.isInTheRoom == null) return null
 
+  console.log(isLargerThan768)
   return (
     <RoomContainer>
-      {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) && (
-        <Progress />
+      {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) &&
+        !isLargerThan768 && <Progress />}
+
+      {isLargerThan768 ? (
+        <SidebarMenu />
+      ) : (
+        <StyledHeader>
+          <SidebarMenu />
+
+          {!state.lastMessageId.loading && state.haveMoreOldMessages.have && (
+            <FABGetOldMessages
+              disabled={state.haveMoreOldMessages.loading}
+              onClick={getMoreOldMessages}
+            >
+              Carregar mais mensagens
+            </FABGetOldMessages>
+          )}
+        </StyledHeader>
       )}
 
-      <StyledHeader>
-        <SidebarMenu />
-
-        {!state.lastMessageId.loading && state.haveMoreOldMessages.have && (
-          <FABGetOldMessages
-            disabled={state.haveMoreOldMessages.loading}
-            onClick={getMoreOldMessages}
-          >
-            Carregar mais mensagens
-          </FABGetOldMessages>
-        )}
-      </StyledHeader>
       <ContentContainer id="content-container">
+        {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) &&
+          isLargerThan768 && <Progress />}
+
         <MessagesBox>
           {state.messages.map(message => (
             <Message
@@ -763,6 +775,17 @@ export function Room(): JSX.Element | null {
             />
           ))}
         </MessagesBox>
+
+        {!state.lastMessageId.loading &&
+          state.haveMoreOldMessages.have &&
+          isLargerThan768 && (
+            <FABGetOldMessages
+              disabled={state.haveMoreOldMessages.loading}
+              onClick={getMoreOldMessages}
+            >
+              Carregar mais mensagens
+            </FABGetOldMessages>
+          )}
 
         {(hasUnreadMessages ?? false) && state.isBlocked === false && (
           <FABScrollToEndOfMessages onClick={endOfMessages}>

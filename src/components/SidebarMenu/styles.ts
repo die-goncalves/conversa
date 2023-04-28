@@ -106,6 +106,7 @@ export const StyledContent = styled(DialogContent)`
 
   &::-webkit-scrollbar {
     width: 1vw;
+    height: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -122,6 +123,48 @@ export const StyledContent = styled(DialogContent)`
   }
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
+  }
+`
+
+export const StyledSidebarContent = styled.aside`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  height: 100svh;
+  background: var(--gray-800);
+  border-radius: 0;
+  box-shadow: var(--shadow);
+
+  overflow: auto;
+  scrollbar-gutter: auto;
+
+  &::-webkit-scrollbar {
+    width: 1vw;
+    height: 1vw;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: var(--gray-600);
+    box-shadow: var(--shadow-lg);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-700);
+    box-shadow: var(--shadow-md);
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: var(--gray-800);
+    box-shadow: var(--shadow);
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--gray-900);
+  }
+
+  @media (min-width: 768px) {
+    position: sticky;
+    top: 0;
+    flex: none;
+    width: 40%;
   }
 `
 
@@ -172,8 +215,59 @@ export const StyledTitle = styled(DialogTitle)`
   }
 `
 
+export const StyledSidebarTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+
+  a {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 40px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+
+    span {
+      margin-right: 0.5rem;
+
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      font-weight: 400;
+      transition: opacity 150ms linear;
+      color: var(--violet-50);
+    }
+    text-decoration: none;
+
+    transition: opacity 150ms linear, border-color 150ms linear;
+    &:hover {
+      span {
+        opacity: 0.8;
+      }
+    }
+
+    outline: 0;
+    &:focus-visible {
+      border-color: var(--violet-300);
+    }
+  }
+
+  @media (min-width: 320px) {
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) {
+    padding: 0 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding: 0 2rem;
+  }
+`
+
 export const StyledMain = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   gap: 0.75rem;
 
@@ -182,6 +276,9 @@ export const StyledMain = styled.div`
   }
   @media (min-width: 640px) {
     padding: 1rem 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding: 1rem 2rem;
   }
 `
 

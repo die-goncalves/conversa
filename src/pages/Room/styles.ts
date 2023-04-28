@@ -3,7 +3,6 @@ import styled from 'styled-components'
 export const RoomContainer = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
   width: 100vw;
   height: 100svh;
 
@@ -29,6 +28,13 @@ export const RoomContainer = styled.div`
   }
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
+  }
+
+  @media (min-width: 320px) {
+    flex-direction: column;
+  }
+  @media (min-width: 768px) {
+    flex-direction: row;
   }
 `
 
@@ -59,6 +65,10 @@ export const ContentContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
+
+  @media (min-width: 768px) {
+    width: 60%;
+  }
 `
 
 export const MessagesBox = styled.ul`
@@ -130,7 +140,6 @@ export const FABScrollToEndOfMessages = styled.button`
 `
 
 export const FABGetOldMessages = styled.button`
-  /* position: absolute; */
   box-sizing: border-box;
   display: flex;
   height: 2.5rem;
@@ -162,12 +171,9 @@ export const FABGetOldMessages = styled.button`
     opacity: 0.8;
   }
 
-  @media (min-width: 320px) {
-    /* top: 16px;
-    right: 16px; */
-  }
-  @media (min-width: 640px) {
-    /* top: 32px;
-    right: 32px; */
+  @media (min-width: 768px) {
+    position: absolute;
+    top: 24px;
+    right: 24px;
   }
 `

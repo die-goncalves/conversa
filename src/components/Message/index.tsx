@@ -2,7 +2,7 @@ import { memo, useEffect, useRef, useState } from 'react'
 import { timeAgo } from '../../utils/formatDate'
 import { get, ref, set } from 'firebase/database'
 import { database } from '../../services/firebaseConfig'
-import { ADMMessage, MessageContainer, RowContainer, Viewed } from './styles'
+import { ADMMessage, MessageLine, Viewed } from './styles'
 
 interface IMessageProps {
   message: {
@@ -173,11 +173,17 @@ export function MessageComponent({
   }
 
   return (
-    <RowContainer id={message.id ?? ''}>
-      <MessageContainer isMe={isMe}>
-        {isMe ? null : <img src={message.sender?.photoURL} alt="" />}
+    <MessageLine id={message.id ?? ''} isMe={isMe}>
+      <div className="message-container">
+        {isMe ? null : (
+          <img
+            className="message-avatar"
+            src={message.sender?.photoURL}
+            alt=""
+          />
+        )}
 
-        <div>
+        <div className="message-balloon">
           {isMe ? null : (
             <header>
               <span>{message.sender?.displayName}</span>
@@ -206,8 +212,8 @@ export function MessageComponent({
             </Viewed>
           </footer>
         </div>
-      </MessageContainer>
-    </RowContainer>
+      </div>
+    </MessageLine>
   )
 }
 

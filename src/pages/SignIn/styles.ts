@@ -282,8 +282,6 @@ export const LogoBox = styled.div`
     font-weight: 500;
   }
 
-  @media (min-width: 320px) {
-  }
   @media (min-width: 640px) {
     border-radius: 4px;
     padding: 0.5rem;

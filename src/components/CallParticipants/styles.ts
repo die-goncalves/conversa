@@ -9,7 +9,7 @@ export const CallWrapper = styled.div`
   @media (min-width: 320px) {
     flex-direction: column;
   }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     margin: 2rem 2rem 0;
   }
 `
@@ -24,6 +24,9 @@ export const CallParticipantsContainer = styled.div`
   }
   @media (min-width: 640px) {
     padding: 0 1.5rem;
+  }
+  @media (min-width: 768px) {
+    padding: 1.5rem 1.5rem 0;
   }
 `
 

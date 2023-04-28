@@ -15,10 +15,16 @@ import {
   StyledMain,
   StyledOverlay,
   StyledTitle,
-  StyledTrigger
+  StyledTrigger,
+  StyledSidebarContent,
+  StyledSidebarTitle
 } from './styles'
+import { useMediaQuery } from 'react-responsive'
 
 export function SidebarMenu(): JSX.Element {
+  const isLargerThan768 = useMediaQuery({
+    query: '(min-width: 768px)'
+  })
   const { rooms } = useContext(RoomContext)
   const { onSignOut } = useContext(AuthContext)
   const [open, setOpen] = useState(false)
@@ -35,6 +41,66 @@ export function SidebarMenu(): JSX.Element {
       }
     )
   }, [rooms])
+
+  if (isLargerThan768) {
+    return (
+      <StyledSidebarContent>
+        <StyledSidebarTitle>
+          <Link to={'/dashboard'}>
+            <LogoSVG />
+            <span>Conversa</span>
+          </Link>
+
+          <Notification />
+        </StyledSidebarTitle>
+        <StyledMain>
+          <SignOutButton onClick={onSignOut}>Sair</SignOutButton>
+
+          <FormJoinRoom />
+
+          {typedRooms.chat !== 0 && (
+            <RoomsBox>
+              <header>Chat</header>
+
+              {rooms.map(room => {
+                if (room.type === 'chat') {
+                  return (
+                    <NavLink
+                      key={room.id}
+                      roomId={room.id ?? ''}
+                      roomImage={room.image}
+                      roomType={room.type}
+                      roomDisplayName={room.displayName}
+                    />
+                  )
+                } else return null
+              })}
+            </RoomsBox>
+          )}
+
+          {typedRooms.video !== 0 && (
+            <RoomsBox>
+              <header>Video Chamada</header>
+
+              {rooms.map(room => {
+                if (room.type === 'video') {
+                  return (
+                    <NavLink
+                      key={room.id}
+                      roomId={room.id ?? ''}
+                      roomImage={room.image}
+                      roomType={room.type}
+                      roomDisplayName={room.displayName}
+                    />
+                  )
+                } else return null
+              })}
+            </RoomsBox>
+          )}
+        </StyledMain>
+      </StyledSidebarContent>
+    )
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>

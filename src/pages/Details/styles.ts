@@ -3,7 +3,6 @@ import styled from 'styled-components'
 export const RoomDetailsContainer = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
   width: 100vw;
   height: 100svh;
 
@@ -31,6 +30,16 @@ export const RoomDetailsContainer = styled.div`
   }
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
+  }
+
+  @media (min-width: 320px) {
+    flex-direction: column;
+  }
+  @media (min-width: 768px) {
+    flex-direction: row;
+    & > div {
+      width: 100%;
+    }
   }
 `
 
@@ -87,6 +96,9 @@ export const ParticipantGallery = styled.div`
   }
   @media (min-width: 640px) {
     column-count: 2;
+  }
+  @media (min-width: 768px) {
+    column-count: 1;
   }
 `
 
@@ -208,5 +220,8 @@ export const BlockedParticipantGallery = styled.div`
   }
   @media (min-width: 640px) {
     column-count: 2;
+  }
+  @media (min-width: 768px) {
+    column-count: 1;
   }
 `
