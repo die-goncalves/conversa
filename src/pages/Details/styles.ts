@@ -46,6 +46,11 @@ export const RoomDetailsContainer = styled.div`
       width: 65%;
     }
   }
+  @media (min-width: 1366px) {
+    & > div {
+      width: 70%;
+    }
+  }
 `
 
 export const StyledHeader = styled.header`

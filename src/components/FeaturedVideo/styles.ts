@@ -5,19 +5,24 @@ export const FeaturedVideoContainer = styled.div`
   display: flex;
 
   @media (min-width: 320px) {
-    padding: 0 1rem;
     width: 100%;
     height: 80%;
+    padding: 0 1rem;
   }
   @media (min-width: 640px) {
     height: 70%;
-    padding: 0rem 1.5rem 0rem;
+    padding: 0 1.5rem 0;
   }
   @media (min-width: 768px) {
-    padding: 1.5rem 1.5rem 0rem;
+    padding: 1.5rem 1.5rem 0;
   }
   @media (min-width: 1024px) {
-    padding: 2rem 2rem 0rem;
+    padding: 2rem 2rem 0;
+  }
+  @media (min-width: 1366px) {
+    width: 80%;
+    height: 100%;
+    padding: 2rem 0 0 2rem;
   }
 `
 

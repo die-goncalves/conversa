@@ -71,6 +71,9 @@ export const ContentContainer = styled.div`
   @media (min-width: 1024px) {
     width: 65%;
   }
+  @media (min-width: 1366px) {
+    width: 70%;
+  }
 `
 
 export const MessagesBox = styled.ul`

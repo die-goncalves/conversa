@@ -15,6 +15,9 @@ export const CallWrapper = styled.div`
   @media (min-width: 768px) {
     height: 100%;
   }
+  @media (min-width: 1366px) {
+    flex-direction: row;
+  }
 `
 
 interface ICallParticipantsContainer {
@@ -38,6 +41,10 @@ export const CallParticipantsContainer = styled.div<ICallParticipantsContainer>`
   @media (min-width: 1024px) {
     padding: ${props =>
       props.hasFeaturedVideo != null ? '0 2rem 0' : '2rem 2rem 0'};
+  }
+  @media (min-width: 1366px) {
+    padding: ${props =>
+      props.hasFeaturedVideo != null ? '2rem 2rem 0 0' : '2rem 2rem 0'};
   }
 `
 
