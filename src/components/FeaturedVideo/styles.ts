@@ -5,7 +5,7 @@ export const FeaturedVideoContainer = styled.div`
   display: flex;
 
   @media (min-width: 320px) {
-    padding: 0.5rem 1rem 0rem;
+    padding: 0 1rem;
     width: 100%;
     height: 80%;
   }

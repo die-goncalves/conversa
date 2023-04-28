@@ -4,9 +4,6 @@ export const FormJoinRoomContainer = styled.form`
   display: flex;
   flex-direction: column;
   background: var(--gray-800);
-  box-shadow: var(--shadow);
-  /* margin: 1rem;
-  padding: 1rem; */
   border-radius: 4px;
 
   label {
@@ -26,11 +23,17 @@ export const FormJoinRoomContainer = styled.form`
     padding: 0 1rem;
     border-radius: 0.25rem;
     background: transparent;
+    box-shadow: var(--shadow);
 
-    transition: border-color 150ms linear;
+    transition: border-color 150ms linear, box-shadow 150ms linear;
     outline: 0;
     &:focus-visible {
       border-color: var(--violet-300);
+      box-shadow: var(--shadow-md);
+    }
+    &:not(:focus-visible):hover {
+      border-color: var(--gray-600);
+      box-shadow: var(--shadow-md);
     }
   }
 

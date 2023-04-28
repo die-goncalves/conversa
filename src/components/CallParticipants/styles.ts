@@ -4,8 +4,17 @@ export const CallWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100svh - 56px);
   overflow: hidden;
+
+  @media (min-width: 320px) {
+    height: calc(100svh - 4.5rem);
+  }
+  @media (min-width: 640px) {
+    height: calc(100svh - 5.5rem);
+  }
+  @media (min-width: 768px) {
+    height: 100%;
+  }
 `
 
 interface ICallParticipantsContainer {

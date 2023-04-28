@@ -20,9 +20,15 @@ export const SendMessageContainer = styled.div`
       height: 3.5rem;
       align-items: center;
       border: 2px solid var(--gray-800);
+      box-shadow: var(--shadow);
       border-radius: 4px;
       gap: 0.5rem;
       cursor: text;
+
+      &:has(textarea:not(:focus-visible)):hover {
+        border-color: var(--gray-600);
+        box-shadow: var(--shadow-md);
+      }
 
       &:has(textarea:disabled) {
         cursor: not-allowed;

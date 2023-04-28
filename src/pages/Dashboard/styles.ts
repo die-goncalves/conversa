@@ -193,11 +193,17 @@ export const FormContainer = styled.div`
         padding: 0 1rem;
         border-radius: 0.25rem;
         background: transparent;
+        box-shadow: var(--shadow);
 
-        transition: border-color 150ms linear;
+        transition: border-color 150ms linear, box-shadow 150ms linear;
         outline: 0;
         &:focus-visible {
           border-color: var(--violet-300);
+          box-shadow: var(--shadow-md);
+        }
+        &:not(:focus-visible):hover {
+          border-color: var(--gray-600);
+          box-shadow: var(--shadow-md);
         }
       }
 

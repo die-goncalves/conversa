@@ -42,7 +42,6 @@ export const StyledHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 56px;
   gap: 16px;
 
   & > div {
@@ -52,10 +51,10 @@ export const StyledHeader = styled.header`
   }
 
   @media (min-width: 320px) {
-    padding: 0.5rem 1rem;
+    padding: 1rem 1rem 0;
   }
   @media (min-width: 640px) {
-    padding: 0.5rem 1.5rem;
+    padding: 1.5rem 1.5rem 0;
   }
 `
 

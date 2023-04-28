@@ -178,7 +178,6 @@ export const StyledTitle = styled(DialogTitle)`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
 
   a {
     display: flex;
@@ -214,10 +213,10 @@ export const StyledTitle = styled(DialogTitle)`
   }
 
   @media (min-width: 320px) {
-    padding: 0 1rem;
+    padding: 1rem 1rem 0;
   }
   @media (min-width: 640px) {
-    padding: 0 1.5rem;
+    padding: 1.5rem 1.5rem 0;
   }
 `
 
@@ -225,7 +224,6 @@ export const StyledSidebarTitle = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
 
   a {
     display: flex;
@@ -260,14 +258,11 @@ export const StyledSidebarTitle = styled.div`
     }
   }
 
-  @media (min-width: 320px) {
-    padding: 0 1rem;
-  }
-  @media (min-width: 640px) {
-    padding: 0 1.5rem;
+  @media (min-width: 768px) {
+    padding: 1.5rem 1.5rem 0;
   }
   @media (min-width: 1024px) {
-    padding: 0 2rem;
+    padding: 2rem 2rem 0;
   }
 `
 
