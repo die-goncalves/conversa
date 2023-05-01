@@ -11,11 +11,14 @@ import {
   set
 } from 'firebase/database'
 import { toast } from 'react-toastify'
+import { useMediaQuery } from 'react-responsive'
 import { AuthContext } from '../../contexts/AuthContext'
 import { database } from '../../services/firebaseConfig'
 import { ParticipantCard } from '../../components/ParticipantCard'
 import { Progress } from '../../components/Progress'
 import { BlockedParticipantCard } from '../../components/BlockedParticipantCard'
+import { SidebarMenu } from '../../components/SidebarMenu'
+import { Popover } from '../../components/Popover'
 import {
   ActionSection,
   BlockedParticipantGallery,
@@ -23,10 +26,10 @@ import {
   ParticipantGallery,
   ParticipantSection,
   RoomDetailsContainer,
-  StyledHeader
+  StyledHeader,
+  RoomIdSection,
+  StyledInputPassword
 } from './styles'
-import { SidebarMenu } from '../../components/SidebarMenu'
-import { useMediaQuery } from 'react-responsive'
 
 interface IState {
   roomId: string | null
@@ -58,6 +61,7 @@ interface IState {
     }
   >
   blocked: Record<string, boolean>
+  showPassword: boolean
 }
 enum Actions {
   'set-room-id',
@@ -66,7 +70,8 @@ enum Actions {
   'set-adms',
   'set-users',
   'set-blocked',
-  'has-more-than-one-adm'
+  'has-more-than-one-adm',
+  'set-show-password'
 }
 interface IActions {
   type: keyof typeof Actions
@@ -80,6 +85,7 @@ export function Details(): JSX.Element | null {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const { userState } = useContext(AuthContext)
+  const [open, setOpen] = useState(false)
   const { roomId } = useLoaderData() as {
     roomId: string
   }
@@ -99,7 +105,14 @@ export function Details(): JSX.Element | null {
           return {
             ...state,
             roomId: typedPayload.id,
-            room: typedPayload.room
+            room: typedPayload.room,
+            iAmAdm: null,
+            hasMoreThanOneAdm: null,
+            iAmInTheRoom: null,
+            adms: {},
+            users: {},
+            blocked: {},
+            showPassword: false
           }
         }
         case 'set-i-am-adm': {
@@ -154,6 +167,11 @@ export function Details(): JSX.Element | null {
             blocked: action.payload as Record<string, boolean>
           }
         }
+        case 'set-show-password':
+          return {
+            ...state,
+            showPassword: !state.showPassword
+          }
         default:
           throw new Error('Ação desconhecida')
       }
@@ -166,7 +184,8 @@ export function Details(): JSX.Element | null {
       iAmInTheRoom: null,
       adms: {},
       users: {},
-      blocked: {}
+      blocked: {},
+      showPassword: false
     }
   )
 
@@ -259,6 +278,26 @@ export function Details(): JSX.Element | null {
       }
     },
     [detail.roomId]
+  )
+
+  const handleCopyId = useCallback(
+    async (ev: React.MouseEvent<HTMLButtonElement>) => {
+      try {
+        ev.preventDefault()
+        const inputElement = document.getElementById(
+          'input-text-id'
+        ) as HTMLInputElement
+
+        inputElement.select()
+        inputElement.setSelectionRange(0, 99999) // For mobile devices
+
+        await navigator.clipboard.writeText(inputElement.value)
+        setOpen(prev => !prev)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    []
   )
 
   useEffect(() => {
@@ -386,6 +425,36 @@ export function Details(): JSX.Element | null {
       )}
 
       <div>
+        <RoomIdSection>
+          <h2>Id da sala</h2>
+          <span>Use para chamar participantes para sua sala</span>
+
+          <div>
+            <StyledInputPassword>
+              <input
+                id="input-text-id"
+                readOnly
+                type={detail.showPassword ? 'text' : 'password'}
+                value={detail.roomId ?? ''}
+              />
+              <button
+                onClick={() => {
+                  dispatch({ type: 'set-show-password' })
+                }}
+              >
+                {detail.showPassword ? 'Esconder' : 'Mostrar'}
+              </button>
+            </StyledInputPassword>
+
+            <Popover.Root open={open} onOpenChange={setOpen}>
+              <Popover.Trigger>
+                <button onClick={handleCopyId}>Copiar Id</button>
+              </Popover.Trigger>
+              <Popover.Content>Copiado</Popover.Content>
+            </Popover.Root>
+          </div>
+        </RoomIdSection>
+
         <ParticipantSection>
           <h2>{Object.entries(detail.users).length} participantes</h2>
 
