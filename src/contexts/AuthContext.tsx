@@ -189,7 +189,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const onSignOut: () => Promise<void> = async () => {
     try {
       await auth.signOut()
-      toast.error('Sessão encerrada.')
+      toast.success('Sessão encerrada.')
     } catch (error) {
       toast.error('Falha ao encerrar sessão.')
       console.error(error)
