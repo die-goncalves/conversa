@@ -92,6 +92,7 @@ export const StyledDropdownMenuContent = styled(DropdownMenuContent)`
 
   &::-webkit-scrollbar {
     width: 1vw;
+    height: 1vw;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
@@ -131,6 +132,7 @@ export const StyledDropdownMenuItemNotification = styled(
   background-color: transparent;
   border: 2px solid transparent;
   border-radius: 4px;
+  padding: 0.5rem;
 
   ${props =>
     props.status === 'unread'
@@ -195,26 +197,15 @@ export const StyledDropdownMenuItemNotification = styled(
       margin-top: 0.25rem;
     }
   }
-
-  @media (min-width: 320px) {
-    padding: 0 0.5rem;
-  }
-  @media (min-width: 640px) {
-    padding: 0 1rem;
-  }
-  @media (min-width: 768px) {
-    padding: 0.5rem 1rem;
-  }
 `
 
 export const StyledDropdownMenuItemClearAll = styled(DropdownMenuItem)`
   display: flex;
   align-items: center;
-  height: 3.5rem;
   width: 100%;
   background-color: transparent;
   border: 2px solid transparent;
-  padding: 0 1rem;
+  padding: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
 
@@ -227,7 +218,7 @@ export const StyledDropdownMenuItemClearAll = styled(DropdownMenuItem)`
   }
 
   svg {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     width: 1.5rem;
     height: 1.5rem;
     fill: var(--red-300);
@@ -248,11 +239,11 @@ export const StyledDropdownMenuItemEmptyList = styled(DropdownMenuItem)`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 3.5rem;
+  height: 2.5rem;
   width: 100%;
   background-color: transparent;
   border: 2px solid transparent;
-  padding: 0 1rem;
+  padding: 0.5rem;
   border-radius: 4px;
   outline: none;
 `

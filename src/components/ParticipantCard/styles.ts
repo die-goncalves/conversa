@@ -96,7 +96,6 @@ export const StyledDropdownMenuContent = styled(DropdownMenuContent)`
   animation-name: scaleIn;
   animation-duration: 150ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
 
   transform-origin: var(--radix-dropdown-menu-content-transform-origin);
 
@@ -123,11 +122,10 @@ export const StyledDropdownMenuArrow = styled(DropdownMenuArrow)`
 export const StyledDropdownMenuItem = styled(DropdownMenuItem)`
   display: flex;
   align-items: center;
-  height: 3.5rem;
   width: 100%;
   background-color: transparent;
   border: 2px solid transparent;
-  padding: 0 1rem;
+  padding: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
 
@@ -140,7 +138,7 @@ export const StyledDropdownMenuItem = styled(DropdownMenuItem)`
   }
 
   svg {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     width: 1.5rem;
     height: 1.5rem;
     fill: var(--red-300);
