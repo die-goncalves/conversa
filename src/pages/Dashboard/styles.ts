@@ -62,14 +62,13 @@ export const ContentContainer = styled.div`
 export const StyledHeader = styled.header`
   display: flex;
   align-items: center;
-  height: 56px;
   gap: 1rem;
 
   @media (min-width: 320px) {
-    padding: 0 1rem;
+    padding: 1rem 1rem 0;
   }
   @media (min-width: 640px) {
-    padding: 0 1.5rem;
+    padding: 1.5rem 1.5rem 0;
   }
 `
 
