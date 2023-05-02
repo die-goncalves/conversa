@@ -1,3 +1,12 @@
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { compareAsc } from 'date-fns'
 import {
   child,
@@ -12,15 +21,6 @@ import {
   set,
   type Unsubscribe
 } from 'firebase/database'
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState
-} from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom'
 import { database } from '../../services/firebaseConfig'
 import {
   createPeerConnection,
@@ -29,6 +29,7 @@ import {
   updateMedia
 } from '../../utils/signaling'
 import { AuthContext } from '../../contexts/AuthContext'
+import { IceServersContext } from '../../contexts/IceServersContext'
 
 interface ICall {
   callId: string
@@ -52,6 +53,7 @@ interface ICall {
       }
     ]
   >
+  iceServers: RTCIceServer[] | undefined
 }
 enum Actions {
   'user-id',
@@ -94,7 +96,7 @@ function reducer(state: ICall, action: IActions): ICall {
         }
       ]
 
-      const pc = createPeerConnection(state.localStream)
+      const pc = createPeerConnection(state.localStream, state.iceServers)
       newParticipant[1].peerConnection = pc
 
       if (action.payload[0] !== state.userId) {
@@ -214,12 +216,14 @@ export function usePeerConnection(): IPeerConnection {
   const [mediaPermissionGranted, setMediaPermissionGranted] = useState(false)
   const [isScreenShare, setIsScreenShare] = useState(false)
   const { userState } = useContext(AuthContext)
+  const { iceServers } = useContext(IceServersContext)
   const [call, dispatch] = useReducer(reducer, {
     callId,
     userId: '',
     localStream: null,
     participants: [],
-    media: []
+    media: [],
+    iceServers
   })
   const onChildAddedRef = useRef<{ unsubscribe: Unsubscribe | null }>({
     unsubscribe: null

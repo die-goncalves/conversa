@@ -8,21 +8,6 @@ import {
 } from 'firebase/database'
 import { database } from '../services/firebaseConfig'
 
-export const servers = {
-  iceServers: [
-    {
-      urls: [
-        'stun:stun1.l.google.com:19302',
-        'stun:stun2.l.google.com:19302',
-        'stun:stun.l.google.com:19302',
-        'stun:stun3.l.google.com:19302',
-        'stun:stun4.l.google.com:19302'
-      ]
-    }
-  ],
-  iceCandidatePoolSize: 10
-}
-
 export function listeners(
   participants: Array<
     [
@@ -222,8 +207,13 @@ export function updateMedia(
   })
 }
 
-export function createPeerConnection(stream: MediaStream): RTCPeerConnection {
-  const peerConnection = new RTCPeerConnection(servers)
+export function createPeerConnection(
+  stream: MediaStream,
+  iceServers: RTCIceServer[] | undefined
+): RTCPeerConnection {
+  const peerConnection = new RTCPeerConnection({
+    iceServers
+  })
 
   stream.getTracks().forEach((track: MediaStreamTrack) => {
     peerConnection.addTrack(track, stream)
