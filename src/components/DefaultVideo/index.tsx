@@ -26,8 +26,13 @@ export function DefaultVideo({
     if (participant === undefined) return
 
     if (userId === participant[0]) {
-      if (videoRef.current != null && stream != null)
-        videoRef.current.srcObject = stream
+      if (videoRef.current != null && stream != null) {
+        const newStream = new MediaStream(stream.getTracks())
+        const audioTrack = newStream.getAudioTracks()[0]
+        newStream.removeTrack(audioTrack)
+
+        videoRef.current.srcObject = newStream
+      }
     } else {
       const peerConnection = participant[1].peerConnection
       const remoteStream = new MediaStream()
