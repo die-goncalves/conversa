@@ -15,6 +15,7 @@ import {
   SignUpContainer
 } from './styles'
 import { useMediaQuery } from 'react-responsive'
+import { Presentation } from '../../components/Presentation'
 
 const schema = zod.object({
   email: zod
@@ -55,6 +56,7 @@ export function SignUp(): JSX.Element {
 
   return (
     <PageContainer>
+      <Presentation />
       <SignUpContainer>
         {!isSmallScreen && (
           <LogoBox>
