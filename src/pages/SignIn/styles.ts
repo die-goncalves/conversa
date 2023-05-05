@@ -254,24 +254,6 @@ export const Footer = styled.footer`
 
   a {
     margin: auto;
-    cursor: pointer;
-
-    text-decoration-line: underline;
-    text-decoration-style: wavy;
-    text-decoration-thickness: 2px;
-    text-decoration-color: var(--violet-300);
-
-    transition: opacity 150ms linear, outline-offset 150ms linear;
-    &:hover {
-      opacity: 0.8;
-    }
-    &:focus-visible {
-      border-radius: 1px;
-      outline-style: solid;
-      outline-width: 2px;
-      outline-offset: 2px;
-      outline-color: var(--violet-300);
-    }
   }
 `
 

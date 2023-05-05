@@ -22,6 +22,8 @@ export const NavLinkContainer = styled.div`
   }
 
   & > a:first-of-type {
+    all: unset;
+
     margin-right: auto;
     text-decoration: none;
     cursor: pointer;
@@ -30,15 +32,17 @@ export const NavLinkContainer = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    transition: opacity 150ms linear, outline-offset 150ms linear;
-    &:hover {
+    transition: opacity 150ms linear, outline-color 150ms linear;
+    &:not(:focus-visible):hover {
       opacity: 0.8;
     }
+    outline: 0;
+    outline-color: transparent;
     &:focus-visible {
-      border-radius: 1px;
       outline-style: solid;
-      outline-width: 2px;
       outline-offset: 2px;
+      outline-width: 2px;
+      border-radius: 0.25px;
       outline-color: var(--violet-300);
     }
     &.active {
@@ -61,6 +65,8 @@ export const NavLinkContainer = styled.div`
   }
 
   & > a:last-of-type {
+    all: unset;
+
     display: flex;
     flex: none;
     align-items: center;
@@ -75,7 +81,7 @@ export const NavLinkContainer = styled.div`
       box-shadow 150ms linear;
 
     box-shadow: var(--shadow);
-    &:hover {
+    &:not(:focus-visible):hover {
       background: var(--gray-600);
       box-shadow: var(--shadow-md);
     }

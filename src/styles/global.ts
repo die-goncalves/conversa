@@ -69,6 +69,30 @@ export const GlobalStyle = createGlobalStyle`
     color: inherit;
   }
 
+  a {
+    cursor: pointer;
+
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--violet-300);
+
+    transition: opacity 150ms linear, outline-color 150ms linear;
+    &:not(:focus-visible):hover {
+      opacity: 0.8;
+    }
+
+    outline: 0;
+    outline-color: transparent;
+    &:focus-visible {
+      outline-style: solid;
+      outline-offset: 2px;
+      outline-width: 2px;
+      border-radius: 0.25px;
+      outline-color: var(--violet-300);
+    }
+  }
+
   @media (min-width: 320px) { 
     body {
       font-size: 0.875rem;

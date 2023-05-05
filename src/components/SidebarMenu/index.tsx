@@ -48,6 +48,7 @@ export function SidebarMenu(): JSX.Element {
         <StyledSidebarTitle>
           <Link to={'/dashboard'}>
             <LogoSVG />
+            &nbsp;
             <span>Conversa</span>
           </Link>
 
@@ -132,6 +133,7 @@ export function SidebarMenu(): JSX.Element {
 
             <Link to={'/dashboard'}>
               <LogoSVG />
+              &nbsp;
               <span>Conversa</span>
             </Link>
 

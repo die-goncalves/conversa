@@ -188,10 +188,6 @@ export const StyledTitle = styled(DialogTitle)`
   a {
     display: flex;
     align-items: center;
-    box-sizing: border-box;
-    height: 40px;
-    border: 2px solid transparent;
-    border-radius: 4px;
 
     span {
       margin-right: 0.5rem;
@@ -204,18 +200,6 @@ export const StyledTitle = styled(DialogTitle)`
       color: var(--violet-50);
     }
     text-decoration: none;
-
-    transition: opacity 150ms linear, border-color 150ms linear;
-    &:hover {
-      span {
-        opacity: 0.8;
-      }
-    }
-
-    outline: 0;
-    &:focus-visible {
-      border-color: var(--violet-300);
-    }
   }
 
   @media (min-width: 320px) {
@@ -234,10 +218,6 @@ export const StyledSidebarTitle = styled.div`
   a {
     display: flex;
     align-items: center;
-    box-sizing: border-box;
-    height: 40px;
-    border: 2px solid transparent;
-    border-radius: 4px;
 
     span {
       margin-right: 0.5rem;
@@ -250,18 +230,6 @@ export const StyledSidebarTitle = styled.div`
       color: var(--violet-50);
     }
     text-decoration: none;
-
-    transition: opacity 150ms linear, border-color 150ms linear;
-    &:hover {
-      span {
-        opacity: 0.8;
-      }
-    }
-
-    outline: 0;
-    &:focus-visible {
-      border-color: var(--violet-300);
-    }
   }
 
   @media (min-width: 768px) {
