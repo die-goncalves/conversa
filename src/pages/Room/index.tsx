@@ -528,7 +528,8 @@ export function Room(): JSX.Element | null {
           const snapshotMessagesAfter = await get(
             query(
               ref(database, `messages/${state.roomId}`),
-              startAfter(state.lastViewedMessage)
+              startAt(state.lastViewedMessage),
+              orderByKey()
             )
           )
           messagesAfter = snapshotMessagesAfter.val()
@@ -738,7 +739,6 @@ export function Room(): JSX.Element | null {
 
   if (state.isInTheRoom == null) return null
 
-  console.log(isLargerThan768)
   return (
     <RoomContainer>
       {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) &&
