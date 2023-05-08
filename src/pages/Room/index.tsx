@@ -51,7 +51,7 @@ interface IMessage {
     isAnonymous: boolean
     photoURL: string
   }
-  type?: 'enter' | 'out' | 'info'
+  type?: 'enter' | 'exit' | 'info'
   viewed: Record<string, boolean>
   timestamp: number
 }
@@ -223,7 +223,7 @@ export function Room(): JSX.Element | null {
             sender?: Record<string, boolean>
             viewed: Record<string, boolean>
             timestamp: number
-            type?: 'enter' | 'out' | 'info'
+            type?: 'enter' | 'exit' | 'info'
           }
         > | null
         if (snapshotTyped !== null) {
@@ -237,7 +237,7 @@ export function Room(): JSX.Element | null {
                 sender?: Record<string, boolean> | undefined
                 viewed: Record<string, boolean>
                 timestamp: number
-                type?: 'enter' | 'out' | 'info'
+                type?: 'enter' | 'exit' | 'info'
               }
             ]
           >
@@ -310,8 +310,6 @@ export function Room(): JSX.Element | null {
 
   const hasUnreadMessages = useMemo(() => {
     if (userState.user != null && state.messages.length > 1) {
-      if (state.messages[state.messages.length - 1].sender === undefined)
-        return false
       if (
         state.messages[state.messages.length - 1].sender?.id ===
         userState.user.uid
@@ -542,7 +540,7 @@ export function Room(): JSX.Element | null {
             sender?: Record<string, boolean>
             viewed: Record<string, boolean>
             timestamp: number
-            type?: 'enter' | 'out' | 'info'
+            type?: 'enter' | 'exit' | 'info'
           }
         > = {
           ...messagesBefore,

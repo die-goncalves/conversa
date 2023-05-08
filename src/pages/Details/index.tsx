@@ -222,7 +222,7 @@ export function Details(): JSX.Element | null {
 
           await set(push(child(ref(database), `messages/${detail.roomId}`)), {
             message: `${userDisplayName} saiu da sala`,
-            type: 'out',
+            type: 'exit',
             timestamp: serverTimestamp()
           })
 

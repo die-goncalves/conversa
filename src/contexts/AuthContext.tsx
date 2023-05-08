@@ -182,7 +182,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       navigate('dashboard')
     } catch (error) {
       toast.error('Falha ao iniciar sessão.')
-      console.log(error)
+      console.error(error)
     }
   }
 

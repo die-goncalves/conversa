@@ -50,7 +50,6 @@ export function CallParticipants({ call }: ICallParticipants): JSX.Element {
 
     resizeObserverRef.current = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect
-      console.log({ width, height })
       const margin = isSmallScreen ? 8 : isMediumScreen ? 12 : 16
 
       const numRects =

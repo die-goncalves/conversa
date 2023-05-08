@@ -58,7 +58,7 @@ export function ParticipantCard({
 
       await set(push(child(ref(database), `messages/${roomId}`)), {
         message: `${userDisplayName} saiu da sala`,
-        type: 'out',
+        type: 'exit',
         timestamp: serverTimestamp()
       })
 

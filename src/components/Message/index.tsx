@@ -16,7 +16,7 @@ interface IMessageProps {
       photoURL: string
     }
     viewed: Record<string, boolean>
-    type?: 'enter' | 'out' | 'info'
+    type?: 'enter' | 'exit' | 'info'
     timestamp: number
   }
   sender: string
@@ -153,9 +153,9 @@ export function MessageComponent({
           </div>
         </ADMMessage>
       )
-    if (message.type === 'out')
+    if (message.type === 'exit')
       return (
-        <ADMMessage id={message.id ?? ''} type="out">
+        <ADMMessage id={message.id ?? ''} type="exit">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="48"

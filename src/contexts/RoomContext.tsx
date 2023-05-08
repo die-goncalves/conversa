@@ -59,7 +59,7 @@ async function handleImageUpload(files: FileList): Promise<string | undefined> {
     const base64 = await blobToBase64(compressedFile)
     return base64
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 

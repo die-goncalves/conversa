@@ -155,7 +155,7 @@ export const Viewed = styled.div<IViewed>`
 `
 
 interface IADMMessage {
-  type: 'enter' | 'out' | 'info'
+  type: 'enter' | 'exit' | 'info'
 }
 export const ADMMessage = styled.li<IADMMessage>`
   display: flex;
@@ -171,7 +171,7 @@ export const ADMMessage = styled.li<IADMMessage>`
       if (props.type === 'enter') {
         return 'var(--green-300)'
       }
-      if (props.type === 'out') {
+      if (props.type === 'exit') {
         return 'var(--red-300)'
       }
     }};
