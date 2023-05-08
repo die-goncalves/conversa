@@ -52,7 +52,7 @@ export function SignUp(): JSX.Element {
       <Presentation />
       <SignUpContainer>
         <LogoBox>
-          <LogoSVG />
+          <LogoSVG animation />
           <span>Conversa</span>
         </LogoBox>
 

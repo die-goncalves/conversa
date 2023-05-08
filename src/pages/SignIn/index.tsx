@@ -50,7 +50,7 @@ export function SignIn(): JSX.Element {
     <PageContainer>
       <SignInContainer>
         <LogoBox>
-          <LogoSVG />
+          <LogoSVG animation />
           <span>Conversa</span>
         </LogoBox>
 

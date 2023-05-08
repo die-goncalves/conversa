@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import { LogoSVGContainer } from './styles'
 
-export function LogoSVG(): JSX.Element {
+interface ILogoSVG {
+  animation?: boolean
+}
+export function LogoSVG({ animation = false }: ILogoSVG): JSX.Element {
   useEffect(() => {
     const logoSVGContainerElement =
       document.getElementById('logo-svg-container')
@@ -19,7 +22,7 @@ export function LogoSVG(): JSX.Element {
   }, [])
 
   return (
-    <LogoSVGContainer>
+    <LogoSVGContainer {...(animation && { id: 'logo-svg-container' })}>
       <svg
         viewBox="0 0 256 256"
         preserveAspectRatio="xMinYMid meet"
