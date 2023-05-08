@@ -47,6 +47,7 @@ export const SignInContainer = styled.div`
 
   @media (min-width: 320px) {
     width: 100%;
+    height: 100%;
     padding: 1rem;
   }
   @media (min-width: 640px) {
@@ -262,13 +263,22 @@ export const LogoBox = styled.div`
   align-items: center;
 
   span {
-    margin-left: 0.5rem;
     margin-right: 0.5rem;
 
     font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    transition: opacity 150ms linear;
+    color: var(--violet-50);
   }
 
+  @media (min-width: 320px) {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   @media (min-width: 640px) {
     border-radius: 4px;
     padding: 0.5rem;
