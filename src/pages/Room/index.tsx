@@ -522,6 +522,15 @@ export function Room(): JSX.Element | null {
         let messagesAfter
         if (state.isBlocked !== undefined && state.isBlocked) {
           messagesAfter = null
+        } else if (state.lastViewedMessage === null) {
+          const snapshotMessagesAfter = await get(
+            query(
+              ref(database, `messages/${state.roomId}`),
+              startAt(firstMessage),
+              orderByKey()
+            )
+          )
+          messagesAfter = snapshotMessagesAfter.val()
         } else {
           const snapshotMessagesAfter = await get(
             query(
