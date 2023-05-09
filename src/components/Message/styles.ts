@@ -158,6 +158,7 @@ interface IADMMessage {
   type: 'enter' | 'exit' | 'info'
 }
 export const ADMMessage = styled.li<IADMMessage>`
+  position: relative;
   display: flex;
   margin: 0 auto;
   background: var(--gray-800);

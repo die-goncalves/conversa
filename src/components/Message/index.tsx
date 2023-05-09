@@ -54,17 +54,20 @@ export function MessageComponent({
 
     observer.current = new IntersectionObserver(callbackFunction, {
       root: null,
-      rootMargin: '0px',
+      rootMargin: '0px 0px -88px 0px',
       threshold: 1
     })
 
     const entryElement = document.getElementById(message.id)
-    if (entryElement != null) observer.current?.observe(entryElement)
+
+    if (entryElement != null && !iHaveSeen && !isMe) {
+      observer.current?.observe(entryElement)
+    }
 
     return () => {
       observer.current?.disconnect()
     }
-  }, [message.id])
+  }, [message.id, iHaveSeen, isMe])
 
   useEffect(() => {
     if (!(isVisible ?? false) || iHaveSeen || isMe) return
