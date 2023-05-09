@@ -9,7 +9,7 @@ import {
   signInWithEmailAndPassword,
   signInAnonymously
 } from 'firebase/auth'
-import { child, get, ref, set } from 'firebase/database'
+import { child, get, push, ref, serverTimestamp, set } from 'firebase/database'
 import { auth, database } from '../services/firebaseConfig'
 import { toast } from 'react-toastify'
 
@@ -28,16 +28,6 @@ interface IEmailAndPassword {
   password: string
 }
 
-async function addUserToRoom(userId: string, roomId: string): Promise<void> {
-  const roomSnapshot = await get(
-    child(ref(database), `users/${userId}/rooms/${roomId}`)
-  )
-  if (!roomSnapshot.exists()) {
-    await set(ref(database, `users/${userId}/rooms/${roomId}`), true)
-    await set(ref(database, `rooms/${roomId}/users/${userId}`), true)
-  }
-}
-
 async function writeUserData({
   uid,
   displayName,
@@ -54,7 +44,27 @@ async function writeUserData({
       isAnonymous
     })
 
-    await addUserToRoom(uid, import.meta.env.VITE_APP_GLOBAL_ROOM_CHAT_ID)
+    const globalRoomId: string = import.meta.env.VITE_APP_GLOBAL_ROOM_CHAT_ID
+    const globalRoomSnapshot = await get(
+      child(ref(database), `users/${uid}/rooms/${globalRoomId}`)
+    )
+    if (!globalRoomSnapshot.exists()) {
+      await set(ref(database, `users/${uid}/rooms/${globalRoomId}`), true)
+      await set(ref(database, `rooms/${globalRoomId}/users/${uid}`), {
+        'join-date': serverTimestamp()
+      })
+      const messageListRef = child(ref(database), `messages/${globalRoomId}`)
+      const newMessageRef = push(messageListRef)
+      await set(newMessageRef, {
+        message: `Bem vindo, ${String(displayName)}`,
+        type: 'enter',
+        timestamp: serverTimestamp()
+      })
+      await set(
+        ref(database, `rooms/${globalRoomId}/users/${uid}/first-message`),
+        newMessageRef.key
+      )
+    }
   }
 }
 
@@ -153,6 +163,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const onSignInWithGoogle: () => Promise<void> = async () => {
     try {
       const { user } = await signInWithPopup(auth, googleProvider)
+
       await writeUserData({
         uid: user.uid,
         displayName: user.displayName,
