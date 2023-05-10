@@ -55,7 +55,7 @@ export function MessageComponent({
     observer.current = new IntersectionObserver(callbackFunction, {
       root: null,
       rootMargin: '0px 0px -88px 0px',
-      threshold: 1
+      threshold: 0.8
     })
 
     const entryElement = document.getElementById(message.id)
