@@ -1,12 +1,13 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import { useContext, useMemo, useState } from 'react'
-import { LogoSVG } from '../LogoSVG'
+import * as Dialog from '@radix-ui/react-dialog'
 import { Link } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
 import { RoomContext } from '../../contexts/RoomContext'
 import { AuthContext } from '../../contexts/AuthContext'
 import { FormJoinRoom } from '../FormJoinRoom'
 import { NavLink } from '../NavLink'
 import { Notification } from '../Notification'
+import { LogoSVG } from '../LogoSVG'
 import {
   SignOutButton,
   RoomsBox,
@@ -19,7 +20,6 @@ import {
   StyledSidebarContent,
   StyledSidebarTitle
 } from './styles'
-import { useMediaQuery } from 'react-responsive'
 
 export function SidebarMenu(): JSX.Element {
   const isLargerThan768 = useMediaQuery({
@@ -41,6 +41,14 @@ export function SidebarMenu(): JSX.Element {
       }
     )
   }, [rooms])
+
+  function handlePreventClose(ev: Event): void {
+    ev.preventDefault()
+  }
+  function handleClose(ev: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
+    ev.preventDefault()
+    setOpen(false)
+  }
 
   if (isLargerThan768) {
     return (
@@ -117,8 +125,8 @@ export function SidebarMenu(): JSX.Element {
       </StyledTrigger>
 
       <Dialog.Portal>
-        <StyledOverlay />
-        <StyledContent>
+        <StyledOverlay onClick={handleClose} />
+        <StyledContent onInteractOutside={handlePreventClose}>
           <StyledTitle>
             <StyledClose>
               <svg
