@@ -6,7 +6,6 @@ export const StyledDialogPrimitiveContent = styled(DialogPrimitive.Content)`
   border-radius: 4px;
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
     hsl(206 22% 7% / 20%) 0px 10px 20px -15px; //*
-  width: 90vw;
   max-width: 450px;
   max-height: 85svh;
   position: fixed;
@@ -58,6 +57,10 @@ export const StyledDialogPrimitiveContent = styled(DialogPrimitive.Content)`
   }
   &::-webkit-scrollbar-track {
     background: var(--gray-900);
+  }
+
+  @media (min-width: 320px) {
+    width: calc(100% - 32px);
   }
 `
 

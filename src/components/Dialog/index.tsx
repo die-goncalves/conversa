@@ -52,17 +52,23 @@ const DialogClose = forwardRef<
 ))
 DialogClose.displayName = 'Dialog.Close'
 
-const DialogContent = forwardRef<
-  HTMLDivElement,
-  DialogPrimitive.DialogContentProps
->(({ children, ...props }, forwardedRef) => (
-  <DialogPrimitive.Portal>
-    <StyledDialogPrimitiveOverlay />
-    <StyledDialogPrimitiveContent {...props} ref={forwardedRef}>
-      {children}
-    </StyledDialogPrimitiveContent>
-  </DialogPrimitive.Portal>
-))
+interface IDialogContentProps extends DialogPrimitive.DialogContentProps {
+  onInteractOverlay?: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void
+}
+const DialogContent = forwardRef<HTMLDivElement, IDialogContentProps>(
+  ({ children, onInteractOverlay, ...props }, forwardedRef) => (
+    <DialogPrimitive.Portal>
+      <StyledDialogPrimitiveOverlay
+        {...(onInteractOverlay !== undefined && { onClick: onInteractOverlay })}
+      />
+      <StyledDialogPrimitiveContent {...props} ref={forwardedRef}>
+        {children}
+      </StyledDialogPrimitiveContent>
+    </DialogPrimitive.Portal>
+  )
+)
 DialogContent.displayName = 'Dialog.Content'
 
 export const Dialog = {
