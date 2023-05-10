@@ -11,6 +11,10 @@ import {
 export function Presentation(): JSX.Element {
   const [open, setOpen] = useState(false)
 
+  function handlePreventClose(ev: Event): void {
+    ev.preventDefault()
+  }
+
   function handleClose(): void {
     const storage = sessionStorage.getItem('@conversa-v0.1.0')
     if (storage != null) {
@@ -45,10 +49,10 @@ export function Presentation(): JSX.Element {
         onEscapeKeyDown={ev => {
           handleClose()
         }}
-        onPointerDownOutside={ev => {
-          handleClose()
-        }}
-        onInteractOutside={ev => {
+        onPointerDownOutside={handlePreventClose}
+        onInteractOutside={handlePreventClose}
+        onInteractOverlay={ev => {
+          setOpen(false)
           handleClose()
         }}
       >
