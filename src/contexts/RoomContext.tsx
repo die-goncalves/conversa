@@ -7,7 +7,7 @@ import {
   useState
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import imageCompression from 'browser-image-compression'
+import { toast } from 'react-toastify'
 import {
   child,
   get,
@@ -19,7 +19,7 @@ import {
 } from 'firebase/database'
 import { database } from '../services/firebaseConfig'
 import { AuthContext } from './AuthContext'
-import { toast } from 'react-toastify'
+import { convertCompressedFileToBase64 } from '../utils/toBase64'
 
 interface IRoom {
   id: string | null
@@ -36,31 +36,6 @@ interface INewRoom {
   displayName: string
   adm: string
   image: FileList
-}
-
-const blobToBase64 = async (blob: Blob): Promise<string> =>
-  await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(blob)
-    reader.onload = () => {
-      resolve(reader.result as string)
-    }
-    reader.onerror = error => {
-      reject(error)
-    }
-  })
-
-async function handleImageUpload(files: FileList): Promise<string | undefined> {
-  try {
-    const compressedFile = await imageCompression(files[0], {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 64
-    })
-    const base64 = await blobToBase64(compressedFile)
-    return base64
-  } catch (error) {
-    console.error(error)
-  }
 }
 
 interface RoomContextData {
@@ -96,7 +71,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
   const writeNewRoom = useCallback(
     async ({ type, displayName, adm, image }: INewRoom) => {
       try {
-        const compressedFile = await handleImageUpload(image)
+        const compressedBase64 = await convertCompressedFileToBase64(image[0])
 
         const roomListRef = child(ref(database), 'rooms')
         const newRoomRef = push(roomListRef)
@@ -109,7 +84,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
             adms: {
               [adm]: true
             },
-            image: compressedFile,
+            image: compressedBase64,
             timestamp,
             users: {
               [adm]: {
@@ -267,6 +242,8 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
             }
           }
           setRooms(roomsTemp)
+        } else {
+          setRooms([])
         }
       }
     )

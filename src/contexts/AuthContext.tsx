@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useEffect, useReducer } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -11,7 +12,7 @@ import {
 } from 'firebase/auth'
 import { child, get, push, ref, serverTimestamp, set } from 'firebase/database'
 import { auth, database } from '../services/firebaseConfig'
-import { toast } from 'react-toastify'
+import { fetchAvatar, convertCompressedFileToBase64 } from '../utils/toBase64'
 
 const googleProvider = new GoogleAuthProvider()
 
@@ -164,11 +165,17 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     try {
       const { user } = await signInWithPopup(auth, googleProvider)
 
+      let compressedBase64: string | null = null
+      if (user.photoURL != null) {
+        const file = await fetchAvatar(user.photoURL)
+        compressedBase64 = await convertCompressedFileToBase64(file)
+      }
+
       await writeUserData({
         uid: user.uid,
         displayName: user.displayName,
         email: user.email,
-        photoURL: user.photoURL,
+        photoURL: compressedBase64,
         isAnonymous: user.isAnonymous
       })
       toast.success('Sessão iniciada.')
