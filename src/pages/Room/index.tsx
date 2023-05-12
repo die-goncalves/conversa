@@ -462,8 +462,7 @@ export function Room(): JSX.Element | null {
       userState.user === null ||
       state.roomId === null ||
       state.isInTheRoom === null ||
-      state.lastViewedMessage === undefined ||
-      state.isBlocked === undefined
+      state.lastViewedMessage === undefined
     )
       return
 
@@ -473,6 +472,12 @@ export function Room(): JSX.Element | null {
         userState.user !== null &&
         state.lastViewedMessage !== undefined
       ) {
+        const isBlocked = (
+          await get(
+            ref(database, `rooms/${state.roomId}/blocked/${userState.user.uid}`)
+          )
+        ).exists()
+
         const firstMessage = (
           await get(
             ref(
@@ -520,7 +525,7 @@ export function Room(): JSX.Element | null {
         }
 
         let messagesAfter
-        if (state.isBlocked !== undefined && state.isBlocked) {
+        if (isBlocked) {
           messagesAfter = null
         } else if (state.lastViewedMessage === null) {
           const snapshotMessagesAfter = await get(
@@ -613,13 +618,7 @@ export function Room(): JSX.Element | null {
     }
 
     void getMessages()
-  }, [
-    state.roomId,
-    state.isInTheRoom,
-    state.lastViewedMessage,
-    state.isBlocked,
-    userState.user
-  ])
+  }, [state.roomId, state.isInTheRoom, state.lastViewedMessage, userState.user])
 
   // MONITORANDO ADIÇÃO DE MENSAGENS
   const unsubscribeRefOnChildAdded = useRef<{
