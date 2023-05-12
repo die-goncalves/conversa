@@ -1,0 +1,49 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth !== null",
+      "$uid": {
+        ".write": "auth !== null && auth.uid === $uid",
+        "rooms": {
+          "$room_id": {
+            ".write": "auth !== null && (root.child('rooms').child($room_id).child('adms').child(auth.uid).exists())",
+          }
+        }
+      },
+    },
+    "notifications": {
+      "$user_id": {
+        ".read": "auth !== null && auth.uid === $user_id",
+        ".write": "auth !== null",
+      },
+    },
+    "rooms": {
+      "$room_id": {
+        ".read": "auth !== null",
+      	".write": "auth !== null && !data.exists() || (root.child('rooms').child($room_id).child('adms').child(auth.uid).exists())",
+        "users": {
+          "$user_uid": {
+            ".write": "auth !== null",
+          }
+        },
+        "adms": {
+          ".write": "auth !== null && (root.child('rooms').child($room_id).child('adms').child(auth.uid).exists())",
+        },
+        "signaling-users": {
+            ".write": "auth !== null",
+        }
+      }
+    },
+    "messages": {
+      "$room_id": {
+        ".read": "auth !== null && (root.child('users').child(auth.uid).child('rooms').child($room_id).exists())",
+        ".write": "auth !== null && (root.child('rooms').child($room_id).child('adms').child(auth.uid).exists())",
+        ".indexOn": "timestamp",
+        "$message_id": {
+    			".read": "auth !== null && (root.child('users').child(auth.uid).child('rooms').child($room_id).exists())",
+          ".write": "auth !== null && !(root.child('rooms').child($room_id).child('blocked').child(auth.uid).exists() && !newData.hasChild('type')) && (root.child('users').child(auth.uid).child('rooms').child($room_id).exists())",
+        }
+      }
+    }
+  }
+}
