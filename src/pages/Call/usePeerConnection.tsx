@@ -277,24 +277,6 @@ export function usePeerConnection(): IPeerConnection {
     }
   }, [call.userId, call.localStream])
 
-  const hangup = useCallback(async (): Promise<void> => {
-    if (call.localStream != null) {
-      call.participants.forEach(p => {
-        p[1].peerConnection.close()
-      })
-
-      call.localStream.getTracks().forEach(t => {
-        t.stop()
-        call.localStream?.removeTrack(t)
-      })
-
-      dispatch({ type: 'clear-state' })
-      await remove(
-        ref(database, `rooms/${callId}/signaling-users/${call.userId}`)
-      )
-    }
-  }, [call.localStream, call.participants, call.userId])
-
   const screenShare = useCallback(async () => {
     const stream = await navigator.mediaDevices.getDisplayMedia()
     const [videoTrack] = stream.getVideoTracks()
@@ -369,6 +351,25 @@ export function usePeerConnection(): IPeerConnection {
       setIsScreenShare(false)
     }
   }, [call.participants, call.userId, call.media, call.localStream])
+
+  const hangup = useCallback(async (): Promise<void> => {
+    await forceStopScreenShare()
+    if (call.localStream != null) {
+      call.participants.forEach(p => {
+        p[1].peerConnection.close()
+      })
+
+      call.localStream.getTracks().forEach(t => {
+        t.stop()
+        call.localStream?.removeTrack(t)
+      })
+
+      dispatch({ type: 'clear-state' })
+      await remove(
+        ref(database, `rooms/${callId}/signaling-users/${call.userId}`)
+      )
+    }
+  }, [call.localStream, call.participants, call.userId])
 
   const userMedia = call.media.find(m => m[0] === call.userId)
 
