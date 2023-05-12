@@ -27,11 +27,8 @@ export function DefaultVideo({
 
     if (userId === participant[0]) {
       if (videoRef.current != null && stream != null) {
-        const newStream = new MediaStream(stream.getTracks())
-        const audioTrack = newStream.getAudioTracks()[0]
-        newStream.removeTrack(audioTrack)
-
-        videoRef.current.srcObject = newStream
+        videoRef.current.muted = true
+        videoRef.current.srcObject = stream
       }
     } else {
       const peerConnection = participant[1].peerConnection
