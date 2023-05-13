@@ -214,13 +214,38 @@ Outras funcionalidades como autenticação e a comunicação em tempo real relac
 
 ### Visão do projeto
 
-| ![320px](assets/gif/conversa-min-gif.gif) |
-|:----:|
-|  320px  |
+<details open>
+  <summary>Vídeos</summary>
 
-| ![1440px](assets/gif/conversa-full-gif.gif) |
-|:----:|
-| 1440px |
+  | 320px | 1440px |
+  |:----:|:----:|
+  | <video controls src="assets/video/minW-320px.mp4" /> | <video controls src="assets/video/minW-1440px.mp4" /> |
+</details>
+
+<details open>
+  <summary>Imagens</summary>
+
+  | 320px |
+  |:----:|
+  |  ![320px](assets/image/320px-apresentation.png)  |
+  |  ![320px](assets/image/320px-signup.png)  |
+  |  ![320px](assets/image/320px-create-room.png)  |
+  |  ![320px](assets/image/320px-sidebar.png)  |
+  |  ![320px](assets/image/320px-detail.png)  |
+  |  ![320px](assets/image/320px-chat.png)  |
+  |  ![320px](assets/image/320px-videoconference.png)  |
+  |  ![320px](assets/image/320px-notification.png)  |
+
+  | 1440px |
+  |:----:|
+  |  ![320px](assets/image/1440px-apresentation.png)  |
+  |  ![320px](assets/image/1440px-signup.png)  |
+  |  ![320px](assets/image/1440px-sidebar.png)  |
+  |  ![320px](assets/image/1440px-detail.png)  |
+  |  ![320px](assets/image/1440px-chat.png)  |
+  |  ![320px](assets/image/1440px-videoconference-0.png)  |
+  |  ![320px](assets/image/1440px-videoconference-1.png)  |
+</details>
 
 ## Licença
 
