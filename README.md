@@ -214,16 +214,14 @@ Outras funcionalidades como autenticação e a comunicação em tempo real relac
 
 ### Visão do projeto
 
-<details open>
-  <summary>Vídeos</summary>
+📽️ Se os vídeos abaixo não funcionarem, outra alternativa é encontrá-los em [largura mínima de 320px](assets/video/minW-320px.mp4) e [largura mínima de 1440px](assets/video/minW-1440px.mp4) e baixá-los e se mesmo assim não funcionarem, nesta seção há imagens de alguns quadros dos vídeos.
 
-  | 320px | 1440px |
-  |:----:|:----:|
-  | <video controls src="assets/video/minW-320px.mp4" /> | <video controls src="assets/video/minW-1440px.mp4" /> |
-</details>
+https://github.com/die-goncalves/conversa/assets/67720230/81b7f7d5-c1c5-4a0f-9276-5a5667e23246
+
+https://github.com/die-goncalves/conversa/assets/67720230/8ffaf2f7-bb8f-4d80-8462-d4edfd5d7bbd
 
 <details open>
-  <summary>Imagens</summary>
+  <summary>🖼️ Imagens</summary>
 
   | 320px |
   |:----:|
