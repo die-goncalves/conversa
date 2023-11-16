@@ -49,7 +49,7 @@ export const StyledToastContainer = styled(ToastContainer)<ToastContainerProps>`
   .Toastify__toast-body {
     color: var(--violet-50);
 
-    font-family: 'Assistant', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 400;
