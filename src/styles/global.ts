@@ -58,8 +58,10 @@ export const GlobalStyle = createGlobalStyle`
     background: var(--gray-900);
     color: var(--violet-50);
 
-    font-family: 'Assistant', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
     font-weight: 400;
+    font-size: 1rem; 
+    line-height: 1.5rem;
   }
 
   button, textarea, input, input::file-selector-button, select, a {
@@ -92,24 +94,8 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
-  @media (min-width: 320px) { 
-    body {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-    }
-    h1 {
-      font-size: 1rem;
-      line-height: 1.5rem;
-    }
-  }
-  @media (min-width: 412px) { 
-    body {
-      font-size: 1rem;
-      line-height: 1.5rem;
-    }
-    h1 {
-      font-size: 1.125rem;
-      line-height: 1.75rem;
-    }
+  h1 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
   }
 `
