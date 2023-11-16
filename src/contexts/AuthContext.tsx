@@ -129,11 +129,15 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         email,
         password
       )
+      const name = /.*(?=@)/g.exec(email)?.[0] ?? ''
+      const avatar =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA2xJREFUeJztmtFy2zgMRS9AUraTmd3faKf//1/7ksaSCKAPkt1k2yZ2cik2E9+ZPCUBwENSIAHK1y/f/gPwLz6ptHcAvXUD0DuA3roB6B1Ab90A9A6gt24AegfQWzcAvQPorU8PIG/tMKUETQoRhUIACCIcHgF3g5ltGs8mAHLOGMqAXDJEXl50EYFaK6ZpRK21fWwtjaeccdjvkdLlbkQEpRSUUmBWcTyOqHVuFmMzAMNuh8P+8C4bKWXc32dM44TH43dSZM/VBMDd4Q5lGGj2ht0ATYKHhweazZPoWeCw5w7+pJwL7g73dLtUACUXDDv+4M/2h4KhcO3TAIgI9nfv2/OXaL8/QERo9mgASi7QV1IcQ6JCXQU8ALsdy9SrGgaeLwoAUUFOiWHqImlSaOLMHcVK1sIwc6VPTganANDE+yhd7vMvWgGq218qVTlbjhM5MS1d7pLjk/MRDIaV68RySQHgtHCuUHB8UgCEO8PMVfLg+OQAIM3GNXISdAqAunEZCwCscnxyvgFmm66CWOuHDNES+Bb1u5OMCPxDAmDWCGkA5nnabBtM80SzRQMQEZiJgf1J0zwhnAeaeoifpvYA5mmk2qMCMLOmEOZ5QiWlv5Po17jj+IhocDSOAI7HI90uHUB44PjID3Qcj7TT31M1uchP0wgnng7dDePIhwo0bI/PdeakxYimvcF2pRx3hNd3XVsDAffa9HzRDEAgELEs33jL1TUCYRURba/bzQCICMwqHI5wW34umckAwm2decCsQkSo3aCnatIdTmvFNiLg1SApAXAgHCGydJBkeR2yKBARy0pZITkC9uR+kZLSzwBAAwAigvzkQcTpxUdKaakeR8Dj5YF4ONyeL/ukCSbGqoSdxd0CAgw5/7ZIbGaoZi/WDyOW4orVX7eLCFBKoW8FygoQEaSkSJperJCHO8wdLgJR+d/v4tVvhIpgNxTUajB3SnZ4GwBZmiEqgqR69axEBMLeHnzOCRlLY8TcER5wX16aXW3r0j9UVajKeeB/i5LqupHTkno94B7rs7vX0+dvAZzSzjJg2aTvz5Bg2VqnTt0ZyApjyTTP/ycDISoJouss49f9+VF1BgIAa/t+WR3Ldgl35P1u90/XKDeWqkDxs7H6MdZ2Q90A9A6gt24AegfQWzcAvQPorU8P4AcgEYX8C9EE1QAAAABJRU5ErkJggg=='
+
       await writeUserData({
         uid: user.uid,
-        displayName: user.displayName,
+        displayName: user.displayName ?? name,
         email: user.email,
-        photoURL: user.photoURL,
+        photoURL: user.photoURL ?? avatar,
         isAnonymous: false
       })
       toast.success('Sessão iniciada.')
