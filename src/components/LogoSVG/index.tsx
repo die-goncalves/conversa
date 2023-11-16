@@ -11,6 +11,11 @@ export function LogoSVG({ animation = false }: ILogoSVG): JSX.Element {
     const logoSVGIconElement = document.getElementById('logo-svg-icon')
 
     if (logoSVGContainerElement !== null && logoSVGIconElement !== null) {
+      logoSVGIconElement.classList.add('jello-animation')
+      logoSVGIconElement.onanimationend = () => {
+        logoSVGIconElement.classList.remove('jello-animation')
+      }
+
       logoSVGContainerElement.onmousedown = e => {
         logoSVGIconElement.classList.add('jello-animation')
 
