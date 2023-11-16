@@ -1,34 +1,13 @@
 import styled from 'styled-components'
 
-export const RoomContainer = styled.div`
+export const ChatContainer = styled.div`
   position: relative;
   display: flex;
-  width: 100vw;
+  width: 100%;
   height: 100svh;
 
   overflow: auto;
   scrollbar-gutter: stable;
-
-  &::-webkit-scrollbar {
-    width: 1vw;
-    height: 1vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: var(--gray-600);
-    box-shadow: var(--shadow-lg);
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: var(--gray-800);
-    box-shadow: var(--shadow);
-  }
-  &::-webkit-scrollbar-track {
-    background: var(--gray-900);
-  }
 
   @media (min-width: 320px) {
     flex-direction: column;
@@ -42,7 +21,7 @@ export const StyledHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 
   & > div {
     display: flex;
@@ -64,16 +43,6 @@ export const ContentContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-
-  @media (min-width: 768px) {
-    width: 60%;
-  }
-  @media (min-width: 1024px) {
-    width: 65%;
-  }
-  @media (min-width: 1366px) {
-    width: 70%;
-  }
 `
 
 export const MessagesBox = styled.ul`
@@ -98,12 +67,6 @@ export const MessagesBox = styled.ul`
     margin-right: 2rem;
     margin-left: 2rem;
   }
-`
-
-export const Loader = styled.div`
-  width: 100%;
-  height: 100px;
-  background: red;
 `
 
 export const FABScrollToEndOfMessages = styled.button`
@@ -169,6 +132,7 @@ export const FABGetOldMessages = styled.button`
   color: var(--gray-900);
   font-weight: 500;
   cursor: pointer;
+  line-height: 100%;
 
   transition: background-color 150ms linear, outline-color 150ms linear,
     box-shadow 150ms linear;

@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
+import { useMediaQuery } from 'react-responsive'
 import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RoomContext } from '../../contexts/RoomContext'
@@ -11,7 +12,6 @@ import {
   FormContainer,
   StyledHeader
 } from './styles'
-import { useMediaQuery } from 'react-responsive'
 
 const schema = zod.object({
   room: zod.string().min(1, { message: 'Campo obrigatório' }),
@@ -26,7 +26,7 @@ const schema = zod.object({
 })
 type Schema = zod.infer<typeof schema>
 
-export function Dashboard(): JSX.Element {
+export function Index(): JSX.Element {
   const isLargerThan768 = useMediaQuery({
     query: '(min-width: 768px)'
   })
@@ -57,9 +57,7 @@ export function Dashboard(): JSX.Element {
   return (
     <DashboardContainer>
       <ContentContainer>
-        {isLargerThan768 ? (
-          <SidebarMenu />
-        ) : (
+        {!isLargerThan768 && (
           <StyledHeader>
             <SidebarMenu />
           </StyledHeader>

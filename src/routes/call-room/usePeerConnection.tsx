@@ -208,11 +208,14 @@ interface IPeerConnection {
   isMounted: boolean
 }
 
-export function usePeerConnection(): IPeerConnection {
+export function usePeerConnection({
+  roomId: callId
+}: {
+  roomId: string
+}): IPeerConnection {
   const navigate = useNavigate()
   const [isMounted, setIsMounted] = useState(false)
   const videoTrackRef = useRef<MediaStreamTrack>()
-  const { callId } = useLoaderData() as { callId: string }
   const [mediaPermissionGranted, setMediaPermissionGranted] = useState(false)
   const [isScreenShare, setIsScreenShare] = useState(false)
   const { userState } = useContext(AuthContext)

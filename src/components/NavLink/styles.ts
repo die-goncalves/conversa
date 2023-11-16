@@ -11,14 +11,8 @@ export const NavLinkContainer = styled.div`
 
     object-fit: cover;
 
-    @media (min-width: 320px) {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-    @media (min-width: 412px) {
-      width: 2.5rem;
-      height: 2.5rem;
-    }
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
   & > a:first-of-type {
@@ -65,8 +59,6 @@ export const NavLinkContainer = styled.div`
   }
 
   & > a:last-of-type {
-    all: unset;
-
     display: flex;
     flex: none;
     align-items: center;
@@ -74,7 +66,7 @@ export const NavLinkContainer = styled.div`
     border: 2px solid transparent;
     height: 40px;
     width: 40px;
-    border-radius: 0.25rem;
+    border-radius: 4px;
     background: var(--gray-700);
     cursor: pointer;
     transition: background-color 150ms linear, border-color 150ms linear,

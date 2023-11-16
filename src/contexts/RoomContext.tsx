@@ -117,7 +117,7 @@ function RoomProvider({ children }: RoomProviderProps): JSX.Element {
               newMessageRef.key
             )
             toast.success(`Sala ${displayName} criada!`)
-            navigate(`/dashboard/room/${String(newRoomRef.key)}`)
+            navigate(`/dashboard/chat/${String(newRoomRef.key)}`)
           } else {
             toast.success(`Sala ${displayName} criada!`)
             navigate(`/dashboard/call/${String(newRoomRef.key)}`)

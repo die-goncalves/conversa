@@ -1,20 +1,17 @@
 import styled from 'styled-components'
 
 export const CallContainer = styled.div`
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100svh;
+
   @media (min-width: 320px) {
-    width: 100vw;
-    height: 100svh;
-    position: relative;
-    display: flex;
     flex-direction: column;
-    background: var(--gray-900);
   }
   @media (min-width: 768px) {
-    position: relative;
-    display: flex;
     flex-direction: row;
     flex: 1;
-    background: var(--gray-900);
   }
 `
 

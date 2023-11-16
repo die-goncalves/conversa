@@ -99,4 +99,13 @@ export const GlobalStyle = createGlobalStyle`
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: .5;
+    }
+  }
 `

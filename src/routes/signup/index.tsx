@@ -5,6 +5,7 @@ import zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AuthContext } from '../../contexts/AuthContext'
 import { LogoSVG } from '../../components/LogoSVG'
+import { Presentation } from '../../components/Presentation'
 import {
   Footer,
   Header,
@@ -12,7 +13,7 @@ import {
   Main,
   PageContainer,
   Separator,
-  SignInContainer
+  SignUpContainer
 } from './styles'
 
 const schema = zod.object({
@@ -24,8 +25,8 @@ const schema = zod.object({
 })
 type Schema = zod.infer<typeof schema>
 
-export function SignIn(): JSX.Element {
-  const { onSignInWithEmailAndPassword, onSignInWithGoogle } =
+export function SignUp(): JSX.Element {
+  const { onCreateUserWithEmailAndPassword, onSignInWithGoogle } =
     useContext(AuthContext)
   const {
     register,
@@ -40,7 +41,7 @@ export function SignIn(): JSX.Element {
   })
 
   const onSubmit = async (data: Schema): Promise<void> => {
-    await onSignInWithEmailAndPassword({
+    await onCreateUserWithEmailAndPassword({
       email: data.email,
       password: data.password
     })
@@ -48,14 +49,17 @@ export function SignIn(): JSX.Element {
 
   return (
     <PageContainer>
-      <SignInContainer>
+      <Presentation />
+      <SignUpContainer>
         <LogoBox>
-          <LogoSVG animation />
-          <span>Conversa</span>
+          <div>
+            <LogoSVG animation />
+            <span>Conversa</span>
+          </div>
         </LogoBox>
 
         <Header>
-          <h1>Faça o seu login</h1>
+          <h1>Faça o seu cadastro</h1>
         </Header>
 
         <Main>
@@ -92,7 +96,7 @@ export function SignIn(): JSX.Element {
               </span>
             )}
 
-            <button type="submit">Entrar</button>
+            <button type="submit">Cadastrar</button>
           </form>
 
           <Separator>outras opções</Separator>
@@ -104,9 +108,9 @@ export function SignIn(): JSX.Element {
         </Main>
 
         <Footer>
-          <Link to="/">Criar conta</Link>
+          <Link to="signin">Fazer login</Link>
         </Footer>
-      </SignInContainer>
+      </SignUpContainer>
     </PageContainer>
   )
 }

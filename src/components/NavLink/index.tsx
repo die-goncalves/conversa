@@ -67,7 +67,7 @@ export function NavLink({
       <Link
         to={
           roomType === 'chat'
-            ? `/dashboard/room/${roomId}`
+            ? `/dashboard/chat/${roomId}`
             : `/dashboard/call/${roomId}`
         }
         className={active ? 'active' : ''}
@@ -91,7 +91,7 @@ export function NavLink({
       <Link
         to={
           roomType === 'chat'
-            ? `/dashboard/room/${roomId}/detail`
+            ? `/dashboard/chat/${roomId}/detail`
             : `/dashboard/call/${roomId}/detail`
         }
       >

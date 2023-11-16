@@ -3,34 +3,13 @@ import styled from 'styled-components'
 export const RoomDetailsContainer = styled.div`
   position: relative;
   display: flex;
-  width: 100vw;
+  width: 100%;
   height: 100svh;
+  padding-bottom: 1rem;
 
   background: var(--gray-900);
 
   overflow: auto;
-  scrollbar-gutter: stable;
-
-  &::-webkit-scrollbar {
-    width: 1vw;
-    height: 1vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: var(--gray-600);
-    box-shadow: var(--shadow-lg);
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: var(--gray-800);
-    box-shadow: var(--shadow);
-  }
-  &::-webkit-scrollbar-track {
-    background: var(--gray-900);
-  }
 
   @media (min-width: 320px) {
     flex-direction: column;
@@ -38,17 +17,7 @@ export const RoomDetailsContainer = styled.div`
   @media (min-width: 768px) {
     flex-direction: row;
     & > div {
-      width: 60%;
-    }
-  }
-  @media (min-width: 1024px) {
-    & > div {
-      width: 65%;
-    }
-  }
-  @media (min-width: 1366px) {
-    & > div {
-      width: 70%;
+      width: 100%;
     }
   }
 `
@@ -261,23 +230,24 @@ export const ParticipantSection = styled.section`
 `
 
 export const ParticipantGallery = styled.div`
-  column-count: 3;
-  column-gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 
   @media (min-width: 320px) {
-    column-count: 1;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
   @media (min-width: 640px) {
-    column-count: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   @media (min-width: 768px) {
-    column-count: 1;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
   @media (min-width: 1024px) {
-    column-count: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   @media (min-width: 1280px) {
-    column-count: 3;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `
 
@@ -308,7 +278,8 @@ export const ActionSection = styled.section`
     position: relative;
     display: flex;
     width: 100%;
-    padding: 0.5rem;
+    height: 40px;
+    padding: 0 0.5rem;
     border: 2px solid transparent;
     align-items: center;
     background-color: var(--gray-800);
@@ -318,6 +289,7 @@ export const ActionSection = styled.section`
 
     span {
       text-align: start;
+      vertical-align: bottom;
     }
 
     & + button {

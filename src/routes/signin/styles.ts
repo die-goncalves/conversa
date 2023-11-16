@@ -1,39 +1,17 @@
 import styled from 'styled-components'
 
 export const PageContainer = styled.div`
-  width: 100vw;
+  display: flex;
+  width: 100%;
   height: 100svh;
 
   overflow: auto;
-  scrollbar-gutter: auto;
-
-  &::-webkit-scrollbar {
-    width: 1vw;
-    height: 1vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: var(--gray-600);
-    box-shadow: var(--shadow-lg);
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: var(--gray-800);
-    box-shadow: var(--shadow);
-  }
-  &::-webkit-scrollbar-track {
-    background: var(--gray-900);
-  }
+  scrollbar-gutter: stable both-edges;
 
   @media (min-width: 320px) {
     background: var(--gray-800);
   }
   @media (min-width: 640px) {
-    display: flex;
-    padding: 2.75rem 0;
     background: var(--gray-900);
   }
 `
@@ -44,15 +22,15 @@ export const SignInContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  max-width: 30rem;
+  height: min-content;
+  margin: auto;
 
   @media (min-width: 320px) {
-    width: 100%;
-    height: 100%;
     padding: 1rem;
   }
   @media (min-width: 640px) {
-    width: 30rem;
-    margin: auto;
     padding: 1.5rem;
     border-radius: 4px;
     background: var(--gray-800);
@@ -65,24 +43,17 @@ export const SignInContainer = styled.div`
 
 export const Header = styled.header`
   display: flex;
+  margin: 0 auto 1rem;
 
   h1 {
-    font-family: 'Montserrat', sans-serif;
-  }
-
-  @media (min-width: 320px) {
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  @media (min-width: 640px) {
-    margin: 0 auto;
+    font-weight: 500;
   }
 `
 
 export const Main = styled.main`
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   form {
     display: flex;
@@ -216,10 +187,6 @@ export const Main = styled.main`
       }
     }
   }
-
-  @media (min-width: 320px) {
-    width: 100%;
-  }
 `
 
 export const Separator = styled.span`
@@ -233,19 +200,19 @@ export const Separator = styled.span`
     display: flex;
     align-self: center;
     flex: 1;
-    height: 0.125rem;
+    height: 4px;
     margin-left: 0.5rem;
-    background: var(--violet-50);
-    opacity: 0.2;
+    background: var(--gray-700);
+    box-shadow: var(--shadow);
   }
   &::before {
     content: '';
     display: flex;
     flex: 1;
-    height: 0.125rem;
+    height: 4px;
     margin-right: 0.5rem;
-    background: var(--violet-50);
-    opacity: 0.2;
+    background: var(--gray-700);
+    box-shadow: var(--shadow);
   }
 `
 
@@ -259,33 +226,45 @@ export const Footer = styled.footer`
 `
 
 export const LogoBox = styled.div`
+  position: relative;
   display: flex;
+  width: 100%;
+  flex-direction: column;
   align-items: center;
+  margin: 0 auto;
 
-  span {
-    margin-right: 0.5rem;
+  div {
+    display: flex;
+    align-items: center;
 
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    font-weight: 400;
-    transition: opacity 150ms linear;
-    color: var(--violet-50);
+    span {
+      margin: 0 0.5rem;
+
+      font-weight: 500;
+      color: var(--violet-50);
+
+      @media (min-width: 320px) {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+      }
+      @media (min-width: 412px) {
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+      }
+    }
+
+    svg {
+      height: 40px;
+      width: 40px;
+    }
   }
 
-  @media (min-width: 320px) {
-    position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  @media (min-width: 640px) {
-    border-radius: 4px;
-    padding: 0.5rem;
-    background: var(--gray-800);
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+  &::after {
+    content: '';
+    background: var(--gray-700);
+    box-shadow: var(--shadow);
+    width: 100%;
+    height: 4px;
+    margin: 1rem 0 1.5rem;
   }
 `

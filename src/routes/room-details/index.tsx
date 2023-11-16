@@ -1,5 +1,11 @@
 import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
+import {
+  type LoaderFunctionArgs,
+  useLoaderData,
+  useNavigate
+} from 'react-router-dom'
+import { toast } from 'react-toastify'
 import {
   child,
   get,
@@ -10,15 +16,13 @@ import {
   serverTimestamp,
   set
 } from 'firebase/database'
-import { toast } from 'react-toastify'
-import { useMediaQuery } from 'react-responsive'
 import { AuthContext } from '../../contexts/AuthContext'
 import { database } from '../../services/firebaseConfig'
 import { ParticipantCard } from '../../components/ParticipantCard'
-import { Progress } from '../../components/Progress'
 import { BlockedParticipantCard } from '../../components/BlockedParticipantCard'
 import { SidebarMenu } from '../../components/SidebarMenu'
 import { Popover } from '../../components/Popover'
+import { SkeletonLayout } from './skeleton-layout'
 import {
   ActionSection,
   BlockedParticipantGallery,
@@ -62,6 +66,7 @@ interface IState {
   >
   blocked: Record<string, boolean>
   showPassword: boolean
+  loading: boolean
 }
 enum Actions {
   'set-room-id',
@@ -71,24 +76,40 @@ enum Actions {
   'set-users',
   'set-blocked',
   'has-more-than-one-adm',
-  'set-show-password'
+  'set-show-password',
+  'set-loading'
 }
 interface IActions {
   type: keyof typeof Actions
   payload?: any
 }
 
-export function Details(): JSX.Element | null {
+export function loader({ params }: LoaderFunctionArgs): {
+  roomId?: string
+} {
+  return {
+    roomId: params.roomId
+  }
+}
+
+export function Element(): JSX.Element | null {
+  const { roomId } = useLoaderData() as {
+    roomId: string
+  }
+  return <RoomDetails key={roomId} roomId={roomId} />
+}
+
+interface IRoomDetails {
+  roomId: string
+}
+export function RoomDetails({ roomId }: IRoomDetails): JSX.Element | null {
   const isLargerThan768 = useMediaQuery({
     query: '(min-width: 768px)'
   })
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(true)
   const { userState } = useContext(AuthContext)
   const [open, setOpen] = useState(false)
-  const { roomId } = useLoaderData() as {
-    roomId: string
-  }
+
   const [detail, dispatch] = useReducer(
     function reducer(state: IState, action: IActions) {
       switch (action.type) {
@@ -112,7 +133,8 @@ export function Details(): JSX.Element | null {
             adms: {},
             users: {},
             blocked: {},
-            showPassword: false
+            showPassword: false,
+            loading: true
           }
         }
         case 'set-i-am-adm': {
@@ -172,6 +194,11 @@ export function Details(): JSX.Element | null {
             ...state,
             showPassword: !state.showPassword
           }
+        case 'set-loading':
+          return {
+            ...state,
+            loading: !state.loading
+          }
         default:
           throw new Error('Ação desconhecida')
       }
@@ -185,7 +212,8 @@ export function Details(): JSX.Element | null {
       adms: {},
       users: {},
       blocked: {},
-      showPassword: false
+      showPassword: false,
+      loading: true
     }
   )
 
@@ -204,13 +232,16 @@ export function Details(): JSX.Element | null {
   }, [roomId])
 
   useEffect(() => {
-    if (detail.roomId != null)
-      dispatch({ type: 'set-i-am-adm', payload: userState.user?.uid })
-  }, [detail.roomId, detail.adms, userState.user])
+    if (userState.user != null && Object.entries(detail.adms).length > 0) {
+      dispatch({ type: 'set-i-am-adm', payload: userState.user.uid })
+    }
+  }, [detail.adms, userState.user])
 
   useEffect(() => {
-    if (detail.roomId != null) dispatch({ type: 'has-more-than-one-adm' })
-  }, [detail.roomId, detail.adms])
+    if (Object.entries(detail.adms).length > 0) {
+      dispatch({ type: 'has-more-than-one-adm' })
+    }
+  }, [detail.adms])
 
   const removeUserFromRoom = useCallback(
     async (id: string | undefined) => {
@@ -353,7 +384,6 @@ export function Details(): JSX.Element | null {
               photoURL: string
             }
           > = {}
-          setLoading(true)
           for (const userId of Object.keys(snapshot.val())) {
             const snapshotUser = await get(ref(database, `users/${userId}`))
             if (snapshotUser.exists()) {
@@ -371,7 +401,6 @@ export function Details(): JSX.Element | null {
                 }
             }
           }
-          setLoading(false)
           dispatch({ type: 'set-users', payload: users })
         }
       }
@@ -408,15 +437,28 @@ export function Details(): JSX.Element | null {
     }
   }, [detail.roomId])
 
-  if (detail.iAmInTheRoom !== true) return null
+  useEffect(() => {
+    const truthy =
+      detail.loading &&
+      Object.entries(detail.adms).length > 0 &&
+      Object.entries(detail.users).length > 0 &&
+      detail.room !== null &&
+      detail.roomId !== null &&
+      detail.iAmInTheRoom !== null &&
+      detail.hasMoreThanOneAdm !== null &&
+      detail.iAmAdm !== null
+
+    if (truthy) {
+      dispatch({ type: 'set-loading' })
+    }
+  }, [detail])
+
+  if (detail.loading)
+    return <SkeletonLayout isLargerThan768={isLargerThan768} />
 
   return (
     <RoomDetailsContainer>
-      {loading && <Progress />}
-
-      {isLargerThan768 ? (
-        <SidebarMenu />
-      ) : (
+      {!isLargerThan768 && (
         <StyledHeader>
           <SidebarMenu />
 

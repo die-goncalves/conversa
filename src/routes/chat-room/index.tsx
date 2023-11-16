@@ -6,7 +6,12 @@ import {
   useReducer,
   useRef
 } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
+import {
+  useLoaderData,
+  useNavigate,
+  type LoaderFunctionArgs
+} from 'react-router-dom'
 import {
   child,
   get,
@@ -17,7 +22,6 @@ import {
   query,
   ref,
   startAt,
-  startAfter,
   limitToLast,
   endAt,
   type Unsubscribe,
@@ -32,14 +36,13 @@ import { Message } from '../../components/Message'
 import { MessageInput } from '../../components/MessageInput'
 import { SidebarMenu } from '../../components/SidebarMenu'
 import {
-  RoomContainer,
+  ChatContainer,
   MessagesBox,
   ContentContainer,
   FABScrollToEndOfMessages,
   FABGetOldMessages,
   StyledHeader
 } from './styles'
-import { useMediaQuery } from 'react-responsive'
 
 interface IMessage {
   id: string | null
@@ -92,12 +95,28 @@ interface IActions {
   payload?: any
 }
 
-export function Room(): JSX.Element | null {
+export function loader({ params }: LoaderFunctionArgs): {
+  roomId: string | undefined
+} {
+  return {
+    roomId: params.roomId
+  }
+}
+export function Element(): JSX.Element | null {
+  const { roomId } = useLoaderData() as {
+    roomId: string
+  }
+  return <ChatRoom key={roomId} roomId={roomId} />
+}
+
+interface IChatRoom {
+  roomId: string
+}
+export function ChatRoom({ roomId }: IChatRoom): JSX.Element | null {
   const isLargerThan768 = useMediaQuery({
     query: '(min-width: 768px)'
   })
   const navigate = useNavigate()
-  const { roomId } = useLoaderData() as { roomId: string }
   const { userState } = useContext(AuthContext)
   const [state, dispatch] = useReducer(
     function reducer(state: IState, actions: IActions): IState {
@@ -746,13 +765,11 @@ export function Room(): JSX.Element | null {
   if (state.isInTheRoom == null) return null
 
   return (
-    <RoomContainer>
+    <ChatContainer>
       {(state.lastMessageId.loading || state.haveMoreOldMessages.loading) &&
         !isLargerThan768 && <Progress />}
 
-      {isLargerThan768 ? (
-        <SidebarMenu />
-      ) : (
+      {!isLargerThan768 && (
         <StyledHeader>
           <SidebarMenu />
 
@@ -812,6 +829,6 @@ export function Room(): JSX.Element | null {
           disable={state.isBlocked}
         />
       </ContentContainer>
-    </RoomContainer>
+    </ChatContainer>
   )
 }

@@ -1,14 +1,31 @@
-import { usePeerConnection } from './usePeerConnection'
+import { type LoaderFunctionArgs, useLoaderData } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
 import { CallActions } from '../../components/CallActions'
 import { CallParticipants } from '../../components/CallParticipants'
-import { CallContainer, StyledCall, StyledHeader } from './styles'
 import { SidebarMenu } from '../../components/SidebarMenu'
-import { useMediaQuery } from 'react-responsive'
-import { Fragment } from 'react'
+import { usePeerConnection } from './usePeerConnection'
+import { CallContainer, StyledCall, StyledHeader } from './styles'
 
-export function Call(): JSX.Element | null {
-  const isSmallScreen = useMediaQuery({
-    query: '(min-width: 320px) and (max-width: 767px)'
+export function loader({ params }: LoaderFunctionArgs): {
+  roomId: string | undefined
+} {
+  return {
+    roomId: params.roomId
+  }
+}
+export function Element(): JSX.Element | null {
+  const { roomId } = useLoaderData() as {
+    roomId: string
+  }
+  return <CallRoom key={roomId} roomId={roomId} />
+}
+
+interface ICallRoom {
+  roomId: string
+}
+export function CallRoom({ roomId }: ICallRoom): JSX.Element | null {
+  const isLargerThan768 = useMediaQuery({
+    query: '(min-width: 768px)'
   })
   const {
     toggleCamera,
@@ -20,13 +37,13 @@ export function Call(): JSX.Element | null {
     call,
     userMedia,
     isMounted
-  } = usePeerConnection()
+  } = usePeerConnection({ roomId })
 
   if (!isMounted) return null
 
   return (
     <CallContainer>
-      {isSmallScreen ? (
+      {!isLargerThan768 && (
         <StyledHeader>
           <SidebarMenu />
 
@@ -42,11 +59,9 @@ export function Call(): JSX.Element | null {
             />
           )}
         </StyledHeader>
-      ) : (
-        <SidebarMenu />
       )}
 
-      {isSmallScreen ? (
+      {!isLargerThan768 ? (
         <StyledCall>
           <CallParticipants call={call} />
         </StyledCall>

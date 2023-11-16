@@ -115,27 +115,12 @@ export const StyledSidebarContent = styled.aside`
   border-radius: 0;
   box-shadow: var(--shadow);
 
+  position: sticky;
+  top: 0;
+  width: 100%;
+
   overflow: auto;
   scrollbar-gutter: auto;
-
-  @media (min-width: 768px) {
-    position: sticky;
-    top: 0;
-    flex: none;
-    width: 40%;
-  }
-  @media (min-width: 1024px) {
-    position: sticky;
-    top: 0;
-    flex: none;
-    width: 35%;
-  }
-  @media (min-width: 1366px) {
-    position: sticky;
-    top: 0;
-    flex: none;
-    width: 30%;
-  }
 `
 
 export const StyledTitle = styled(DialogTitle)`
@@ -144,20 +129,28 @@ export const StyledTitle = styled(DialogTitle)`
   justify-content: space-between;
 
   a {
+    height: 40px;
+    border: 2px solid transparent;
+    border-radius: 4px;
     display: flex;
     align-items: center;
+    transition: border-color 150ms linear;
 
     span {
       margin-right: 0.5rem;
-
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
-      line-height: 1.5rem;
       font-weight: 400;
-      transition: opacity 150ms linear;
-      color: var(--violet-50);
+      font-size: 1rem;
+    }
+    svg {
+      width: 40px;
+      height: 40px;
     }
     text-decoration: none;
+
+    outline: 0;
+    &:focus-visible {
+      border-color: var(--violet-300);
+    }
   }
 
   @media (min-width: 320px) {
@@ -174,20 +167,26 @@ export const StyledSidebarTitle = styled.div`
   justify-content: space-between;
 
   a {
+    height: 40px;
+    border: 2px solid transparent;
+    border-radius: 4px;
     display: flex;
     align-items: center;
+    transition: border-color 150ms linear;
 
     span {
       margin-right: 0.5rem;
-
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
-      line-height: 1.5rem;
-      font-weight: 400;
-      transition: opacity 150ms linear;
-      color: var(--violet-50);
+    }
+    svg {
+      width: 40px;
+      height: 40px;
     }
     text-decoration: none;
+
+    outline: 0;
+    &:focus-visible {
+      border-color: var(--violet-300);
+    }
   }
 
   @media (min-width: 768px) {

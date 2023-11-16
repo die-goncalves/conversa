@@ -12,7 +12,6 @@ const DefaultParticipantCard = css`
   width: 100%;
   border: 2px solid transparent;
   align-items: center;
-  margin-bottom: 1rem;
   background-color: var(--gray-800);
   box-shadow: var(--shadow);
   border-radius: 4px;

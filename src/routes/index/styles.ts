@@ -3,32 +3,11 @@ import styled from 'styled-components'
 export const DashboardContainer = styled.div`
   position: relative;
   display: flex;
-  width: 100vw;
+  width: 100%;
   height: 100svh;
 
   overflow: auto;
   scrollbar-gutter: auto;
-
-  &::-webkit-scrollbar {
-    width: 1vw;
-    height: 1vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: var(--gray-600);
-    box-shadow: var(--shadow-lg);
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: var(--gray-800);
-    box-shadow: var(--shadow);
-  }
-  &::-webkit-scrollbar-track {
-    background: var(--gray-900);
-  }
 
   @media (min-width: 320px) {
     background: var(--gray-800);
@@ -79,16 +58,11 @@ export const FormContainer = styled.div`
 
   h1 {
     text-align: center;
-    font-family: 'Montserrat', sans-serif;
-
     @media (min-width: 320px) {
-      font-size: 1rem;
-      line-height: 1.5rem;
-      font-weight: 600;
+      margin-bottom: 1rem;
     }
     @media (min-width: 640px) {
-      font-size: 1.125rem;
-      line-height: 1.75rem;
+      margin-bottom: 1.5rem;
     }
   }
 
