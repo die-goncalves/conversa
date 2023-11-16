@@ -103,27 +103,6 @@ export const StyledContent = styled(DialogContent)`
 
   overflow: auto;
   scrollbar-gutter: auto;
-
-  &::-webkit-scrollbar {
-    width: 1vw;
-    height: 1vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: var(--gray-600);
-    box-shadow: var(--shadow-lg);
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: var(--gray-800);
-    box-shadow: var(--shadow);
-  }
-  &::-webkit-scrollbar-track {
-    background: var(--gray-900);
-  }
 `
 
 export const StyledSidebarContent = styled.aside`
@@ -138,27 +117,6 @@ export const StyledSidebarContent = styled.aside`
 
   overflow: auto;
   scrollbar-gutter: auto;
-
-  &::-webkit-scrollbar {
-    width: 1vw;
-    height: 1vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: var(--gray-600);
-    box-shadow: var(--shadow-lg);
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-700);
-    box-shadow: var(--shadow-md);
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: var(--gray-800);
-    box-shadow: var(--shadow);
-  }
-  &::-webkit-scrollbar-track {
-    background: var(--gray-900);
-  }
 
   @media (min-width: 768px) {
     position: sticky;

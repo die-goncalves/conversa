@@ -12,6 +12,7 @@ import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
   :root {
+    color-scheme: dark;
     --gray-900: #1F1E20;
     --gray-800: #29282B;
     --gray-700: #312F31;

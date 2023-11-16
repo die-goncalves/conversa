@@ -54,25 +54,6 @@ export const SendMessageContainer = styled.div`
 
         overflow: auto;
         scrollbar-gutter: stable;
-        &::-webkit-scrollbar {
-          width: 16px;
-        }
-        &::-webkit-scrollbar-thumb {
-          border-radius: 2px;
-          background: var(--gray-600);
-          box-shadow: var(--shadow-lg);
-        }
-        &::-webkit-scrollbar-thumb:hover {
-          background: var(--gray-700);
-          box-shadow: inset var(--shadow-md);
-        }
-        &::-webkit-scrollbar-thumb:active {
-          background-color: var(--gray-800);
-          box-shadow: var(--shadow);
-        }
-        &::-webkit-scrollbar-track {
-          background: var(--gray-900);
-        }
 
         &:disabled {
           cursor: not-allowed;
