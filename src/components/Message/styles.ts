@@ -14,16 +14,11 @@ export const MessageLine = styled.li<IMessageLine>`
     justify-content: ${props => (props.isMe ? 'flex-end' : 'flex-start')};
 
     @media (min-width: 320px) {
-      max-width: ${props => (props.isMe ? 'calc(80% - 2.5rem)' : '80%')};
-      min-width: ${props => (props.isMe ? 'calc(50% - 2.5rem)' : '50%')};
-    }
-    @media (min-width: 640px) {
-      max-width: ${props => (props.isMe ? 'calc(70% - 3.25rem)' : '70%')};
-      min-width: ${props => (props.isMe ? 'calc(50% - 3.25rem)' : '50%')};
+      max-width: 100%;
+      min-width: min-content;
     }
     @media (min-width: 1024px) {
-      max-width: ${props => (props.isMe ? 'calc(70% - 4rem)' : '70%')};
-      min-width: ${props => (props.isMe ? 'calc(50% - 4rem)' : '50%')};
+      max-width: 50%;
     }
   }
 
@@ -56,7 +51,8 @@ export const MessageLine = styled.li<IMessageLine>`
     flex-direction: column;
     border-radius: 4px;
     background: ${props =>
-      props.isMe ? 'var(--gray-700)' : 'var(--gray-800)'};
+      props.isMe ? 'var(--gray-800)' : 'var(--violet-300)'};
+    color: ${props => (props.isMe ? 'var(--violet-50)' : 'var(--gray-900)')};
     box-shadow: ${props => (props.isMe ? 'var(--shadow-md)' : 'var(--shadow)')};
 
     &,
@@ -81,35 +77,18 @@ export const MessageLine = styled.li<IMessageLine>`
       width: ${props => (props.isMe ? '100%' : 'calc(100% - 4rem)')};
     }
   }
-
-  header {
-    border-radius: 4px;
-
-    @media (min-width: 320px) {
-      padding: 0;
-    }
-    @media (min-width: 640px) {
-      padding: 0.5rem 1rem;
-      background: var(--gray-700);
-      box-shadow: var(--shadow);
-    }
-    @media (min-width: 768px) {
-      padding: 0;
-      background: transparent;
-      box-shadow: none;
-    }
-    @media (min-width: 1024px) {
-      padding: 0.5rem 1rem;
-      background: var(--gray-700);
-      box-shadow: var(--shadow);
+  .message-balloon > div.username {
+    span {
+      font-family: 'Josefin Slab', sans-serif;
+      font-weight: 600;
     }
   }
-  main {
+  .message-balloon > div.message {
     max-width: 100%;
     margin-top: ${props => (props.isMe ? 0 : '0.5rem')};
     align-self: ${props => (props.isMe ? 'flex-end' : 'flex-start')};
   }
-  footer {
+  .message-balloon > div.time-view {
     ${props =>
       props.isMe
         ? {
@@ -161,11 +140,9 @@ export const ADMMessage = styled.li<IADMMessage>`
   position: relative;
   display: flex;
   margin: 0 auto;
-  background: var(--gray-800);
 
   min-width: auto;
   border-radius: 4px;
-  box-shadow: var(--shadow);
 
   svg {
     fill: ${props => {
@@ -178,9 +155,6 @@ export const ADMMessage = styled.li<IADMMessage>`
     }};
     width: 1.5rem;
     height: 1.5rem;
-    filter: drop-shadow(0px 0.3px 0.7px rgba(0, 0, 0, 0.141))
-      drop-shadow(0px 1.1px 2.2px rgba(0, 0, 0, 0.209))
-      drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.35));
   }
 
   div {

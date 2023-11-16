@@ -28,12 +28,10 @@ export function MessageComponent({
   sender,
   roomId
 }: IMessageProps): JSX.Element | null {
-  const diffDate = timeAgo(Date.now(), message.timestamp)
-  const [isMe, setIsMe] = useState(() => sender === message.sender?.id)
-  const [iHaveSeen, setIHaveSeen] = useState(() =>
-    Object.keys(message.viewed ?? {}).includes(sender)
-  )
   const [isVisible, setIsVisible] = useState<boolean>()
+  const diffDate = timeAgo(Date.now(), message.timestamp)
+  const isMe = sender === message.sender?.id
+  const iHaveSeen = Object.keys(message.viewed ?? {}).includes(sender)
 
   const observer = useRef<IntersectionObserver>()
   useEffect(() => {
@@ -188,14 +186,14 @@ export function MessageComponent({
 
         <div className="message-balloon">
           {isMe ? null : (
-            <header>
-              <span>{message.sender?.displayName}</span>
-            </header>
+            <div className="username">
+              <span>@{message.sender?.displayName}</span>
+            </div>
           )}
 
-          <main>{message.message}</main>
+          <div className="message">{message.message}</div>
 
-          <footer>
+          <div className="time-view">
             <span>{diffDate}</span>
             <Viewed
               isViewed={
@@ -213,7 +211,7 @@ export function MessageComponent({
                 <path d="M294 814 70 590l43-43 181 181 43 43-43 43Zm170 0L240 590l43-43 181 181 384-384 43 43-427 427Zm0-170-43-43 257-257 43 43-257 257Z" />
               </svg>
             </Viewed>
-          </footer>
+          </div>
         </div>
       </div>
     </MessageLine>
