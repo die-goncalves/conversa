@@ -232,7 +232,6 @@ https://github.com/die-goncalves/conversa/assets/67720230/8ffaf2f7-bb8f-4d80-846
   |  ![320px](assets/image/320px-detail.png)  |
   |  ![320px](assets/image/320px-chat.png)  |
   |  ![320px](assets/image/320px-videoconference.png)  |
-  |  ![320px](assets/image/320px-notification.png)  |
 
   | 1440px |
   |:----:|
