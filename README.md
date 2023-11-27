@@ -1,9 +1,17 @@
 <p align="center">
-    <img alt="Conversa" title="Conversa" src="assets/conversa.svg" width="200px" />
-</p>  
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://media.graphassets.com/fAQyOn6LTwOukrwjObRg"/>
+      <source media="(prefers-color-scheme: light)" srcset="https://media.graphassets.com/ldNqOAB8TNugkLaeDjfq"/>
+      <img src="https://media.graphassets.com/ldNqOAB8TNugkLaeDjfq" width="200"/>
+    </picture>
+</p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/deployments/die-goncalves/conversa/production?label=&logoWidth=50&labelColor=white&logo=data:image/svg+xml;base64,PHN2ZyB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBhcmlhLWxhYmVsPSJWZXJjZWwgTG9nb3R5cGUiIGZpbGw9InZhcigtLWdlaXN0LWZvcmVncm91bmQpIiBoZWlnaHQ9IjY1IiB2aWV3Qm94PSIwIDAgMjg0IDY1IiB3aWR0aD0iMjg0Ij48cGF0aCBkPSJNMTQxLjY4IDE2LjI1Yy0xMS4wNCAwLTE5IDcuMi0xOSAxOHM4Ljk2IDE4IDIwIDE4YzYuNjcgMCAxMi41NS0yLjY0IDE2LjE5LTcuMDlsLTcuNjUtNC40MmMtMi4wMiAyLjIxLTUuMDkgMy41LTguNTQgMy41LTQuNzkgMC04Ljg2LTIuNS0xMC4zNy02LjVoMjguMDJjLjIyLTEuMTIuMzUtMi4yOC4zNS0zLjUgMC0xMC43OS03Ljk2LTE3Ljk5LTE5LTE3Ljk5em0tOS40NiAxNC41YzEuMjUtMy45OSA0LjY3LTYuNSA5LjQ1LTYuNSA0Ljc5IDAgOC4yMSAyLjUxIDkuNDUgNi41aC0xOC45em0xMTcuMTQtMTQuNWMtMTEuMDQgMC0xOSA3LjItMTkgMThzOC45NiAxOCAyMCAxOGM2LjY3IDAgMTIuNTUtMi42NCAxNi4xOS03LjA5bC03LjY1LTQuNDJjLTIuMDIgMi4yMS01LjA5IDMuNS04LjU0IDMuNS00Ljc5IDAtOC44Ni0yLjUtMTAuMzctNi41aDI4LjAyYy4yMi0xLjEyLjM1LTIuMjguMzUtMy41IDAtMTAuNzktNy45Ni0xNy45OS0xOS0xNy45OXptLTkuNDUgMTQuNWMxLjI1LTMuOTkgNC42Ny02LjUgOS40NS02LjUgNC43OSAwIDguMjEgMi41MSA5LjQ1IDYuNWgtMTguOXptLTM5LjAzIDMuNWMwIDYgMy45MiAxMCAxMCAxMCA0LjEyIDAgNy4yMS0xLjg3IDguOC00LjkybDcuNjggNC40M2MtMy4xOCA1LjMtOS4xNCA4LjQ5LTE2LjQ4IDguNDktMTEuMDUgMC0xOS03LjItMTktMThzNy45Ni0xOCAxOS0xOGM3LjM0IDAgMTMuMjkgMy4xOSAxNi40OCA4LjQ5bC03LjY4IDQuNDNjLTEuNTktMy4wNS00LjY4LTQuOTItOC44LTQuOTItNi4wNyAwLTEwIDQtMTAgMTB6bTgyLjQ4LTI5djQ2aC05di00Nmg5ek0zNy41OS4yNWwzNi45NSA2NEguNjRsMzYuOTUtNjR6bTkyLjM4IDVsLTI3LjcxIDQ4LTI3LjcxLTQ4aDEwLjM5bDE3LjMyIDMwIDE3LjMyLTMwaDEwLjM5em01OC45MSAxMnY5LjY5Yy0xLS4yOS0yLjA2LS40OS0zLjItLjQ5LTUuODEgMC0xMCA0LTEwIDEwdjE0LjhoLTl2LTM0aDl2OS4yYzAtNS4wOCA1LjkxLTkuMiAxMy4yLTkuMnoiPjwvcGF0aD48L3N2Zz4=&style=flat-square" alt="GitHub deployments" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/github/deployments/die-goncalves/conversa/production?style=flat-square&logo=github&logoColor=ffffff&label=GitHub deployments&labelColor=22272e&color=fcd34d"/>
+      <source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/github/deployments/die-goncalves/conversa/production?style=flat-square&logo=github&logoColor=000000&label=GitHub deployments&labelColor=ffffff&color=fcd34d"/>
+      <img src="https://img.shields.io/github/deployments/die-goncalves/conversa/production?style=flat-square&logo=github&logoColor=000000&label=GitHub deployments&labelColor=ffffff&color=fcd34d"/>
+    </picture>
 </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -134,8 +142,8 @@ Outras funcionalidades como autenticação e a comunicação em tempo real relac
 
 * ### **Pré-requisitos**
 
-  * É **necessário** possuir o **[Git](https://git-scm.com/)** instalado e configurado no computador.
-  * É **necessário** ter o gerenciador de pacotes **[NPM](https://www.npmjs.com/)**.
+  * É **necessário** possuir o [Git](https://git-scm.com/) instalado e configurado no computador.
+  * É **necessário** ter o gerenciador de pacotes [NPM](https://www.npmjs.com/).
   * É **necessário** ter uma conta no [firebase](https://firebase.google.com/).
   * É **necessário** ter uma conta na [metered](https://www.metered.ca/).
 
@@ -210,18 +218,27 @@ Outras funcionalidades como autenticação e a comunicação em tempo real relac
 
 ## Publicação
 
-[![Badge](https://img.shields.io/static/v1?label=Vercel&labelColor=white&message=deployed&color=00B37E&style=flat-square&logo=Vercel&logoColor=000000)](https://conversa-two.vercel.app/)
+<a href="https://conversa-two.vercel.app/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/website?up_message=online&up_color=6ee7b7&down_message=offline&down_color=fda4af&url=https%3A%2F%2Fconversa-two.vercel.app%2F&style=flat-square&logo=vercel&logoColor=ffffff&label=Vercel&labelColor=22272e"/>
+      <source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/website?up_message=online&up_color=6ee7b7&down_message=offline&down_color=fda4af&url=https%3A%2F%2Fconversa-two.vercel.app%2F&style=flat-square&logo=vercel&logoColor=000000&label=Vercel&labelColor=ffffff"/>
+      <img src="https://img.shields.io/website?up_message=online&up_color=6ee7b7&down_message=offline&down_color=fda4af&url=https%3A%2F%2Fconversa-two.vercel.app%2F&style=flat-square&logo=vercel&logoColor=000000&label=Vercel&labelColor=ffffff"/>
+    </picture>
+</a>
 
 ### Visão do projeto
 
-📽️ Se os vídeos abaixo não funcionarem, outra alternativa é encontrá-los em [largura mínima de 320px](assets/video/minW-320px.mp4) e [largura mínima de 1440px](assets/video/minW-1440px.mp4) e baixá-los e se mesmo assim não funcionarem, nesta seção há imagens de alguns quadros dos vídeos.
-
-https://github.com/die-goncalves/conversa/assets/67720230/81b7f7d5-c1c5-4a0f-9276-5a5667e23246
-
-https://github.com/die-goncalves/conversa/assets/67720230/8ffaf2f7-bb8f-4d80-8462-d4edfd5d7bbd
-
 <details open>
-  <summary>🖼️ Imagens</summary>
+    <summary>📽️ Vídeo</summary>
+    <br />
+    <p>↣ Clique na imagem abaixo para ser redirecionado para o URL original do vídeo.</p>
+
+  [![thumbnail](assets/image/thumbnail.png)](https://media.graphassets.com/WrTmdkiERdyG6FEFHuL1)
+</details>
+
+<details open style="border:1px_solid_#aaa;">
+    <summary>🖼️ Imagens</summary>
+    <br />
 
   | 320px |
   |:----:|
@@ -252,5 +269,18 @@ Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 Feito por Diego Gonçalves, contato:
 
-[![Badge](https://img.shields.io/static/v1?label=Linkedin&labelColor=white&message=Diego%20Gonçalves&color=208BEE&style=flat-square&logo=linkedin&logoColor=208BEE&link=https://www.linkedin.com/in/diego-goncalves1990)](https://www.linkedin.com/in/diego-goncalves1990)
-[![Badge](https://img.shields.io/static/v1?label=Gmail&labelColor=white&message=die.goncalves1990@gmail.com&color=EA5134&style=flat-square&logo=gmail&logoColor=EA5134&link=mailto:die.goncalves1990@gmail.com)](mailto:die.goncalves1990@gmail.com)
+<a href="https://www.linkedin.com/in/diego-goncalves1990">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Linkedin-Diego_Gonçalves-93c5fd?style=flat-square&logo=linkedin&logoColor=208bee&labelColor=22272e"/>
+      <source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/Linkedin-Diego_Gonçalves-93c5fd?style=flat-square&logo=linkedin&logoColor=208bee&labelColor=ffffff"/>
+      <img src="https://img.shields.io/badge/Linkedin-Diego_Gonçalves-93c5fd?style=flat-square&logo=linkedin&logoColor=208bee&labelColor=ffffff"/>
+    </picture>
+</a>
+
+<a href="mailto:die.goncalves1990@gmail.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Gmail-die.goncalves1990@gmail.com-fda4af?style=flat-square&logo=gmail&logoColor=ea5134&labelColor=22272e"/>
+      <source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/Gmail-die.goncalves1990@gmail.com-fda4af?style=flat-square&logo=gmail&logoColor=ea5134&labelColor=ffffff"/>
+      <img src="https://img.shields.io/badge/Gmail-die.goncalves1990@gmail.com-fda4af?style=flat-square&logo=gmail&logoColor=ea5134&labelColor=ffffff"/>
+    </picture>
+</a>
